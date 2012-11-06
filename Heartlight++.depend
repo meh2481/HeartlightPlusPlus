@@ -1,0 +1,22 @@
+# depslib dependency file v1.0
+1352171704 source:/home/mark/repos/HeartlightPlusPlus/hge_tut02.cpp
+	"hge.h"
+
+1352165982 /home/mark/repos/HeartlightPlusPlus/include//hge.h
+	"unix_compat.h"
+	<windows.h>
+
+1352167060 /home/mark/repos/HeartlightPlusPlus/include//unix_compat.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	<unistd.h>
+	<assert.h>
+	<errno.h>
+	<limits.h>
+	<sys/stat.h>
+	<sys/time.h>
+	<time.h>
+	<SDL/SDL.h>
+
