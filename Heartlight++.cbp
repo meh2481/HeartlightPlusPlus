@@ -2,25 +2,28 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="tut1" />
+		<Option title="Heartlight++" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/tut1" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
-				<Option type="1" />
+				<Option output="Heartlight++" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".obj/Debug/" />
+				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<Add option="-lSDL -lSDLmain" />
+					<Add option="`sdl-config --libs`" />
+					<Add option="-lSDLmain -lSDL -lvorbis -lvorbisfile" />
+					<Add option="-lopenal -lhge-unix -ljpeg -lpng" />
+					<Add option="-logg -ltinyxml2 -lttvfs -lBox2D" />
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/tut1" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release/" />
+				<Option output="Heartlight++-release" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".obj/Release/" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -28,24 +31,30 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-lSDL -lSDLmain" />
+					<Add option="`sdl-config --libs`" />
+					<Add option="-lSDLmain -lSDL -lvorbis -lvorbisfile" />
+					<Add option="-lopenal -lhge-unix -ljpeg -lpng" />
+					<Add option="-logg -ltinyxml2 -lttvfs -lBox2D" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="`sdl-config --cflags` -lSDL -lSDLmain" />
+			<Add directory="./include/" />
 		</Compiler>
 		<Linker>
 			<Add option="`sdl-config --libs`" />
 			<Add option="-lSDLmain -lSDL -lvorbis -lvorbisfile" />
-			<Add option="-lopenal -lhge-unix -ljpeg -lpng -logg" />
-			<Add directory="/usr/lib/" />
-			<Add directory="./" />
-			<Add directory="/usr/lib/x86_64-linux-gnu/" />
-			<Add directory="./lib/" />
+			<Add option="-lopenal -lhge-unix -ljpeg -lpng" />
+			<Add option="-logg -ltinyxml2 -lttvfs -lBox2D" />
+			<Add directory="./lib/Linux_x64/" />
 		</Linker>
-		<Unit filename="hge_tut02.cpp" />
+		<Unit filename="Engine.cpp" />
+		<Unit filename="Engine.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="myEngine.cpp" />
+		<Unit filename="myEngine.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -1,0 +1,9 @@
+<object>
+  <orig>
+    <image path="res/gfx/orig/rock.png" />
+  </orig>
+  <new>
+    <image path="res/gfx/new/rock.png" />
+    <circle radius="59.5" mass="90" center="63,62" />
+  </new>
+</object>
