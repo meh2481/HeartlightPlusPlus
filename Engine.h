@@ -3,7 +3,12 @@
     Copyright (c) 2012 Mark Hutcheson
 */
 
+#ifndef ENGINE_H
+#define ENGINE_H
+
 #include "globaldefs.h"
+#include "Image.h"
+#include "Object.h"
 
 class Engine
 {
@@ -25,8 +30,9 @@ protected:
     bool myRenderFunc();
 
     //Classes to override in your own class definition
-    virtual bool frame() = 0;
-    virtual void draw() = 0;
+    virtual bool frame() = 0;   //Function that's called every frame
+    virtual void draw() = 0;    //Actual function that draws stuff
+    virtual void init() = 0;    //So we can load all our images and such
 
 public:
     //Constructor/destructor
@@ -47,3 +53,7 @@ public:
 
 bool FrameFunc();
 bool RenderFunc();
+
+
+
+#endif

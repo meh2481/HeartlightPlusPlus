@@ -4,6 +4,7 @@
 */
 
 #include "Engine.h"
+ofstream errlog("err.log");
 
 bool Engine::myFrameFunc()
 {
@@ -52,7 +53,7 @@ Engine::Engine(int iWidth, int iHeight, string sTitle)
 
 	if(!m_hge->System_Initiate())
 	{
-		fprintf(stderr, "Error: %s\n", m_hge->System_GetErrorMessage());
+		errlog << "Error: " << m_hge->System_GetErrorMessage() << endl;
 		exit(1);    //Abort
 	}
 
@@ -60,7 +61,6 @@ Engine::Engine(int iWidth, int iHeight, string sTitle)
 	setFramerate(60);   //60 fps default
 	m_fAccumulatedTime = 0.0;
 	m_sprFill = new hgeSprite(0,0,0,64,64); //Initialize to blank sprite
-
 }
 
 Engine::~Engine()
@@ -73,6 +73,8 @@ Engine::~Engine()
 
 void Engine::start()
 {
+    // Load all that we need to
+    init();
     // Let's rock now!
     m_hge->System_Start();
 }

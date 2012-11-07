@@ -26,14 +26,21 @@ bool myEngine::frame()
 void myEngine::draw()
 {
     fillRect(32,32,64,64,255,0,0,255);  //For now, just draw a red box to make sure everything's good
+    m_myImg->Draw(64,64);
+}
+
+void myEngine::init()
+{
+    m_myImg = new Image("res/gfx/new/rock.png");
 }
 
 myEngine::myEngine(int iWidth, int iHeight, string sTitle) : Engine(iWidth, iHeight, sTitle)
 {
     g_pGlobalEngine = this;
+    m_myImg = NULL;
 }
 
 myEngine::~myEngine()
 {
-
+    delete m_myImg;
 }

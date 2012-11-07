@@ -23,11 +23,13 @@
 1352235334 source:/home/mark/repos/HeartlightPlusPlus/main.cpp
 	"myEngine.h"
 
-1352238615 source:/home/mark/repos/HeartlightPlusPlus/Engine.cpp
+1352303081 source:/home/mark/repos/HeartlightPlusPlus/Engine.cpp
 	"Engine.h"
 
-1352238531 /home/mark/repos/HeartlightPlusPlus/Engine.h
+1352300065 /home/mark/repos/HeartlightPlusPlus/Engine.h
 	"globaldefs.h"
+	"Image.h"
+	"Object.h"
 
 1352165982 /home/mark/repos/HeartlightPlusPlus/include//hgesprite.h
 	"hge.h"
@@ -281,18 +283,29 @@
 	<string>
 	"VFSDefines.h"
 
-1352237627 /home/mark/repos/HeartlightPlusPlus/myEngine.h
+1352300065 /home/mark/repos/HeartlightPlusPlus/myEngine.h
 	"Engine.h"
 
-1352234295 source:/home/mark/repos/HeartlightPlusPlus/myEngine.cpp
+1352302466 source:/home/mark/repos/HeartlightPlusPlus/myEngine.cpp
 	"myEngine.h"
 
-1352238531 /home/mark/repos/HeartlightPlusPlus/globaldefs.h
+1352303081 /home/mark/repos/HeartlightPlusPlus/globaldefs.h
 	<string>
+	<fstream>
 	"hge.h"
 	"hgesprite.h"
 	"hgeparticle.h"
 	"Box2D.h"
 	"tinyxml2.h"
 	"VFS.h"
+
+1352303081 source:/home/mark/repos/HeartlightPlusPlus/Image.cpp
+	"Image.h"
+
+1352301940 /home/mark/repos/HeartlightPlusPlus/Image.h
+	"globaldefs.h"
+
+1352242958 source:/home/mark/repos/HeartlightPlusPlus/Object.cpp
+
+1352297447 /home/mark/repos/HeartlightPlusPlus/Object.h
 
