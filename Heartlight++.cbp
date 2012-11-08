@@ -9,7 +9,7 @@
 			<Target title="Debug">
 				<Option output="Heartlight++" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".obj/Debug/" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
@@ -52,6 +52,11 @@
 		</Linker>
 		<Unit filename="Engine.cpp" />
 		<Unit filename="Engine.h" />
+		<Unit filename="Image.cpp" />
+		<Unit filename="Image.h" />
+		<Unit filename="Object.cpp" />
+		<Unit filename="Object.h" />
+		<Unit filename="globaldefs.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="myEngine.cpp" />
 		<Unit filename="myEngine.h" />

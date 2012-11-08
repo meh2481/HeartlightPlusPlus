@@ -20,21 +20,32 @@ bool RenderFunc()
 
 bool myEngine::frame()
 {
+    UpdateObjects();
     return false;   //Do nothing for now
 }
 
 void myEngine::draw()
 {
-    fillRect(32,32,64,64,255,0,0,255);  //For now, just draw a red box to make sure everything's good
-    m_myImg->Draw(64,64);
+    //Just draw all objects
+    DrawObjects();
 }
 
 void myEngine::init()
 {
-    m_myImg = new Image("res/gfx/new/rock.png");
+    Image* img = getImage("res/gfx/orig/rock.png");
+    img->Scale(2);
+    for(int i = 0; i < 20; i++)
+    {
+        for(int j = 0; j < 12; j++)
+        {
+            Object* obj = new Object(img);
+            obj->SetPos(i*obj->GetWidth(), j*obj->GetHeight());
+            AddObject(obj);
+        }
+    }
 }
 
-myEngine::myEngine(int iWidth, int iHeight, string sTitle) : Engine(iWidth, iHeight, sTitle)
+myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iWidth, iHeight, sTitle)
 {
     g_pGlobalEngine = this;
     m_myImg = NULL;
@@ -42,5 +53,4 @@ myEngine::myEngine(int iWidth, int iHeight, string sTitle) : Engine(iWidth, iHei
 
 myEngine::~myEngine()
 {
-    delete m_myImg;
 }

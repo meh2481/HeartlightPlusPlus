@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-    myEngine eng(800, 600, "Heartlight++"); //Create our engine
+    myEngine eng(640, 400, "Heartlight++"); //Create our engine
 
     eng.start(); //Get the engine rolling
 	return 0;

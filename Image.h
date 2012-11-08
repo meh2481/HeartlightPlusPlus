@@ -39,6 +39,9 @@ public:
     void DrawCentered(Point pt, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center the entire image centered at pt
     void DrawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at x,y
     void DrawCentered(Point pt, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at pt
+
+    void Scale(uint16_t iScaleFac); //Scales this image up by a given factor, without interpolation. THIS CANNOT BE UNDONE
+
 };
 
 

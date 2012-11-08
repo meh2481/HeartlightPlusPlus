@@ -18,7 +18,7 @@ protected:
     void init();
 
 public:
-    myEngine(int iWidth, int iHeight, string sTitle);
+    myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle);
     ~myEngine();
 };
 

@@ -34,7 +34,7 @@ bool Engine::myRenderFunc()
     return false;   //Keep going
 }
 
-Engine::Engine(int iWidth, int iHeight, string sTitle)
+Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 {
     m_hge = hgeCreate(HGE_VERSION);
 
@@ -65,6 +65,14 @@ Engine::Engine(int iWidth, int iHeight, string sTitle)
 
 Engine::~Engine()
 {
+    //Clean up our object list
+    for(list<Object*>::iterator i = m_lObjects.begin(); i != m_lObjects.end(); i++)
+        delete (*i);
+
+    //Clean up our image map
+    for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
+        delete (i->second);    //Delete each image
+
     delete m_sprFill;
     // Clean up and shutdown
 	m_hge->System_Shutdown();
@@ -95,10 +103,38 @@ void Engine::fillRect(Rect rc, uint16_t red, uint16_t green, uint16_t blue, uint
     fillRect(rc.left, rc.top, rc.right, rc.bottom, red, green, blue, alpha);
 }
 
+Image* Engine::getImage(string sFilename)
+{
+    map<string, Image*>::iterator i = m_mImages.find(sFilename);
+    if(i == m_mImages.end())   //This image isn't here yet; load
+    {
+        Image* img = new Image(sFilename);
+        m_mImages[sFilename] = img; //Add to the map
+        return img;
+    }
+    return i->second; //Return this image
+}
 
+void Engine::AddObject(Object* obj)
+{
+    m_lObjects.push_back(obj);
+}
 
+void Engine::UpdateObjects()
+{
+    for(list<Object*>::iterator i = m_lObjects.begin(); i != m_lObjects.end(); i++)
+    {
+        (*i)->Update();
+    }
+}
 
-
+void Engine::DrawObjects(float fScale)
+{
+    for(list<Object*>::iterator i = m_lObjects.begin(); i != m_lObjects.end(); i++)
+    {
+        (*i)->Draw(fScale);
+    }
+}
 
 
 
