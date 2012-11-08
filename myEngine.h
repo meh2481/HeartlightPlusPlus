@@ -19,8 +19,8 @@ class myEngine : public Engine
 private:
     Image* m_imgHUD;
     Object* m_levelGrid[LEVEL_WIDTH][LEVEL_HEIGHT];    //Object grid for the game
-    //list<string> m_lLevels;         //List of levels read in from LEVELS.HL
-    //list<string>::iterator m_iCurrLevel;    //Current level we're playing
+    //list<string> m_vLevels;         //List of levels read in from LEVELS.HL
+    //uint32_t m_intCurrLevel;    //And integer of it
 
 protected:
     bool frame();
@@ -28,13 +28,15 @@ protected:
     void init();
 
 public:
-list<string> m_lLevels;         //List of levels read in from LEVELS.HL
-    list<string>::iterator m_iCurrLevel;    //Current level we're playing
+    //TODO: MAKE PRIVATE
+    vector<string> m_vLevels;         //List of levels read in from LEVELS.HL
+    uint32_t m_intCurrLevel;    //And integer of it
+
     myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle);
     ~myEngine();
 
     void loadLevel();   //Loads the current level m_iCurrLevel is pointing to into m_levelGrid[][]
-    bool loadLevels(string sFilename);  //Loads in all the levels from the specified text file into m_lLevels
+    bool loadLevels(string sFilename);  //Loads in all the levels from the specified text file into m_vLevels
 };
 
 

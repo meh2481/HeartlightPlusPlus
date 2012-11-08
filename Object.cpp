@@ -45,10 +45,36 @@ void Object::SetNumFrames(uint16_t iNumFrames)
     m_iHeight = m_Img->GetHeight()/m_iNumFrames;
 }
 
+//-----------------------------------------------------------------------------------------------------------------------
+Brick::Brick(Image* img) : Object(img)
+{
+}
 
+Door::Door(Image* img) : Object(img)
+{
+}
 
+Dwarf::Dwarf(Image* img) : Object(img)
+{
+}
 
+void Brick::UpdateFrame()
+{
+    //Don't update frame on bricks
+}
 
+void Door::UpdateFrame()
+{
+    if(m_iCurFrame > 0)
+        m_iCurFrame++;
+    if(m_iCurFrame >= m_iNumFrames)
+        m_iCurFrame = m_iNumFrames-1;
+}
+
+void Dwarf::UpdateFrame()
+{
+    //Don't update frame on dwarf
+}
 
 
 

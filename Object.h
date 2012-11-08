@@ -48,10 +48,30 @@ public:
 
 };
 
+//Objects specific to our game
+class Brick : public Object
+{
+protected:
+    void UpdateFrame();
+public:
+    Brick(Image* img);
+};
 
+class Door : public Object
+{
+protected:
+    void UpdateFrame();
+public:
+    Door(Image* img);
+};
 
-
-
+class Dwarf : public Object
+{
+protected:
+    void UpdateFrame();
+public:
+    Dwarf(Image* img);
+};
 
 
 

@@ -14,18 +14,21 @@ bool FrameFunc()
     {
         if(g_pGlobalEngine->m_hge->Input_KeyDown(HGEK_RIGHT))
         {
-            g_pGlobalEngine->m_iCurrLevel++;
-            if(g_pGlobalEngine->m_iCurrLevel == g_pGlobalEngine->m_lLevels.end())
-                g_pGlobalEngine->m_iCurrLevel = g_pGlobalEngine->m_lLevels.begin();
+            g_pGlobalEngine->m_intCurrLevel++;
+            if(g_pGlobalEngine->m_intCurrLevel == g_pGlobalEngine->m_vLevels.size())
+            {
+                g_pGlobalEngine->m_intCurrLevel = 0;
+            }
             g_pGlobalEngine->loadLevel();
         }
         if(g_pGlobalEngine->m_hge->Input_KeyDown(HGEK_LEFT))
         {
-            if(g_pGlobalEngine->m_iCurrLevel == g_pGlobalEngine->m_lLevels.begin())
+            if(g_pGlobalEngine->m_intCurrLevel == 0)
             {
-                g_pGlobalEngine->m_iCurrLevel = g_pGlobalEngine->m_lLevels.end();
+                g_pGlobalEngine->m_intCurrLevel = g_pGlobalEngine->m_vLevels.size();
+
             }
-            g_pGlobalEngine->m_iCurrLevel--;
+            g_pGlobalEngine->m_intCurrLevel--;
             g_pGlobalEngine->loadLevel();
         }
     }
@@ -108,6 +111,7 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
 {
     g_pGlobalEngine = this;
     m_imgHUD = NULL;
+    m_intCurrLevel = 0;
 }
 
 myEngine::~myEngine()
@@ -129,30 +133,23 @@ void myEngine::loadLevel()
     Image* metalwall = getImage("res/gfx/orig/metalwall.png");
     Image* Ltunnel = getImage("res/gfx/orig/tunnelL.png");
     Image* Rtunnel = getImage("res/gfx/orig/tunnelR.png");
-    if(m_iCurrLevel == m_lLevels.end()) //At the end, when we shouldn't be
+    if(m_intCurrLevel >= m_vLevels.size()) //At the end, when we shouldn't be
     {
         errlog << "No levels loaded! Abort. " << endl;
         exit(1);
     }
     ClearObjects(); //If there's any memory hanging around with objects, clear it out
 
-    string s = *m_iCurrLevel;
-    //if(s.length() != LEVEL_HEIGHT*LEVEL_WIDTH)  //Wrong size
-    //{
-    //    errlog << "Level is of invalid size " << s.length() << ". Abort." << endl;
-    //    exit(1);
-    //}
+    string s = m_vLevels[m_intCurrLevel];
     string::iterator it = s.begin();
-  //for ( it=str.begin() ; it < str.end(); it++ )
 
     //Loop through, creating all objects
     for(uint16_t row = 0; row < LEVEL_HEIGHT; row++)
     {
-        errlog << endl;
+        //errlog << endl;
         for(uint16_t col = 0; col < LEVEL_WIDTH+2; col++)
         {
             char cObj = *it++;
-            errlog << cObj;
             bool bSkip = false;
 
             //Create object
@@ -183,14 +180,14 @@ void myEngine::loadLevel()
                     break;
 
                 case '*':   //the dwarf
-                    obj = new Object(dwarf);
+                    obj = new Dwarf(dwarf);
                     obj->SetNumFrames(8);
                     obj->SetPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     AddObject(obj);
                     break;
 
                 case '!':   //exit door
-                    obj = new Object(exitdoor);
+                    obj = new Door(exitdoor);
                     obj->SetNumFrames(4);
                     obj->SetPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     AddObject(obj);
@@ -218,8 +215,9 @@ void myEngine::loadLevel()
                     break;
 
                 case '#':   //brick wall
-                    obj = new Object(brick);
+                    obj = new Brick(brick);
                     obj->SetNumFrames(4);
+                    obj->SetFrame(m_intCurrLevel % 4);  //Color depends on level number, like original game
                     obj->SetPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     AddObject(obj);
                     break;
@@ -300,22 +298,21 @@ bool myEngine::loadLevels(string sFilename)
                 return false;
             }
             char c = infile.get();
+            if(c == '\r' || c == '\t')
+                continue;
             if(c == '}')
                 break;
             s.push_back(c); //Tack this onto the end of the string
-            errlog << c;
         }
 
         //Add this string to our list of levels
-        errlog << endl;
-        errlog << "Adding level " << iLevelNum << endl;
-        m_lLevels.push_back(s);
+        m_vLevels.push_back(s);
     }
 
     //Done
     infile.close();
-    m_iCurrLevel = m_lLevels.begin();   //Start from top
-    if(m_iCurrLevel == m_lLevels.end()) //No levels?
+    m_intCurrLevel = 0;   //Start from top
+    if(m_intCurrLevel == m_vLevels.size()) //No levels?
     {
         errlog << "No levels in file " << sFilename << endl;
         return false;
