@@ -61,13 +61,13 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 	setFramerate(60);   //60 fps default
 	m_fAccumulatedTime = 0.0;
 	m_sprFill = new hgeSprite(0,0,0,64,64); //Initialize to blank sprite
+	m_bFirstMusic = true;
+	m_hge->Random_Seed();   //Seed the random number generator
 }
 
 Engine::~Engine()
 {
-    //Clean up our object list
-    for(list<Object*>::iterator i = m_lObjects.begin(); i != m_lObjects.end(); i++)
-        delete (*i);
+    ClearObjects();
 
     //Clean up our image map
     for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
@@ -79,12 +79,23 @@ Engine::~Engine()
 	m_hge->Release();
 }
 
+void Engine::ClearObjects()
+{
+    //Clean up our object list
+    for(list<Object*>::iterator i = m_lObjects.begin(); i != m_lObjects.end(); i++)
+        delete (*i);
+    m_lObjects.clear();
+}
+
 void Engine::start()
 {
     // Load all that we need to
     init();
+    //HEFFECT s = m_hge->Effect_Load("res/sfx/new/theme_music.ogg");
+    //m_hge->Effect_PlayEx(s,100,0,1.0,true);
     // Let's rock now!
     m_hge->System_Start();
+    //m_hge->Effect_Free(s);
 }
 
 void Engine::fillRect(Point p1, Point p2, uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha)
@@ -115,6 +126,19 @@ Image* Engine::getImage(string sFilename)
     return i->second; //Return this image
 }
 
+HEFFECT Engine::getEffect(string sFilename)
+{
+    map<string, HEFFECT>::iterator i = m_mSounds.find(sFilename);
+    if(i == m_mSounds.end())   //This sound isn't here yet; load
+    {
+        errlog << "Loading sound effect " << sFilename << endl;
+        HEFFECT eff = m_hge->Effect_Load(sFilename.c_str());
+        m_mSounds[sFilename] = eff; //Add to the map
+        return eff;
+    }
+    return i->second; //Return this sound
+}
+
 void Engine::AddObject(Object* obj)
 {
     m_lObjects.push_back(obj);
@@ -136,9 +160,20 @@ void Engine::DrawObjects(float fScale)
     }
 }
 
+void Engine::PlaySound(string sFilename, int volume, int pan, float pitch)
+{
+    HEFFECT eff = getEffect(sFilename);
+    m_hge->Effect_PlayEx(eff,volume,pan,pitch);
+}
 
-
-
+void Engine::PlayMusic(string sFilename, int volume, int pan, float pitch)
+{
+    HEFFECT eff = getEffect(sFilename); //Can take a while, depending on the song
+    if(!m_bFirstMusic)
+        m_hge->Channel_Stop(m_MusicChannel);
+    m_MusicChannel = m_hge->Effect_PlayEx(eff,volume,pan,pitch,true);
+    m_bFirstMusic = false;
+}
 
 
 

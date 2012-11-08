@@ -35,8 +35,10 @@ public:
 
     //Accessor methods
     void SetNumFrames(uint16_t iNumFrames);
+    int16_t  GetFrame() {return m_iCurFrame;};
+    void  SetFrame(int16_t iFrame) {m_iCurFrame = iFrame;}; //WARNING: Potentially dangerous
     uint32_t GetWidth() {return m_iWidth;};
-    uint32_t GetHeight() {return m_iHeight/m_iNumFrames;};
+    uint32_t GetHeight() {return m_iHeight;};
     void SetCenter(Point ptCenter) {m_ptPos = ptCenter;};
     void SetCenter(float32 x, float32 y)    {m_ptPos.x = x; m_ptPos.y = y;};
     void SetPos(float32 x, float32 y)   {m_ptPos.x = x + m_iWidth/2.0; m_ptPos.y = y + m_iHeight/2.0;};

@@ -24,13 +24,17 @@ protected:
     float m_fTargetTime;
     hgeSprite* m_sprFill;   //Sprite for filling a color
     map<string, Image*> m_mImages;  //Image handler
-    list<Object*> m_lObjects;    //Object handler
+    map<string, HEFFECT> m_mSounds; //Sound handler
+    list<Object*> m_lObjects;       //Object handler
+    HCHANNEL m_MusicChannel;        //Sound channel we play our music on
+    bool m_bFirstMusic; //Don't stop a previous song playing if there is none
 
-    //Engine-use class definitions
+    //Engine-use function definitions
     friend bool FrameFunc();
     friend bool RenderFunc();
     bool myFrameFunc();
     bool myRenderFunc();
+    HEFFECT getEffect(string sFilename);
 
     //Classes to override in your own class definition
     virtual bool frame() = 0;   //Function that's called every frame
@@ -51,10 +55,16 @@ public:
     void AddObject(Object* obj);    //Add an object to the object handler
     void UpdateObjects();           //Update all objects in the game
     void DrawObjects(float fScale = 1.0);   //Draw all objects in the game
+    void ClearObjects();    //Destroy all objects, freeing memory
+    void PlaySound(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play a sound
+    void PlayMusic(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play looping music
+    int32_t randInt(int32_t min, int32_t max) {return m_hge->Random_Int(min, max);};  //Get a random integer
 
     //Accessor methods
     void setFramerate(uint16_t iFramerate)    {m_iFramerate = iFramerate; m_fTargetTime = 1.0/(float)(m_iFramerate);};
     uint16_t getFramerate()   {return m_iFramerate;};
+    uint16_t getWidth() {return m_hge->System_GetState(HGE_SCREENWIDTH);};
+    uint16_t getHeight() {return m_hge->System_GetState(HGE_SCREENHEIGHT);};
 
 };
 
