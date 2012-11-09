@@ -400,11 +400,16 @@ bool myEngine::loadLevels(string sFilename)
     return true;
 }
 
-void myEngine::CheckGrid(int row, int col)
+bool myEngine::CheckGrid(int row, int col)
 {
+    if(row < 0 ||
+       col < 0 ||
+       row >= LEVEL_HEIGHT ||
+       col >= LEVEL_WIDTH)
+        return false; //We're at the edge of the map -- ignore
     retroObject* obj = m_levelGrid[col][row];
     if(obj == NULL || keyDown(HGEK_SPACE))
-        return; //Nothing to do here
+        return false; //Nothing to do here
     switch(obj->GetNameChar())
     {
         case '$':   //Heart
@@ -449,11 +454,97 @@ void myEngine::CheckGrid(int row, int col)
                 PlaySound("res/sfx/orig/applause.ogg");
             }
             break;
+
+        //Tunnels
+        case '>':   //Tunnel to the right
+        {
+            //See if tunnel is obstructed
+            bool bObstructed = true;
+            for(uint16_t coltest = col+1; coltest < LEVEL_WIDTH; coltest++)
+            {
+                if(coltest == LEVEL_WIDTH)
+                    break;
+                retroObject* tunnelTest = m_oldGrid[coltest][row];
+                if(tunnelTest == NULL || tunnelTest->GetNameChar() == '.')
+                {
+                    bObstructed = false;    //We can go this way if it's just grass or empty space
+                    break;
+                }
+                else if(tunnelTest->GetNameChar() != '>')
+                    break;  //Obstructed
+            }
+            if(bObstructed)
+                break;  //We can't go through this tunnel (also will prevent you from going the wrong way through tunnels)
+
+            //Enter the tunnel
+            obj->setImage(getImage("res/gfx/orig/tunnelR_up.png"));
+            obj->SetName(">*"); //Player is in here
+            m_bTunnelMoved = true;  //Entered this tunnel
+            PlaySound("res/sfx/orig/subway.ogg");
+
+            //Destroy the current dwarf object
+            for(uint32_t i = 0; i < LEVEL_HEIGHT; i++)
+            {
+                for(uint32_t j = 0; j < LEVEL_WIDTH; j++)
+                {
+                    if(m_levelGrid[j][i] != NULL && m_levelGrid[j][i]->GetNameChar() == '*')
+                    {
+                        m_levelGrid[j][i]->Kill();
+                        m_levelGrid[j][i] = NULL;
+                    }
+                }
+            }
+            return true;
+        }
+
+        case '<':   //Tunnel to the left
+        {
+            //See if tunnel is obstructed
+            bool bObstructed = true;
+            for(uint16_t coltest = col-1; coltest > 0; coltest--)
+            {
+                if(coltest <= 0)
+                    break;
+                retroObject* tunnelTest = m_oldGrid[coltest][row];
+                if(tunnelTest == NULL || tunnelTest->GetNameChar() == '.')
+                {
+                    bObstructed = false;    //We can go this way if it's just grass or empty space
+                    break;
+                }
+                else if(tunnelTest->GetNameChar() != '<')
+                    break;  //Obstructed
+            }
+            if(bObstructed)
+                break;  //We can't go through this tunnel (also will prevent you from going the wrong way through tunnels)
+
+            //Enter the tunnel
+            obj->setImage(getImage("res/gfx/orig/tunnelL_up.png"));
+            obj->SetName("<*"); //Player is in here
+            PlaySound("res/sfx/orig/subway.ogg");
+
+            //Destroy the current dwarf object
+            for(uint32_t i = 0; i < LEVEL_HEIGHT; i++)
+            {
+                for(uint32_t j = 0; j < LEVEL_WIDTH; j++)
+                {
+                    if(m_levelGrid[j][i] != NULL && m_levelGrid[j][i]->GetNameChar() == '*')
+                    {
+                        m_levelGrid[j][i]->Kill();
+                        m_levelGrid[j][i] = NULL;
+                    }
+                }
+            }
+
+            return true;
+        }
+
     }
+    return false;
 }
 
 void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
 {
+    m_bTunnelMoved = false;
     for(int row = 0; row < LEVEL_HEIGHT; row++)
     {
         for(int col = 0; col < LEVEL_WIDTH; col++)
@@ -478,14 +569,15 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                     break;
 
                 case '.':   //grass
-                    break;
+                    break;  //Does nothing
 
                 case '*':   //dwarf
                     //Move the player if pressing keys
                     if(keyDown(HGEK_RIGHT))
                     {
-                        CheckGrid(row, col+1);
-                        if(!keyDown(HGEK_SPACE) && m_levelGrid[col+1][row] == NULL)
+                        if(CheckGrid(row, col+1))
+                            break;
+                        if(!keyDown(HGEK_SPACE) && col+1 < LEVEL_WIDTH && m_levelGrid[col+1][row] == NULL)
                         {
                             m_levelGrid[col+1][row] = obj;
                             m_levelGrid[col][row] = NULL;
@@ -499,15 +591,16 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                                 iFrame = 0;
                             else
                                 iFrame = 2;
-                            if(m_oldGrid[col+1][row] != NULL)
+                            if(col+1 >= LEVEL_WIDTH || m_oldGrid[col+1][row] != NULL)
                                 iFrame = 0;
                             obj->SetFrame(iFrame);
                         }
                     }
                     else if(keyDown(HGEK_LEFT))
                     {
-                        CheckGrid(row, col-1);
-                        if(!keyDown(HGEK_SPACE) && m_levelGrid[col-1][row] == NULL)
+                        if(CheckGrid(row, col-1))
+                            break;
+                        if(!keyDown(HGEK_SPACE) && col > 0 && m_levelGrid[col-1][row] == NULL)
                         {
                             m_levelGrid[col-1][row] = obj;
                             m_levelGrid[col][row] = NULL;
@@ -521,7 +614,7 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                                 iFrame = 1;
                             else
                                 iFrame = 3;
-                            if(m_oldGrid[col-1][row] != NULL)
+                            if(col <= 0 || m_oldGrid[col-1][row] != NULL)
                                 iFrame = 1;
                             obj->SetFrame(iFrame);
                         }
@@ -529,7 +622,7 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                     else if(keyDown(HGEK_DOWN))
                     {
                         CheckGrid(row+1, col);
-                        if(!keyDown(HGEK_SPACE) && m_levelGrid[col][row+1] == NULL)
+                        if(!keyDown(HGEK_SPACE) && row+1 < LEVEL_HEIGHT && m_levelGrid[col][row+1] == NULL)
                         {
                             m_levelGrid[col][row+1] = obj;
                             m_levelGrid[col][row] = NULL;
@@ -543,7 +636,7 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                                 iFrame -= 2;
                             else
                                 iFrame += 2;
-                            if(m_oldGrid[col][row+1] != NULL)
+                            if(row+1 >= LEVEL_HEIGHT || m_oldGrid[col][row+1] != NULL)
                                 if(iFrame > 1)
                                 iFrame -= 2;
                             obj->SetFrame(iFrame);
@@ -552,7 +645,7 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                     else if(keyDown(HGEK_UP))
                     {
                         CheckGrid(row-1, col);
-                        if(!keyDown(HGEK_SPACE) && m_levelGrid[col][row-1] == NULL)
+                        if(!keyDown(HGEK_SPACE) && row > 0 && m_levelGrid[col][row-1] == NULL)
                         {
                             m_levelGrid[col][row-1] = obj;
                             m_levelGrid[col][row] = NULL;
@@ -566,7 +659,7 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                                 iFrame -= 2;
                             else
                                 iFrame += 2;
-                            if(m_oldGrid[col][row-1] != NULL)
+                            if(row <= 0 || m_oldGrid[col][row-1] != NULL)
                                 if(iFrame > 1)
                                 iFrame -= 2;
                             obj->SetFrame(iFrame);
@@ -581,7 +674,7 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                     break;
 
                 case '!':   //exit
-                    break;
+                    break;  //Does nothing
 
                 case '&':   //bomb
                     break;
@@ -603,15 +696,75 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                     if(s == "<*")   //Has the player inside
                     {
                         //Move player left
+                        retroObject* nextTunnel = m_levelGrid[col-1][row];  //Assume this is good, since we'll test for it before entering a tunnel
+                        if(nextTunnel == NULL || nextTunnel->GetNameChar() == '.')  //We can place player down in empty spaces or grass
+                        {
+                            if(nextTunnel != NULL)
+                                nextTunnel->Kill();
+                            //Create dwarf
+                            m_levelGrid[col-1][row] = new Dwarf(getImage("res/gfx/orig/dwarf.png"));
+                            m_levelGrid[col-1][row]->SetNumFrames(8);
+                            m_levelGrid[col-1][row]->SetFrame(1);
+                            m_levelGrid[col-1][row]->SetPos((col-1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col-1][row]->SetName('*');
+                            AddObject(m_levelGrid[col-1][row]);
+                            obj->SetName('<');
+                            obj->setImage(getImage("res/gfx/orig/tunnelL.png"));
+
+                        }
+                        else if(nextTunnel->GetNameChar() == '<')    //Next tunnel
+                        {
+                            nextTunnel->SetName("<*");  //Put player inside this next tunnel
+                            obj->SetName('<');  //Move player out of this tunnel
+                            //Swap the images of each
+                            Image* img = obj->getImage();
+                            obj->setImage(nextTunnel->getImage());
+                            nextTunnel->setImage(img);
+                        }
+                        /*else    //Something went horribly wrong
+                        {
+                            errlog << "Something went terribly horribly wrong with this tunnel logic! Aborting..." << endl;
+                            exit(1);
+                        }*/
                     }
                     break;
                 }
 
                 case '>':   //Right tunnel
                 {
-                    if(s == ">*")   //Has the player inside
+                    if(s == ">*" && !m_bTunnelMoved)   //Has the player inside
                     {
+                        m_bTunnelMoved = true;
                         //Move player right
+                        retroObject* nextTunnel = m_oldGrid[col+1][row];  //Assume this is good, since we'll test for it before entering a tunnel
+                        if(nextTunnel == NULL || nextTunnel->GetNameChar() == '.')  //We can place player down in empty spaces or grass
+                        {
+                            if(nextTunnel != NULL)
+                                nextTunnel->Kill();
+                            //Create dwarf
+                            m_levelGrid[col+1][row] = new Dwarf(getImage("res/gfx/orig/dwarf.png"));
+                            m_levelGrid[col+1][row]->SetNumFrames(8);
+                            m_levelGrid[col+1][row]->SetPos((col+1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col+1][row]->SetName('*');
+                            AddObject(m_levelGrid[col+1][row]);
+                            obj->SetName('>');
+                            obj->setImage(getImage("res/gfx/orig/tunnelR.png"));
+
+                        }
+                        else if(nextTunnel->GetNameChar() == '>')    //Next tunnel
+                        {
+                            nextTunnel->SetName(">*");  //Put player inside this next tunnel
+                            obj->SetName('>');  //Move player out of this tunnel
+                            //Swap the images of each
+                            Image* img = obj->getImage();
+                            obj->setImage(nextTunnel->getImage());
+                            nextTunnel->setImage(img);
+                        }
+                        /*else    //Something went horribly wrong
+                        {
+                            errlog << "Something went terribly horribly wrong with this tunnel logic! Aborting..." << nextTunnel->GetNameChar() << endl;
+                            exit(1);
+                        }*/
                     }
                     break;
                 }

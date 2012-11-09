@@ -54,6 +54,9 @@ public:
     void SetVelocity(float32 x, float32 y)  {m_ptVel.x = x; m_ptVel.y = y;};
     uint32_t getID()    {return m_Img->GetID();};   //For engine use
 
+    Image* getImage()   {return m_Img;};
+    void setImage(Image* img)   {m_Img = img;}; //Use with caution! No error-checking!
+
 };
 
 class retroObject : public Object

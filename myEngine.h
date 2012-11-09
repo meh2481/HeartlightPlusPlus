@@ -33,8 +33,9 @@ private:
     uint32_t m_iHeartsTotal;    //How many hearts total there are in this level
     uint32_t m_iCollectedHearts;    //how many hearts in this level we've collected
     uint16_t m_iWinningCount;   //Counts down when winning a level
+    bool m_bTunnelMoved;    //Haven't moved in a tunnel (need this for shallow copy issues)
 
-    void CheckGrid(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can
+    bool CheckGrid(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
 
 protected:
     void frame();
