@@ -12,6 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-O2" />
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
@@ -39,6 +40,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-O2" />
 			<Add option="-Wall" />
 			<Add option="`sdl-config --cflags` -lSDL -lSDLmain" />
 			<Add directory="./include/" />

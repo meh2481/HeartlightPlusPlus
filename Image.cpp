@@ -12,6 +12,7 @@ Image::Image(string sFilename)
 
     HGE* hge = hgeCreate(HGE_VERSION);
     m_hTex = hge->Texture_Load(sFilename.c_str());
+    m_hscaledTex = 0;
 
     if(!m_hTex) //Failed to load texture
     {
@@ -38,6 +39,8 @@ Image::~Image()
     HGE* hge = hgeCreate(HGE_VERSION);
     delete m_hSprite;
     hge->Texture_Free(m_hTex);
+    if(m_hscaledTex)
+        hge->Texture_Free(m_hscaledTex);
     hge->Release();
 }
 
@@ -110,12 +113,32 @@ void Image::DrawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stre
 //Stretch this image onto a larger one, without interpolation
 void Image::Scale(uint16_t iScaleFac)
 {
-    if(iScaleFac < 2)   //Don't scale up any if 1 or 0
+    if(iScaleFac < 1)   //Don't scale up any if 0
         return;
+
     HGE* hge = hgeCreate(HGE_VERSION);
-    HTEXTURE scaledTex = hge->Texture_Create(m_iWidth * iScaleFac, m_iHeight * iScaleFac);  //Create a new texture of the right size
+    if(m_hscaledTex)
+    {
+        hge->Texture_Free(m_hscaledTex);
+        m_hscaledTex = 0;
+        m_iWidth = hge->Texture_GetWidth(m_hTex, true);
+        m_iHeight = hge->Texture_GetHeight(m_hTex, true);
+        if(iScaleFac == 1)  //Rescale down to the original image
+        {
+            m_hSprite->SetTexture(m_hTex);
+            m_hSprite->SetTextureRect(0,0,m_iWidth,m_iHeight);
+            return; //Done
+        }
+    }
+    else if(iScaleFac == 1)
+    {
+        //Nothing to do if there's no previous texture and we're just reverting
+        hge->Release();
+        return;
+    }
+    m_hscaledTex = hge->Texture_Create(m_iWidth * iScaleFac, m_iHeight * iScaleFac);  //Create a new texture of the right size
     DWORD* src = hge->Texture_Lock(m_hTex); //Grab our original texture data
-    DWORD* dest = hge->Texture_Lock(scaledTex, false);   //And our new data
+    DWORD* dest = hge->Texture_Lock(m_hscaledTex, false);   //And our new data
 
     //Now loop through and copy over, scaling up
     for(uint32_t x = 0; x < m_iWidth; x++)
@@ -133,13 +156,13 @@ void Image::Scale(uint16_t iScaleFac)
     }
 
     hge->Texture_Unlock(m_hTex);    //Unlock both textures
-    hge->Texture_Unlock(scaledTex);
-    m_hSprite->SetTexture(scaledTex);   //Set to the new texture
+    hge->Texture_Unlock(m_hscaledTex);
+    m_hSprite->SetTexture(m_hscaledTex);   //Set to the new texture
     m_iWidth *= iScaleFac;              //Set to new dimensions
     m_iHeight *= iScaleFac;
     m_hSprite->SetTextureRect(0,0,m_iWidth,m_iHeight);  //Set the sprite to this new texture rectangle
-    hge->Texture_Free(m_hTex);  //Clean up old texture
-    m_hTex = scaledTex; //Save new texture
+    //hge->Texture_Free(m_hTex);  //Clean up old texture
+    //m_hTex = scaledTex; //Save new texture
     hge->Release();
 }
 

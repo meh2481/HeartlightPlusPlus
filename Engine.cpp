@@ -8,14 +8,19 @@ ofstream errlog("err.log");
 
 bool Engine::myFrameFunc()
 {
+    //Handle input events HGE is giving us
+    hgeInputEvent event;
+    while(m_hge->Input_GetEvent(&event))
+        handleEvent(event);
+
     float dt = m_hge->Timer_GetDelta();
     m_fAccumulatedTime += dt;
     if(m_fAccumulatedTime >= m_fTargetTime)
     {
         m_fAccumulatedTime -= m_fTargetTime;
-        return frame();
+        frame();
     }
-    return false;
+    return m_bQuitting;
 }
 
 bool Engine::myRenderFunc()
@@ -62,6 +67,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 	m_fAccumulatedTime = 0.0;
 	m_sprFill = new hgeSprite(0,0,0,64,64); //Initialize to blank sprite
 	m_bFirstMusic = true;
+	m_bQuitting = false;
 	m_hge->Random_Seed();   //Seed the random number generator
 }
 
@@ -82,9 +88,9 @@ Engine::~Engine()
 void Engine::ClearObjects()
 {
     //Clean up our object list
-    for(list<Object*>::iterator i = m_lObjects.begin(); i != m_lObjects.end(); i++)
-        delete (*i);
-    m_lObjects.clear();
+    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+        delete (*i).second;
+    m_mObjects.clear();
 }
 
 void Engine::start()
@@ -121,6 +127,7 @@ Image* Engine::getImage(string sFilename)
     {
         Image* img = new Image(sFilename);
         m_mImages[sFilename] = img; //Add to the map
+        img->SetID(m_mImages.size());   //For now, just numbering 0...n will work for an ID
         return img;
     }
     return i->second; //Return this image
@@ -141,22 +148,29 @@ HEFFECT Engine::getEffect(string sFilename)
 
 void Engine::AddObject(Object* obj)
 {
-    m_lObjects.push_back(obj);
+    pair<uint32_t, Object*> objPair;
+    objPair.first = obj->getID();
+    objPair.second = obj;
+    m_mObjects.insert(objPair);
 }
 
 void Engine::UpdateObjects()
 {
-    for(list<Object*>::iterator i = m_lObjects.begin(); i != m_lObjects.end(); i++)
+    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
-        (*i)->Update();
+        if(!(*i).second->Update())
+        {
+            delete (*i).second;
+            m_mObjects.erase(i);
+        }
     }
 }
 
 void Engine::DrawObjects(float fScale)
 {
-    for(list<Object*>::iterator i = m_lObjects.begin(); i != m_lObjects.end(); i++)
+    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
-        (*i)->Draw(fScale);
+        (*i).second->Draw(fScale);
     }
 }
 
@@ -174,6 +188,28 @@ void Engine::PlayMusic(string sFilename, int volume, int pan, float pitch)
     m_MusicChannel = m_hge->Effect_PlayEx(eff,volume,pan,pitch,true);
     m_bFirstMusic = false;
 }
+
+bool Engine::keyDown(int32_t keyCode)
+{
+    return(m_hge->Input_GetKeyState(keyCode));
+}
+
+void Engine::ScaleImages(uint16_t scaleFac)
+{
+    for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
+    {
+        i->second->Scale(scaleFac);
+    }
+}
+
+
+
+
+
+
+
+
+
 
 
 

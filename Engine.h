@@ -14,9 +14,7 @@
 class Engine
 {
 private:
-    Engine(){}; //Default constructor isn't callable
 
-protected:
     //Variables for use by the engine
     HGE* m_hge;
     uint16_t m_iFramerate;
@@ -25,9 +23,10 @@ protected:
     hgeSprite* m_sprFill;   //Sprite for filling a color
     map<string, Image*> m_mImages;  //Image handler
     map<string, HEFFECT> m_mSounds; //Sound handler
-    list<Object*> m_lObjects;       //Object handler
+    multimap<uint32_t, Object*> m_mObjects;       //Object handler
     HCHANNEL m_MusicChannel;        //Sound channel we play our music on
     bool m_bFirstMusic; //Don't stop a previous song playing if there is none
+    bool m_bQuitting;   //Stop the game if this turns true
 
     //Engine-use function definitions
     friend bool FrameFunc();
@@ -36,10 +35,15 @@ protected:
     bool myRenderFunc();
     HEFFECT getEffect(string sFilename);
 
+    Engine(){}; //Default constructor isn't callable
+
+protected:
+
     //Classes to override in your own class definition
-    virtual bool frame() = 0;   //Function that's called every frame
+    virtual void frame() = 0;   //Function that's called every frame
     virtual void draw() = 0;    //Actual function that draws stuff
     virtual void init() = 0;    //So we can load all our images and such
+    virtual void handleEvent(hgeInputEvent event) = 0;  //Function that's called for each HGE input event
 
 public:
     //Constructor/destructor
@@ -59,6 +63,9 @@ public:
     void PlaySound(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play a sound
     void PlayMusic(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play looping music
     int32_t randInt(int32_t min, int32_t max) {return m_hge->Random_Int(min, max);};  //Get a random integer
+    bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
+    void Quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
+    void ScaleImages(uint16_t scaleFac);    //Scale all images by scaleFac
 
     //Accessor methods
     void setFramerate(uint16_t iFramerate)    {m_iFramerate = iFramerate; m_fTargetTime = 1.0/(float)(m_iFramerate);};

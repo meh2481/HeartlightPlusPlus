@@ -14,9 +14,12 @@ private:
     Image(){};  //Default constructor is uncallable
 
     HTEXTURE   m_hTex;
+    HTEXTURE   m_hscaledTex;    //If we've scaled it
     hgeSprite* m_hSprite;
     string     m_sFilename;
     uint32_t m_iWidth, m_iHeight;
+    uint32_t m_iID;  //Used to differentiate objects easily so can draw in batches
+                    // (it's faster to draw one image several times in a row than it is to draw images in random order)
 
 public:
     //Constructor/destructor
@@ -27,6 +30,8 @@ public:
     uint32_t GetWidth()     {return m_iWidth;};
     uint32_t GetHeight()    {return m_iHeight;};
     string GetFilename()    {return m_sFilename;};
+    uint32_t GetID()    {return m_iID;};    //For engine use
+    void SetID(uint32_t id) {m_iID = id;};
 
     //public methods
     void Draw(Rect rcScreenPos);    //Stretch the image into this rect
@@ -40,7 +45,7 @@ public:
     void DrawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at x,y
     void DrawCentered(Point pt, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at pt
 
-    void Scale(uint16_t iScaleFac); //Scales this image up by a given factor, without interpolation. THIS CANNOT BE UNDONE
+    void Scale(uint16_t iScaleFac); //Scales this image up by a given factor from the original, without interpolation. (Scale(1) to reset to original size)
 
 };
 

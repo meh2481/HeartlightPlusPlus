@@ -14,6 +14,8 @@ Object::Object(Image* img)
     m_iCurFrame = 0;
     m_iWidth = img->GetWidth();
     m_iHeight = img->GetHeight();
+    m_ptVel.SetZero();
+    m_bDying = false;
 }
 
 Object::~Object()
@@ -28,9 +30,10 @@ void Object::UpdateFrame()
         m_iCurFrame = 0;
 }
 
-void Object::Update()
+bool Object::Update()
 {
     UpdateFrame();
+    return !m_bDying;
 }
 
 void Object::Draw(float fScaleFactor)
@@ -46,15 +49,21 @@ void Object::SetNumFrames(uint16_t iNumFrames)
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-Brick::Brick(Image* img) : Object(img)
+retroObject::retroObject(Image* img) : Object(img)
+{
+    m_sName = "";
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+Brick::Brick(Image* img) : retroObject(img)
 {
 }
 
-Door::Door(Image* img) : Object(img)
+Door::Door(Image* img) : retroObject(img)
 {
 }
 
-Dwarf::Dwarf(Image* img) : Object(img)
+Dwarf::Dwarf(Image* img) : retroObject(img)
 {
 }
 
