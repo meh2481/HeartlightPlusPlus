@@ -16,6 +16,7 @@ Object::Object(Image* img)
     m_iHeight = img->GetHeight();
     m_ptVel.SetZero();
     m_bDying = false;
+    m_bAnimateOnce = false;
 }
 
 Object::~Object()
@@ -27,7 +28,11 @@ void Object::UpdateFrame()
 {
     m_iCurFrame++;
     if(m_iCurFrame >= m_iNumFrames)
+    {
+        if(m_bAnimateOnce)  //If we're only supposed to animate once, die
+            Kill();
         m_iCurFrame = 0;
+    }
 }
 
 bool Object::Update()
@@ -42,10 +47,11 @@ void Object::Draw(float fScaleFactor)
     m_Img->DrawCentered(m_ptPos, rcImgPos, 0.0, fScaleFactor);
 }
 
-void Object::SetNumFrames(uint16_t iNumFrames)
+void Object::SetNumFrames(uint16_t iNumFrames, bool bAnimateOnce)
 {
     m_iNumFrames = iNumFrames;
     m_iHeight = m_Img->GetHeight()/m_iNumFrames;
+    m_bAnimateOnce = bAnimateOnce;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------

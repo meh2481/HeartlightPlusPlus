@@ -60,7 +60,7 @@ public:
     void UpdateObjects();           //Update all objects in the game
     void DrawObjects(float fScale = 1.0);   //Draw all objects in the game
     void ClearObjects();    //Destroy all objects, freeing memory
-    void PlaySound(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play a sound
+    virtual void PlaySound(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play a sound
     void PlayMusic(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play looping music
     int32_t randInt(int32_t min, int32_t max) {return m_hge->Random_Int(min, max);};  //Get a random integer
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed

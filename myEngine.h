@@ -51,6 +51,7 @@ public:
     bool loadLevels(string sFilename);  //Loads in all the levels from the specified text file into m_vLevels
     void UpdateGrid();  //Updates the level grid, moving objects around
     void loadImages(string sListFilename);  //Loads all images listed in this file into memory, so we can batch load easily
+    void PlaySound(string sFilename);   //Plays a sound, with pitch shifting depending on framerate
 };
 
 

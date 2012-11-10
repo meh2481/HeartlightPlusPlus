@@ -18,6 +18,7 @@ private:
 protected:
     Image* m_Img;
     uint16_t m_iNumFrames;
+    bool m_bAnimateOnce;
     uint16_t m_iCurFrame;
     uint32_t m_iWidth, m_iHeight;
     Point m_ptPos;
@@ -39,7 +40,7 @@ public:
     void Kill() {m_bDying = true;};    //Destroy sprite
 
     //Accessor methods
-    void SetNumFrames(uint16_t iNumFrames);
+    void SetNumFrames(uint16_t iNumFrames, bool bAnimateOnce = false);
     int16_t  GetFrame() {return m_iCurFrame;};
     void  SetFrame(int16_t iFrame) {m_iCurFrame = iFrame;}; //WARNING: Potentially dangerous
     uint32_t GetWidth() {return m_iWidth;};

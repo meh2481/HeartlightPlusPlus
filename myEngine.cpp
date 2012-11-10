@@ -74,10 +74,8 @@ void myEngine::init()
         exit(1);    //Abort
     }
     loadLevel();
-    setFramerate(GAME_FRAMERATE);
     //m_imgHUD->Scale(SCALE_FAC);
     //PlayMusic("res/sfx/orig/menu_music.ogg"); //Start playing menu music
-    //PlaySound("res/sfx/orig/explode.ogg");
 }
 
 myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iWidth, iHeight, sTitle)
@@ -142,6 +140,14 @@ void myEngine::handleEvent(hgeInputEvent event)
                 case HGEK_ESCAPE:
                     //For now, just reload level
                     loadLevel();
+                    break;
+
+                case HGEK_F11:      //F11: Decrease fps
+                    setFramerate(std::max(getFramerate()-1,1));
+                    break;
+
+                case HGEK_F12:      //F12: Increase fps
+                    setFramerate(getFramerate()+1);
                     break;
             }
             break;
@@ -450,7 +456,7 @@ bool myEngine::CheckGrid(int row, int col)
                 m_levelGrid[col][row]->Kill();
                 m_levelGrid[col][row] = NULL;
                 m_oldGrid[col][row] = NULL;
-                m_iWinningCount = WIN_COUNT;
+                m_iWinningCount = WIN_COUNT+2;  //+2 here because we'll miss a couple frames
                 PlaySound("res/sfx/orig/applause.ogg");
             }
             break;
@@ -563,13 +569,44 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
             switch(*(s.begin()))
             {
                 case '$':   //heart
+                case '@':   //rock  (both heart and rock behave the same way as far as falling and such)
+                    if(row == LEVEL_HEIGHT-1 || m_oldGrid[col][row+1] != NULL )   //Hitting something
+                    {
+                        if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->GetNameChar() == '*') //Hit player
+                        {
+                            if(obj->GetVelocity().y > 0)   //Falling on top of player
+                            {
+                                //TODO kill player
+                            }
+                        }
+                        else if(obj->GetVelocity().y > 0)   //Hit ground
+                        {
+                            if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->GetNameChar() == '.') //Hit grass
+                            {
+                                if(*(s.begin()) == '$') //Heart hit
+                                    PlaySound("res/sfx/orig/heart_hit_grass.ogg");
+                                else
+                                    PlaySound("res/sfx/orig/hit_grass.ogg");
+                            }
+                            else
+                            {
+                                if(*(s.begin()) == '$') //Heart hit
+                                    PlaySound("res/sfx/orig/heart_hit1.ogg");   //TODO random hit noise
+                                else
+                                    PlaySound("res/sfx/orig/rock_hit.ogg");
+                            }
+                            obj->SetVelocity(0,0);  //Hitting something, stop falling
+                        }
+                    }
+                    else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1] == NULL)   //Fall down
+                    {
+                        obj->Offset(0,GRID_HEIGHT*SCALE_FAC);
+                        m_levelGrid[col][row+1] = obj;
+                        m_levelGrid[col][row] = NULL;
+                        obj->SetVelocity(0,1);
+                    }
+                    //TODO Check and see if we should move over to fall
                     break;
-
-                case '@':   //rock
-                    break;
-
-                case '.':   //grass
-                    break;  //Does nothing
 
                 case '*':   //dwarf
                     //Move the player if pressing keys
@@ -673,22 +710,12 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                     }
                     break;
 
-                case '!':   //exit
-                    break;  //Does nothing
-
                 case '&':   //bomb
+                    //TODO
                     break;
 
                 case '0':   //balloon
-                    break;
-
-                case '=':   //plasma
-                    break;
-
-                case '#':   //brick wall
-                    break;
-
-                case '%':   //metal wall
+                    //TODO
                     break;
 
                 case '<':   //Left tunnel
@@ -721,11 +748,6 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                             obj->setImage(nextTunnel->getImage());
                             nextTunnel->setImage(img);
                         }
-                        /*else    //Something went horribly wrong
-                        {
-                            errlog << "Something went terribly horribly wrong with this tunnel logic! Aborting..." << endl;
-                            exit(1);
-                        }*/
                     }
                     break;
                 }
@@ -760,11 +782,6 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                             obj->setImage(nextTunnel->getImage());
                             nextTunnel->setImage(img);
                         }
-                        /*else    //Something went horribly wrong
-                        {
-                            errlog << "Something went terribly horribly wrong with this tunnel logic! Aborting..." << nextTunnel->GetNameChar() << endl;
-                            exit(1);
-                        }*/
                     }
                     break;
                 }
@@ -773,7 +790,10 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
     }
 }
 
-
+void myEngine::PlaySound(string sFilename)
+{
+    Engine::PlaySound(sFilename, 100, 0, (float32)(getFramerate()/(float)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
+}
 
 
 
