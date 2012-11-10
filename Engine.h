@@ -29,8 +29,8 @@ private:
     bool m_bQuitting;   //Stop the game if this turns true
 
     //Engine-use function definitions
-    friend bool FrameFunc();
-    friend bool RenderFunc();
+    friend bool frameFunc();
+    friend bool renderFunc();
     bool myFrameFunc();
     bool myRenderFunc();
     HEFFECT getEffect(string sFilename);
@@ -56,16 +56,16 @@ public:
     void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha);
     void fillRect(Rect rc, uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha);
     Image* getImage(string sFilename);  //Retrieves an image from the filename, creating it if need be
-    void AddObject(Object* obj);    //Add an object to the object handler
-    void UpdateObjects();           //Update all objects in the game
-    void DrawObjects(float fScale = 1.0);   //Draw all objects in the game
-    void ClearObjects();    //Destroy all objects, freeing memory
-    virtual void PlaySound(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play a sound
-    void PlayMusic(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play looping music
+    void addObject(Object* obj);    //Add an object to the object handler
+    void updateObjects();           //update all objects in the game
+    void drawObjects(float fScale = 1.0);   //draw all objects in the game
+    void clearObjects();    //Destroy all objects, freeing memory
+    virtual void playSound(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play a sound
+    void playMusic(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play looping music
     int32_t randInt(int32_t min, int32_t max) {return m_hge->Random_Int(min, max);};  //Get a random integer
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
-    void Quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
-    void ScaleImages(uint16_t scaleFac);    //Scale all images by scaleFac
+    void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
+    void scaleImages(uint16_t scaleFac);    //scale all images by scaleFac
 
     //Accessor methods
     void setFramerate(uint16_t iFramerate)    {m_iFramerate = iFramerate; m_fTargetTime = 1.0/(float)(m_iFramerate);};
@@ -75,8 +75,8 @@ public:
 
 };
 
-bool FrameFunc();
-bool RenderFunc();
+bool frameFunc();
+bool renderFunc();
 
 
 

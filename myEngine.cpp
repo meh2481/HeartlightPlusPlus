@@ -8,20 +8,20 @@
 //For HGE-based functions to be able to call our Engine class functions - Note that this means there can be no more than one Engine at a time
 static myEngine* g_pGlobalEngine;
 
-bool FrameFunc()
+bool frameFunc()
 {
     return g_pGlobalEngine->myFrameFunc();
 }
 
-bool RenderFunc()
+bool renderFunc()
 {
     return g_pGlobalEngine->myRenderFunc();
 }
 
 void myEngine::frame()
 {
-    UpdateGrid();
-    UpdateObjects();
+    updateGrid();
+    updateObjects();
     if(m_iWinningCount) //If winning a level, make dwarf jump up and down
     {
         if(--m_iWinningCount)
@@ -33,9 +33,9 @@ void myEngine::frame()
                 {
                     if(m_levelGrid[col][row] == NULL)
                         continue;
-                    if(m_levelGrid[col][row]->GetNameChar() == '*')
+                    if(m_levelGrid[col][row]->getNameChar() == '*')
                     {
-                        m_levelGrid[col][row]->SetFrame(m_iWinningCount % 2 + 6);
+                        m_levelGrid[col][row]->setFrame(m_iWinningCount % 2 + 6);
                     }
                 }
             }
@@ -53,9 +53,9 @@ void myEngine::frame()
 void myEngine::draw()
 {
     //Just draw all objects
-    DrawObjects();
+    drawObjects();
     //And bottom bar
-    m_imgHUD->Draw(0,getHeight() - m_imgHUD->GetHeight());
+    m_imgHUD->draw(0,getHeight() - m_imgHUD->getHeight());
 }
 
 void myEngine::init()
@@ -66,7 +66,7 @@ void myEngine::init()
     m_imgHUD = getImage("res/gfx/orig/bottombar.png");  //Hang onto this image
 
     //Now scale all the images up
-    ScaleImages(SCALE_FAC);
+    scaleImages(SCALE_FAC);
 
     if(!loadLevels("res/LEVELS.HL"))
     {
@@ -74,8 +74,8 @@ void myEngine::init()
         exit(1);    //Abort
     }
     loadLevel();
-    //m_imgHUD->Scale(SCALE_FAC);
-    //PlayMusic("res/sfx/orig/menu_music.ogg"); //Start playing menu music
+    //m_imgHUD->scale(SCALE_FAC);
+    //playMusic("res/sfx/orig/menu_music.ogg"); //Start playing menu music
 }
 
 myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iWidth, iHeight, sTitle)
@@ -143,7 +143,7 @@ void myEngine::handleEvent(hgeInputEvent event)
                     break;
 
                 case HGEK_F11:      //F11: Decrease fps
-                    setFramerate(std::max(getFramerate()-1,1));
+                    setFramerate(std::max(getFramerate()-1,0));
                     break;
 
                 case HGEK_F12:      //F12: Increase fps
@@ -182,7 +182,7 @@ void myEngine::loadLevel()
         errlog << "No levels loaded! Abort. " << endl;
         exit(1);
     }
-    ClearObjects(); //If there's any memory hanging around with objects, clear it out
+    clearObjects(); //If there's any memory hanging around with objects, clear it out
     m_iHeartsTotal = 0; //No hearts in this level yet
     m_iCollectedHearts = 0;     //And we've collected none
     //And clear out our map
@@ -213,99 +213,99 @@ void myEngine::loadLevel()
                 case '$':   //Heart
                     m_iHeartsTotal++;   //Increment the total number of hearts in this level
                     m_levelGrid[col][row] = new retroObject(heart);
-                    m_levelGrid[col][row]->SetNumFrames(6);
-                    m_levelGrid[col][row]->SetFrame(randInt(0,5));    //randomize the frame it starts at
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setNumFrames(6);
+                    m_levelGrid[col][row]->setFrame(randInt(0,5));    //randomize the frame it starts at
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '@':   //rock
                     m_levelGrid[col][row] = new retroObject(rock);
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '.':   //grass
                     m_levelGrid[col][row] = new retroObject(grass);
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '*':   //the dwarf
                     m_levelGrid[col][row] = new Dwarf(dwarf);
-                    m_levelGrid[col][row]->SetNumFrames(8);
+                    m_levelGrid[col][row]->setNumFrames(8);
                     //Set to facing left if on right side of the screen
                     if(col >= LEVEL_WIDTH/2)
-                        m_levelGrid[col][row]->SetFrame(1);
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                        m_levelGrid[col][row]->setFrame(1);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '!':   //exit door
                     m_levelGrid[col][row] = new Door(exitdoor);
-                    m_levelGrid[col][row]->SetNumFrames(4);
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setNumFrames(4);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '&':   //bomb
                     m_levelGrid[col][row] = new retroObject(bomb);
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '0':   //balloon
                     m_levelGrid[col][row] = new retroObject(balloon);
-                    m_levelGrid[col][row]->SetNumFrames(4);
-                    m_levelGrid[col][row]->SetFrame(randInt(0,3));
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setNumFrames(4);
+                    m_levelGrid[col][row]->setFrame(randInt(0,3));
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '=':   //plasma
                     m_levelGrid[col][row] = new retroObject(plasma);
-                    m_levelGrid[col][row]->SetNumFrames(8);
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setNumFrames(8);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '#':   //brick wall
                     m_levelGrid[col][row] = new Brick(brick);
-                    m_levelGrid[col][row]->SetNumFrames(4);
-                    m_levelGrid[col][row]->SetFrame(m_iCurrentLevel % 4);  //Color depends on level number, like original game
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setNumFrames(4);
+                    m_levelGrid[col][row]->setFrame(m_iCurrentLevel % 4);  //Color depends on level number, like original game
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '%':   //metal wall
                     m_levelGrid[col][row] = new retroObject(metalwall);
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
                 case '<':   //left tunnel
                     m_levelGrid[col][row] = new retroObject(Ltunnel);
-                    m_levelGrid[col][row]->SetNumFrames(4);
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setNumFrames(4);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '>':   //right tunnel
                     m_levelGrid[col][row] = new retroObject(Rtunnel);
-                    m_levelGrid[col][row]->SetNumFrames(4);
-                    m_levelGrid[col][row]->SetPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                    m_levelGrid[col][row]->SetName(cObj);
-                    AddObject(m_levelGrid[col][row]);
+                    m_levelGrid[col][row]->setNumFrames(4);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setName(cObj);
+                    addObject(m_levelGrid[col][row]);
                     break;
 
                 case '\n':
@@ -334,10 +334,10 @@ void myEngine::loadLevel()
             {
                 if(m_levelGrid[col][row] == NULL)
                     continue;
-                if(m_levelGrid[col][row]->GetNameChar() == '!')
+                if(m_levelGrid[col][row]->getNameChar() == '!')
                 {
-                    m_levelGrid[col][row]->SetFrame(1);
-                    PlaySound("res/sfx/orig/door_open.ogg");
+                    m_levelGrid[col][row]->setFrame(1);
+                    playSound("res/sfx/orig/door_open.ogg");
                 }
             }
         }
@@ -406,7 +406,7 @@ bool myEngine::loadLevels(string sFilename)
     return true;
 }
 
-bool myEngine::CheckGrid(int row, int col)
+bool myEngine::checkGrid(int row, int col)
 {
     if(row < 0 ||
        col < 0 ||
@@ -416,7 +416,7 @@ bool myEngine::CheckGrid(int row, int col)
     retroObject* obj = m_levelGrid[col][row];
     if(obj == NULL || keyDown(HGEK_SPACE))
         return false; //Nothing to do here
-    switch(obj->GetNameChar())
+    switch(obj->getNameChar())
     {
         case '$':   //Heart
             m_iCollectedHearts++;
@@ -429,35 +429,35 @@ bool myEngine::CheckGrid(int row, int col)
                     {
                         if(m_levelGrid[col][row] == NULL)
                             continue;
-                        if(m_levelGrid[col][row]->GetNameChar() == '!')
+                        if(m_levelGrid[col][row]->getNameChar() == '!')
                         {
-                            m_levelGrid[col][row]->SetFrame(1);
-                            PlaySound("res/sfx/orig/door_open.ogg");
+                            m_levelGrid[col][row]->setFrame(1);
+                            playSound("res/sfx/orig/door_open.ogg");
                         }
                     }
                 }
             }
             else    //Otherwise, play getting heart noise
-                PlaySound("res/sfx/orig/get_heart.ogg");
-            m_levelGrid[col][row]->Kill();
+                playSound("res/sfx/orig/get_heart.ogg");
+            m_levelGrid[col][row]->kill();
             m_levelGrid[col][row] = NULL;
             m_oldGrid[col][row] = NULL;
             break;
 
         case '.':   //Grass- just destroy
-            m_levelGrid[col][row]->Kill();
+            m_levelGrid[col][row]->kill();
             m_levelGrid[col][row] = NULL;
             m_oldGrid[col][row] = NULL;
             break;
 
         case '!':
-            if(m_levelGrid[col][row]->GetFrame() == 3)  //If open
+            if(m_levelGrid[col][row]->getFrame() == 3)  //If open
             {
-                m_levelGrid[col][row]->Kill();
+                m_levelGrid[col][row]->kill();
                 m_levelGrid[col][row] = NULL;
                 m_oldGrid[col][row] = NULL;
                 m_iWinningCount = WIN_COUNT+2;  //+2 here because we'll miss a couple frames
-                PlaySound("res/sfx/orig/applause.ogg");
+                playSound("res/sfx/orig/applause.ogg");
             }
             break;
 
@@ -471,12 +471,12 @@ bool myEngine::CheckGrid(int row, int col)
                 if(coltest == LEVEL_WIDTH)
                     break;
                 retroObject* tunnelTest = m_oldGrid[coltest][row];
-                if(tunnelTest == NULL || tunnelTest->GetNameChar() == '.')
+                if(tunnelTest == NULL || tunnelTest->getNameChar() == '.')
                 {
                     bObstructed = false;    //We can go this way if it's just grass or empty space
                     break;
                 }
-                else if(tunnelTest->GetNameChar() != '>')
+                else if(tunnelTest->getNameChar() != '>')
                     break;  //Obstructed
             }
             if(bObstructed)
@@ -484,18 +484,18 @@ bool myEngine::CheckGrid(int row, int col)
 
             //Enter the tunnel
             obj->setImage(getImage("res/gfx/orig/tunnelR_up.png"));
-            obj->SetName(">*"); //Player is in here
+            obj->setName(">*"); //Player is in here
             m_bTunnelMoved = true;  //Entered this tunnel
-            PlaySound("res/sfx/orig/subway.ogg");
+            playSound("res/sfx/orig/subway.ogg");
 
             //Destroy the current dwarf object
             for(uint32_t i = 0; i < LEVEL_HEIGHT; i++)
             {
                 for(uint32_t j = 0; j < LEVEL_WIDTH; j++)
                 {
-                    if(m_levelGrid[j][i] != NULL && m_levelGrid[j][i]->GetNameChar() == '*')
+                    if(m_levelGrid[j][i] != NULL && m_levelGrid[j][i]->getNameChar() == '*')
                     {
-                        m_levelGrid[j][i]->Kill();
+                        m_levelGrid[j][i]->kill();
                         m_levelGrid[j][i] = NULL;
                     }
                 }
@@ -512,12 +512,12 @@ bool myEngine::CheckGrid(int row, int col)
                 if(coltest <= 0)
                     break;
                 retroObject* tunnelTest = m_oldGrid[coltest][row];
-                if(tunnelTest == NULL || tunnelTest->GetNameChar() == '.')
+                if(tunnelTest == NULL || tunnelTest->getNameChar() == '.')
                 {
                     bObstructed = false;    //We can go this way if it's just grass or empty space
                     break;
                 }
-                else if(tunnelTest->GetNameChar() != '<')
+                else if(tunnelTest->getNameChar() != '<')
                     break;  //Obstructed
             }
             if(bObstructed)
@@ -525,17 +525,17 @@ bool myEngine::CheckGrid(int row, int col)
 
             //Enter the tunnel
             obj->setImage(getImage("res/gfx/orig/tunnelL_up.png"));
-            obj->SetName("<*"); //Player is in here
-            PlaySound("res/sfx/orig/subway.ogg");
+            obj->setName("<*"); //Player is in here
+            playSound("res/sfx/orig/subway.ogg");
 
             //Destroy the current dwarf object
             for(uint32_t i = 0; i < LEVEL_HEIGHT; i++)
             {
                 for(uint32_t j = 0; j < LEVEL_WIDTH; j++)
                 {
-                    if(m_levelGrid[j][i] != NULL && m_levelGrid[j][i]->GetNameChar() == '*')
+                    if(m_levelGrid[j][i] != NULL && m_levelGrid[j][i]->getNameChar() == '*')
                     {
-                        m_levelGrid[j][i]->Kill();
+                        m_levelGrid[j][i]->kill();
                         m_levelGrid[j][i] = NULL;
                     }
                 }
@@ -544,11 +544,45 @@ bool myEngine::CheckGrid(int row, int col)
             return true;
         }
 
+        case '@':
+        case '&':   //Push bombs or rocks
+        case '0':   //or balloons
+            if(col > 0 &&
+               m_levelGrid[col-1][row] != NULL &&
+               m_levelGrid[col-1][row]->getNameChar() == '*' &&
+               m_levelGrid[col-1][row]->getFrame() < 2 &&
+               keyDown(HGEK_RIGHT) && !keyDown(HGEK_SPACE))    //Pushing to the right
+            {
+                if(col < LEVEL_WIDTH-1 && m_levelGrid[col+1][row] == NULL)  //There's an empty space for us to push it
+                {
+                    //Push it over
+                    m_levelGrid[col+1][row] = m_levelGrid[col][row];
+                    m_levelGrid[col+1][row]->offset(GRID_WIDTH*SCALE_FAC,0);
+                    m_levelGrid[col][row] = NULL;
+                    m_oldGrid[col][row] = NULL;
+                }
+            }
+            else if(col < LEVEL_WIDTH-1 &&
+                    m_levelGrid[col+1][row] != NULL &&
+                    m_levelGrid[col+1][row]->getNameChar() == '*' &&
+                    m_levelGrid[col+1][row]->getFrame() < 2 &&
+                    keyDown(HGEK_LEFT) && !keyDown(HGEK_SPACE))    //Pushing to the left
+            {
+                if(col > 0 && m_levelGrid[col-1][row] == NULL)
+                {
+                    m_levelGrid[col-1][row] = m_levelGrid[col][row];
+                    m_levelGrid[col-1][row]->offset(-GRID_WIDTH*SCALE_FAC,0);
+                    m_levelGrid[col][row] = NULL;
+                    m_oldGrid[col][row] = NULL;
+                }
+            }
+            break;
+
     }
     return false;
 }
 
-void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
+void myEngine::updateGrid() //Workhorse for updating the objects in the game
 {
     m_bTunnelMoved = false;
     for(int row = 0; row < LEVEL_HEIGHT; row++)
@@ -565,110 +599,176 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
             if(obj == NULL)
                 continue;   //ignore empty spaces
 
-            string s = obj->GetName();
+            string s = obj->getName();
             switch(*(s.begin()))
             {
                 case '$':   //heart
-                case '@':   //rock  (both heart and rock behave the same way as far as falling and such)
-                    if(row == LEVEL_HEIGHT-1 || m_oldGrid[col][row+1] != NULL )   //Hitting something
+                case '@':   //rock
+                case '&':   //bomb
+                    if((row == LEVEL_HEIGHT-1 || m_oldGrid[col][row+1] != NULL) && obj->getVelocity().y > 0)   //Hitting something
                     {
-                        if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->GetNameChar() == '*') //Hit player
+                        if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '*') //Hit player
                         {
-                            if(obj->GetVelocity().y > 0)   //Falling on top of player
-                            {
-                                //TODO kill player
-                            }
+                            //TODO kill player
                         }
-                        else if(obj->GetVelocity().y > 0)   //Hit ground
+                        else  //Hit ground
                         {
-                            if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->GetNameChar() == '.') //Hit grass
+                            if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '.' && obj->getVelocity().y > 1) //Hit grass
                             {
                                 if(*(s.begin()) == '$') //Heart hit
-                                    PlaySound("res/sfx/orig/heart_hit_grass.ogg");
+                                    playSound("res/sfx/orig/heart_hit_grass.ogg");
                                 else
-                                    PlaySound("res/sfx/orig/hit_grass.ogg");
+                                    playSound("res/sfx/orig/hit_grass.ogg");
                             }
-                            else
+                            else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '&' && obj->getVelocity().y > 1)    //Hit a bomb
+                            {
+                                //Explode
+                                m_oldGrid[col][row+1]->setImage(getImage("res/gfx/orig/bombexplode.png"));
+                                m_oldGrid[col][row+1]->setName('x');    //Explode
+                                playSound("res/sfx/orig/explode.ogg");
+                                if(*(s.begin()) == '&')    //bomb hit
+                                {
+                                    //Explode
+                                    obj->setImage(getImage("res/gfx/orig/bombexplode.png"));
+                                    obj->setName('x');
+                                    playSound("res/sfx/orig/explode.ogg");
+                                }
+                            }
+                            else if(obj->getVelocity().y > 1)
                             {
                                 if(*(s.begin()) == '$') //Heart hit
-                                    PlaySound("res/sfx/orig/heart_hit1.ogg");   //TODO random hit noise
-                                else
-                                    PlaySound("res/sfx/orig/rock_hit.ogg");
+                                {
+                                    char cName[256];
+                                    sprintf(cName, "res/sfx/orig/heart_hit%d.ogg", randInt(1,4));
+                                    playSound(string(cName));   //Random hit noise
+                                }
+                                else if(*(s.begin()) == '&')    //bomb hit
+                                {
+                                    //Explode
+                                    obj->setImage(getImage("res/gfx/orig/bombexplode.png"));
+                                    obj->setName('x');
+                                    playSound("res/sfx/orig/explode.ogg");
+                                }
+                                else    //rock hit
+                                    playSound("res/sfx/orig/rock_hit.ogg");
                             }
-                            obj->SetVelocity(0,0);  //Hitting something, stop falling
+                            float32 fYvel = obj->getVelocity().y;
+                            if(fYvel > 0)
+                                obj->setVelocity(0,fYvel-1);  //Hitting something, stop falling
                         }
                     }
                     else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1] == NULL)   //Fall down
                     {
-                        obj->Offset(0,GRID_HEIGHT*SCALE_FAC);
+                        obj->offset(0,GRID_HEIGHT*SCALE_FAC);
                         m_levelGrid[col][row+1] = obj;
                         m_levelGrid[col][row] = NULL;
-                        obj->SetVelocity(0,1);
+                        obj->setVelocity(0,2);
                     }
-                    //TODO Check and see if we should move over to fall
+                    if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1] != NULL)   //Check and see if we should move over to fall
+                    {
+                        //Check and see if we're on top of an object we can slide off of
+                        char cObj = m_levelGrid[col][row+1]->getNameChar();
+                        if(cObj == '$' ||
+                           cObj == '@' ||
+                           cObj == '&' ||
+                           cObj == '=' ||
+                           cObj == '#' ||
+                           cObj == 'x' ||
+                           cObj == 'X')
+                        {
+                            //Check left side first, as per game behavior
+                            if(col > 0 && m_levelGrid[col-1][row] == NULL && m_levelGrid[col-1][row+1] == NULL && obj->getVelocity().y == 0)
+                            {
+                                if(row < 1 || m_levelGrid[col-1][row-1] == NULL || (m_levelGrid[col-1][row-1]->getNameChar() != '$' &&
+                                                                                    m_levelGrid[col-1][row-1]->getNameChar() != '&' &&
+                                                                                    m_levelGrid[col-1][row-1]->getNameChar() != '@'))    //Also check above for falling objects
+                                {
+                                    m_levelGrid[col-1][row] = obj;
+                                    obj->offset(-GRID_WIDTH*SCALE_FAC,0);
+                                    m_levelGrid[col][row] = NULL;   //Move over
+                                }
+                            }
+                            //Then check right side
+                            else if(col < LEVEL_WIDTH-1 && m_levelGrid[col+1][row] == NULL && m_levelGrid[col+1][row+1] == NULL && obj->getVelocity().y == 0)
+                            {
+                                if(row < 1 || m_levelGrid[col+1][row-1] == NULL || (m_levelGrid[col+1][row-1]->getNameChar() != '$' &&
+                                                                                    m_levelGrid[col+1][row-1]->getNameChar() != '&' &&
+                                                                                    m_levelGrid[col+1][row-1]->getNameChar() != '@'))    //Also check above for falling objects
+                                {
+                                    m_levelGrid[col+1][row] = obj;
+                                    obj->offset(GRID_WIDTH*SCALE_FAC,0);
+                                    m_levelGrid[col][row] = NULL;   //Move over
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                case 'x': //Bomb starting to explode
+                    //TODO Create explosion
                     break;
 
                 case '*':   //dwarf
                     //Move the player if pressing keys
                     if(keyDown(HGEK_RIGHT))
                     {
-                        if(CheckGrid(row, col+1))
+                        if(checkGrid(row, col+1))
                             break;
                         if(!keyDown(HGEK_SPACE) && col+1 < LEVEL_WIDTH && m_levelGrid[col+1][row] == NULL)
                         {
                             m_levelGrid[col+1][row] = obj;
                             m_levelGrid[col][row] = NULL;
-                            obj->Offset(GRID_WIDTH*SCALE_FAC, 0);
+                            obj->offset(GRID_WIDTH*SCALE_FAC, 0);
                         }
                         if(!keyDown(HGEK_SPACE))
                         {
                             //Set to right frame
-                            int16_t iFrame = obj->GetFrame();
+                            int16_t iFrame = obj->getFrame();
                             if(iFrame > 1)
                                 iFrame = 0;
                             else
                                 iFrame = 2;
                             if(col+1 >= LEVEL_WIDTH || m_oldGrid[col+1][row] != NULL)
                                 iFrame = 0;
-                            obj->SetFrame(iFrame);
+                            obj->setFrame(iFrame);
                         }
                     }
                     else if(keyDown(HGEK_LEFT))
                     {
-                        if(CheckGrid(row, col-1))
+                        if(checkGrid(row, col-1))
                             break;
                         if(!keyDown(HGEK_SPACE) && col > 0 && m_levelGrid[col-1][row] == NULL)
                         {
                             m_levelGrid[col-1][row] = obj;
                             m_levelGrid[col][row] = NULL;
-                            obj->Offset(-GRID_WIDTH*SCALE_FAC, 0);
+                            obj->offset(-GRID_WIDTH*SCALE_FAC, 0);
                         }
                         if(!keyDown(HGEK_SPACE))
                         {
                             //Set to right frame
-                            int16_t iFrame = obj->GetFrame();
+                            int16_t iFrame = obj->getFrame();
                             if(iFrame > 1)
                                 iFrame = 1;
                             else
                                 iFrame = 3;
                             if(col <= 0 || m_oldGrid[col-1][row] != NULL)
                                 iFrame = 1;
-                            obj->SetFrame(iFrame);
+                            obj->setFrame(iFrame);
                         }
                     }
                     else if(keyDown(HGEK_DOWN))
                     {
-                        CheckGrid(row+1, col);
+                        checkGrid(row+1, col);
                         if(!keyDown(HGEK_SPACE) && row+1 < LEVEL_HEIGHT && m_levelGrid[col][row+1] == NULL)
                         {
                             m_levelGrid[col][row+1] = obj;
                             m_levelGrid[col][row] = NULL;
-                            obj->Offset(0, GRID_HEIGHT*SCALE_FAC);
+                            obj->offset(0, GRID_HEIGHT*SCALE_FAC);
                         }
                         if(!keyDown(HGEK_SPACE))
                         {
                             //Set to right frame
-                            int16_t iFrame = obj->GetFrame();
+                            int16_t iFrame = obj->getFrame();
                             if(iFrame > 1)
                                 iFrame -= 2;
                             else
@@ -676,22 +776,22 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                             if(row+1 >= LEVEL_HEIGHT || m_oldGrid[col][row+1] != NULL)
                                 if(iFrame > 1)
                                 iFrame -= 2;
-                            obj->SetFrame(iFrame);
+                            obj->setFrame(iFrame);
                         }
                     }
                     else if(keyDown(HGEK_UP))
                     {
-                        CheckGrid(row-1, col);
+                        checkGrid(row-1, col);
                         if(!keyDown(HGEK_SPACE) && row > 0 && m_levelGrid[col][row-1] == NULL)
                         {
                             m_levelGrid[col][row-1] = obj;
                             m_levelGrid[col][row] = NULL;
-                            obj->Offset(0, -GRID_HEIGHT*SCALE_FAC);
+                            obj->offset(0, -GRID_HEIGHT*SCALE_FAC);
                         }
                         if(!keyDown(HGEK_SPACE))
                         {
                             //Set to right frame
-                            int16_t iFrame = obj->GetFrame();
+                            int16_t iFrame = obj->getFrame();
                             if(iFrame > 1)
                                 iFrame -= 2;
                             else
@@ -699,19 +799,15 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                             if(row <= 0 || m_oldGrid[col][row-1] != NULL)
                                 if(iFrame > 1)
                                 iFrame -= 2;
-                            obj->SetFrame(iFrame);
+                            obj->setFrame(iFrame);
                         }
                     }
                     else    //Set to stopped frame
                     {
-                        int16_t iFrame = obj->GetFrame();
+                        int16_t iFrame = obj->getFrame();
                         if(iFrame >= 2)
-                            obj->SetFrame(iFrame-2);
+                            obj->setFrame(iFrame-2);
                     }
-                    break;
-
-                case '&':   //bomb
-                    //TODO
                     break;
 
                 case '0':   //balloon
@@ -724,25 +820,25 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                     {
                         //Move player left
                         retroObject* nextTunnel = m_levelGrid[col-1][row];  //Assume this is good, since we'll test for it before entering a tunnel
-                        if(nextTunnel == NULL || nextTunnel->GetNameChar() == '.')  //We can place player down in empty spaces or grass
+                        if(nextTunnel == NULL || nextTunnel->getNameChar() == '.')  //We can place player down in empty spaces or grass
                         {
                             if(nextTunnel != NULL)
-                                nextTunnel->Kill();
+                                nextTunnel->kill();
                             //Create dwarf
                             m_levelGrid[col-1][row] = new Dwarf(getImage("res/gfx/orig/dwarf.png"));
-                            m_levelGrid[col-1][row]->SetNumFrames(8);
-                            m_levelGrid[col-1][row]->SetFrame(1);
-                            m_levelGrid[col-1][row]->SetPos((col-1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                            m_levelGrid[col-1][row]->SetName('*');
-                            AddObject(m_levelGrid[col-1][row]);
-                            obj->SetName('<');
+                            m_levelGrid[col-1][row]->setNumFrames(8);
+                            m_levelGrid[col-1][row]->setFrame(1);
+                            m_levelGrid[col-1][row]->setPos((col-1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col-1][row]->setName('*');
+                            addObject(m_levelGrid[col-1][row]);
+                            obj->setName('<');
                             obj->setImage(getImage("res/gfx/orig/tunnelL.png"));
 
                         }
-                        else if(nextTunnel->GetNameChar() == '<')    //Next tunnel
+                        else if(nextTunnel->getNameChar() == '<')    //Next tunnel
                         {
-                            nextTunnel->SetName("<*");  //Put player inside this next tunnel
-                            obj->SetName('<');  //Move player out of this tunnel
+                            nextTunnel->setName("<*");  //Put player inside this next tunnel
+                            obj->setName('<');  //Move player out of this tunnel
                             //Swap the images of each
                             Image* img = obj->getImage();
                             obj->setImage(nextTunnel->getImage());
@@ -759,24 +855,24 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
                         m_bTunnelMoved = true;
                         //Move player right
                         retroObject* nextTunnel = m_oldGrid[col+1][row];  //Assume this is good, since we'll test for it before entering a tunnel
-                        if(nextTunnel == NULL || nextTunnel->GetNameChar() == '.')  //We can place player down in empty spaces or grass
+                        if(nextTunnel == NULL || nextTunnel->getNameChar() == '.')  //We can place player down in empty spaces or grass
                         {
                             if(nextTunnel != NULL)
-                                nextTunnel->Kill();
+                                nextTunnel->kill();
                             //Create dwarf
                             m_levelGrid[col+1][row] = new Dwarf(getImage("res/gfx/orig/dwarf.png"));
-                            m_levelGrid[col+1][row]->SetNumFrames(8);
-                            m_levelGrid[col+1][row]->SetPos((col+1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
-                            m_levelGrid[col+1][row]->SetName('*');
-                            AddObject(m_levelGrid[col+1][row]);
-                            obj->SetName('>');
+                            m_levelGrid[col+1][row]->setNumFrames(8);
+                            m_levelGrid[col+1][row]->setPos((col+1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col+1][row]->setName('*');
+                            addObject(m_levelGrid[col+1][row]);
+                            obj->setName('>');
                             obj->setImage(getImage("res/gfx/orig/tunnelR.png"));
 
                         }
-                        else if(nextTunnel->GetNameChar() == '>')    //Next tunnel
+                        else if(nextTunnel->getNameChar() == '>')    //Next tunnel
                         {
-                            nextTunnel->SetName(">*");  //Put player inside this next tunnel
-                            obj->SetName('>');  //Move player out of this tunnel
+                            nextTunnel->setName(">*");  //Put player inside this next tunnel
+                            obj->setName('>');  //Move player out of this tunnel
                             //Swap the images of each
                             Image* img = obj->getImage();
                             obj->setImage(nextTunnel->getImage());
@@ -790,9 +886,9 @@ void myEngine::UpdateGrid() //Workhorse for updating the objects in the game
     }
 }
 
-void myEngine::PlaySound(string sFilename)
+void myEngine::playSound(string sFilename)
 {
-    Engine::PlaySound(sFilename, 100, 0, (float32)(getFramerate()/(float)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
+    Engine::playSound(sFilename, 100, 0, (float32)(getFramerate()/(float)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
 }
 
 

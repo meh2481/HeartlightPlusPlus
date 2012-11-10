@@ -35,7 +35,7 @@ private:
     uint16_t m_iWinningCount;   //Counts down when winning a level
     bool m_bTunnelMoved;    //Haven't moved in a tunnel (need this for shallow copy issues)
 
-    bool CheckGrid(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
+    bool checkGrid(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
 
 protected:
     void frame();
@@ -49,9 +49,9 @@ public:
 
     void loadLevel();   //Loads the current level m_iCurrLevel is pointing to into m_levelGrid[][]
     bool loadLevels(string sFilename);  //Loads in all the levels from the specified text file into m_vLevels
-    void UpdateGrid();  //Updates the level grid, moving objects around
+    void updateGrid();  //Updates the level grid, moving objects around
     void loadImages(string sListFilename);  //Loads all images listed in this file into memory, so we can batch load easily
-    void PlaySound(string sFilename);   //Plays a sound, with pitch shifting depending on framerate
+    void playSound(string sFilename);   //Plays a sound, with pitch shifting depending on framerate
 };
 
 

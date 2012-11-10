@@ -27,25 +27,25 @@ public:
     ~Image();
 
     //Accessor methods
-    uint32_t GetWidth()     {return m_iWidth;};
-    uint32_t GetHeight()    {return m_iHeight;};
-    string GetFilename()    {return m_sFilename;};
-    uint32_t GetID()    {return m_iID;};    //For engine use
-    void SetID(uint32_t id) {m_iID = id;};
+    uint32_t getWidth()     {return m_iWidth;};
+    uint32_t getHeight()    {return m_iHeight;};
+    string getFilename()    {return m_sFilename;};
+    uint32_t getID()    {return m_iID;};    //For engine use
+    void setID(uint32_t id) {m_iID = id;};
 
     //public methods
-    void Draw(Rect rcScreenPos);    //Stretch the image into this rect
-    void Draw(Rect rcScreenPos, Rect rcImgPos); //Stretch part of the image into this rect
-    void Draw(float32 x, float32 y);    //Draw the entire image with upper left corner at x,y
-    void Draw(Point pt);                //Draw the entire image with upper left corner at pt
-    void Draw(float32 x, float32 y, Rect rcImgPos); //Draw part of the image at x, y
-    void Draw(Point pt, Rect rcImgPos); //Draw part of the image at pt
-    void DrawCentered(float32 x, float32 y, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center the entire image centered at x,y
-    void DrawCentered(Point pt, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center the entire image centered at pt
-    void DrawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at x,y
-    void DrawCentered(Point pt, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at pt
+    void draw(Rect rcScreenPos);    //Stretch the image into this rect
+    void draw(Rect rcScreenPos, Rect rcImgPos); //Stretch part of the image into this rect
+    void draw(float32 x, float32 y);    //draw the entire image with upper left corner at x,y
+    void draw(Point pt);                //draw the entire image with upper left corner at pt
+    void draw(float32 x, float32 y, Rect rcImgPos); //draw part of the image at x, y
+    void draw(Point pt, Rect rcImgPos); //draw part of the image at pt
+    void drawCentered(float32 x, float32 y, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center the entire image centered at x,y
+    void drawCentered(Point pt, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center the entire image centered at pt
+    void drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at x,y
+    void drawCentered(Point pt, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at pt
 
-    void Scale(uint16_t iScaleFac); //Scales this image up by a given factor from the original, without interpolation. (Scale(1) to reset to original size)
+    void scale(uint16_t iScaleFac); //Scales this image up by a given factor from the original, without interpolation. (scale(1) to reset to original size)
 
 };
 

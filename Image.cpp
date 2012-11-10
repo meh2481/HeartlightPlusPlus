@@ -44,74 +44,74 @@ Image::~Image()
     hge->Release();
 }
 
-void Image::Draw(Rect rcScreenPos)
+void Image::draw(Rect rcScreenPos)
 {
     Rect rcImg = {0,0,m_iWidth,m_iHeight};
-    Draw(rcScreenPos, rcImg);
+    draw(rcScreenPos, rcImg);
 }
 
-void Image::Draw(Rect rcScreenPos, Rect rcImgPos)
+void Image::draw(Rect rcScreenPos, Rect rcImgPos)
 {
     if(m_hSprite == NULL)
     {
-        errlog << "NULL hgeSprite in Image::Draw()" << endl;
+        errlog << "NULL hgeSprite in Image::draw()" << endl;
         return;
     }
     m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
     m_hSprite->RenderStretch(rcScreenPos.left, rcScreenPos.top, rcScreenPos.right, rcScreenPos.bottom);
 }
 
-void Image::Draw(float32 x, float32 y)
+void Image::draw(float32 x, float32 y)
 {
     Rect rcScr = {x, y, m_iWidth+x, m_iHeight+y};
-    Draw(rcScr);
+    draw(rcScr);
 }
 
-void Image::Draw(Point pt)
+void Image::draw(Point pt)
 {
-    Draw(pt.x, pt.y);
+    draw(pt.x, pt.y);
 }
 
-void Image::Draw(float32 x, float32 y, Rect rcImgPos)
+void Image::draw(float32 x, float32 y, Rect rcImgPos)
 {
     Rect rcScr = {x, y, m_iWidth+x, m_iHeight+y};
-    Draw(rcScr, rcImgPos);
+    draw(rcScr, rcImgPos);
 }
 
-void Image::Draw(Point pt, Rect rcImgPos)
+void Image::draw(Point pt, Rect rcImgPos)
 {
-    Draw(pt.x, pt.y, rcImgPos);
+    draw(pt.x, pt.y, rcImgPos);
 }
 
-void Image::DrawCentered(float32 x, float32 y, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(float32 x, float32 y, float32 rotation, float32 stretchFactor)
 {
     Rect rcImg = {0,0,m_iWidth,m_iHeight};
-    DrawCentered(x, y, rcImg, rotation, stretchFactor);
+    drawCentered(x, y, rcImg, rotation, stretchFactor);
 }
 
-void Image::DrawCentered(Point pt, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(Point pt, float32 rotation, float32 stretchFactor)
 {
-    DrawCentered(pt.x, pt.y, rotation, stretchFactor);
+    drawCentered(pt.x, pt.y, rotation, stretchFactor);
 }
 
-void Image::DrawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactor)
 {
     if(m_hSprite == NULL)
     {
-        errlog << "NULL hgeSprite in Image::DrawCentered()" << endl;
+        errlog << "NULL hgeSprite in Image::drawCentered()" << endl;
         return;
     }
     m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
     m_hSprite->RenderEx(x - rcImgPos.width()/2.0, y - rcImgPos.height()/2.0, rotation, stretchFactor);
 }
 
-void Image::DrawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactor)
 {
-    DrawCentered(pt.x, pt.y, rcImgPos, rotation, stretchFactor);
+    drawCentered(pt.x, pt.y, rcImgPos, rotation, stretchFactor);
 }
 
 //Stretch this image onto a larger one, without interpolation
-void Image::Scale(uint16_t iScaleFac)
+void Image::scale(uint16_t iScaleFac)
 {
     if(iScaleFac < 1)   //Don't scale up any if 0
         return;

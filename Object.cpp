@@ -12,8 +12,8 @@ Object::Object(Image* img)
     m_Img = img;
     m_iNumFrames = 1;
     m_iCurFrame = 0;
-    m_iWidth = img->GetWidth();
-    m_iHeight = img->GetHeight();
+    m_iWidth = img->getWidth();
+    m_iHeight = img->getHeight();
     m_ptVel.SetZero();
     m_bDying = false;
     m_bAnimateOnce = false;
@@ -24,33 +24,33 @@ Object::~Object()
 
 }
 
-void Object::UpdateFrame()
+void Object::updateFrame()
 {
     m_iCurFrame++;
     if(m_iCurFrame >= m_iNumFrames)
     {
         if(m_bAnimateOnce)  //If we're only supposed to animate once, die
-            Kill();
+            kill();
         m_iCurFrame = 0;
     }
 }
 
-bool Object::Update()
+bool Object::update()
 {
-    UpdateFrame();
+    updateFrame();
     return !m_bDying;
 }
 
-void Object::Draw(float fScaleFactor)
+void Object::draw(float fScaleFactor)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
-    m_Img->DrawCentered(m_ptPos, rcImgPos, 0.0, fScaleFactor);
+    m_Img->drawCentered(m_ptPos, rcImgPos, 0.0, fScaleFactor);
 }
 
-void Object::SetNumFrames(uint16_t iNumFrames, bool bAnimateOnce)
+void Object::setNumFrames(uint16_t iNumFrames, bool bAnimateOnce)
 {
     m_iNumFrames = iNumFrames;
-    m_iHeight = m_Img->GetHeight()/m_iNumFrames;
+    m_iHeight = m_Img->getHeight()/m_iNumFrames;
     m_bAnimateOnce = bAnimateOnce;
 }
 
@@ -73,12 +73,12 @@ Dwarf::Dwarf(Image* img) : retroObject(img)
 {
 }
 
-void Brick::UpdateFrame()
+void Brick::updateFrame()
 {
     //Don't update frame on bricks
 }
 
-void Door::UpdateFrame()
+void Door::updateFrame()
 {
     if(m_iCurFrame > 0)
         m_iCurFrame++;
@@ -86,7 +86,7 @@ void Door::UpdateFrame()
         m_iCurFrame = m_iNumFrames-1;
 }
 
-void Dwarf::UpdateFrame()
+void Dwarf::updateFrame()
 {
     //Don't update frame on dwarf
 }
