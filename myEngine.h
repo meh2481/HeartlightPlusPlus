@@ -52,6 +52,7 @@ public:
     void updateGrid();  //Updates the level grid, moving objects around
     void loadImages(string sListFilename);  //Loads all images listed in this file into memory, so we can batch load easily
     void playSound(string sFilename);   //Plays a sound, with pitch shifting depending on framerate
+    void explode(uint16_t row, uint16_t col, bool bStartFrame1 = false);    //For handling bomb explosions tile by tile
 };
 
 

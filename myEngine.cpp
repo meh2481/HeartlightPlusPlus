@@ -582,6 +582,57 @@ bool myEngine::checkGrid(int row, int col)
     return false;
 }
 
+void myEngine::explode(uint16_t row, uint16_t col, bool bStartFrame1)
+{
+    if(row < 0 ||
+       row > LEVEL_HEIGHT-1 ||
+       col < 0 ||
+       col > LEVEL_WIDTH-1)
+    {
+        return;     //Off grid = nothing
+    }
+    retroObject* obj = m_levelGrid[col][row];
+    if(obj == NULL) //If null, go ahead and create explosion
+    {
+        m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+        m_levelGrid[col][row]->setName('X');
+        m_levelGrid[col][row]->setNumFrames(7);
+        if(bStartFrame1)
+            m_levelGrid[col][row]->setFrame(1); //Skip first frame
+        m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
+        addObject(m_levelGrid[col][row]);
+    }
+    else
+    {
+        switch(obj->getNameChar())
+        {
+            case '.':
+            case '@':
+            case '=':
+            case '#':
+            case '$':
+            case '!':
+            case '*':
+                obj->kill();
+                m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                m_levelGrid[col][row]->setName('X');
+                m_levelGrid[col][row]->setNumFrames(7);
+                if(bStartFrame1)
+                    m_levelGrid[col][row]->setFrame(1); //Skip first frame
+                m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
+                addObject(m_levelGrid[col][row]);
+                break;
+            case '&':
+                if(bStartFrame1)
+                    obj->setVelocity(0,42);
+                else
+                    obj->setVelocity(0,36);
+                return;
+
+        }
+    }
+}
+
 void myEngine::updateGrid() //Workhorse for updating the objects in the game
 {
     m_bTunnelMoved = false;
@@ -602,14 +653,61 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
             string s = obj->getName();
             switch(*(s.begin()))
             {
+                case 'x':   //exploding bomb
+                    obj->kill();
+                    m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                    m_levelGrid[col][row]->setName('X');
+                    m_levelGrid[col][row]->setNumFrames(7);
+                    m_levelGrid[col][row]->setFrame(1); //Skip first frame
+                    m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
+                    addObject(m_levelGrid[col][row]);
+                    explode(row+1, col, true);
+                    explode(row, col+1, true);
+                    explode(row-1, col);
+                    explode(row, col-1);
+                case 'X':   //explosion
+                    if(obj->getFrame() == 6)
+                    {
+                        obj->kill();
+                        m_levelGrid[col][row] = NULL;
+                    }
+                    break;
                 case '$':   //heart
                 case '@':   //rock
                 case '&':   //bomb
+                    if(obj->getVelocity().y == 36)
+                    {
+                        //Explode
+                        obj->setImage(getImage("res/gfx/orig/bombexplode.png"));
+                        obj->setName('x');
+                        playSound("res/sfx/orig/explode.ogg");
+                        break;
+                    }
+                    else if(obj->getVelocity().y == 42)
+                    {
+                        obj->setVelocity(0,36);
+                        break;
+                    }
+
                     if((row == LEVEL_HEIGHT-1 || m_oldGrid[col][row+1] != NULL) && obj->getVelocity().y > 0)   //Hitting something
                     {
                         if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '*') //Hit player
                         {
-                            //TODO kill player
+                            //kill player
+                            if(m_levelGrid[col][row+1]->getFrame() < 4) //But only if not dying or winning
+                            {
+                                m_levelGrid[col][row+1]->kill();
+                                m_levelGrid[col][row+1] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                                m_levelGrid[col][row+1]->setName('X');
+                                m_levelGrid[col][row+1]->setNumFrames(7);
+                                m_levelGrid[col][row+1]->setPos(col*GRID_WIDTH*SCALE_FAC, (row+1)*GRID_HEIGHT*SCALE_FAC);
+                                addObject(m_levelGrid[col][row+1]);
+                                playSound("res/sfx/orig/explode.ogg");
+                            }
+                            float32 fYvel = obj->getVelocity().y;
+                            if(fYvel > 0)
+                                obj->setVelocity(0,fYvel-1);  //Hitting something, stop falling
+
                         }
                         else  //Hit ground
                         {
@@ -702,10 +800,6 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                             }
                         }
                     }
-                    break;
-
-                case 'x': //Bomb starting to explode
-                    //TODO Create explosion
                     break;
 
                 case '*':   //dwarf
