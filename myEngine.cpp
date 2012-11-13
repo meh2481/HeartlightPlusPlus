@@ -143,11 +143,11 @@ void myEngine::handleEvent(hgeInputEvent event)
                     break;
 
                 case HGEK_F11:      //F11: Decrease fps
-                    setFramerate(std::max(getFramerate()-1,0));
+                    setFramerate(std::max(getFramerate()-1.0,0.0));
                     break;
 
                 case HGEK_F12:      //F12: Increase fps
-                    setFramerate(getFramerate()+1);
+                    setFramerate(getFramerate()+1.0);
                     break;
             }
             break;
@@ -721,12 +721,14 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                             else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '&' && obj->getVelocity().y > 1)    //Hit a bomb
                             {
                                 //Explode
-                                m_oldGrid[col][row+1]->setImage(getImage("res/gfx/orig/bombexplode.png"));
-                                m_oldGrid[col][row+1]->setName('x');    //Explode
-                                playSound("res/sfx/orig/explode.ogg");
+                                m_oldGrid[col][row+1]->setVelocity(0,36);
+                                //m_oldGrid[col][row+1]->setImage(getImage("res/gfx/orig/bombexplode.png"));
+                                //m_oldGrid[col][row+1]->setName('x');    //Explode
+                                //playSound("res/sfx/orig/explode.ogg");
                                 if(*(s.begin()) == '&')    //bomb hit
                                 {
                                     //Explode
+                                    //obj->setVelocity(0,36);
                                     obj->setImage(getImage("res/gfx/orig/bombexplode.png"));
                                     obj->setName('x');
                                     playSound("res/sfx/orig/explode.ogg");
@@ -803,6 +805,8 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                     break;
 
                 case '*':   //dwarf
+                    if(obj->getFrame() > 3)
+                        break;
                     //Move the player if pressing keys
                     if(keyDown(HGEK_RIGHT))
                     {

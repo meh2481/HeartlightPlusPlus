@@ -17,9 +17,9 @@ private:
 
     //Variables for use by the engine
     HGE* m_hge;
-    uint16_t m_iFramerate;
-    float m_fAccumulatedTime;
-    float m_fTargetTime;
+    float32 m_fFramerate;
+    float32 m_fAccumulatedTime;
+    float32 m_fTargetTime;
     hgeSprite* m_sprFill;   //Sprite for filling a color
     map<string, Image*> m_mImages;  //Image handler
     map<string, HEFFECT> m_mSounds; //Sound handler
@@ -68,8 +68,8 @@ public:
     void scaleImages(uint16_t scaleFac);    //scale all images by scaleFac
 
     //Accessor methods
-    void setFramerate(uint16_t iFramerate)    {m_iFramerate = iFramerate; m_fTargetTime = 1.0/(float)(m_iFramerate);};
-    uint16_t getFramerate()   {return m_iFramerate;};
+    void setFramerate(float32 fFramerate);
+    float32 getFramerate()   {return m_fFramerate;};
     uint16_t getWidth() {return m_hge->System_GetState(HGE_SCREENWIDTH);};
     uint16_t getHeight() {return m_hge->System_GetState(HGE_SCREENHEIGHT);};
 

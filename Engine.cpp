@@ -79,6 +79,13 @@ Engine::~Engine()
     for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
         delete (i->second);    //Delete each image
 
+    //Clean up our sound effects
+    for(map<string, HEFFECT>::iterator i = m_mSounds.begin(); i != m_mSounds.end(); i++)
+    {
+        errlog << "Freeing sound effect " << i->first << endl;
+        m_hge->Effect_Free(i->second);
+    }
+
     delete m_sprFill;
     // Clean up and shutdown
 	m_hge->System_Shutdown();
@@ -202,7 +209,16 @@ void Engine::scaleImages(uint16_t scaleFac)
     }
 }
 
-
+void Engine::setFramerate(float32 fFramerate)
+{
+    if(m_fFramerate == 0.0)
+        m_fAccumulatedTime = 0.0;   //If we're stuck at 0fps for a while, this number could be huge, which would cause unlimited fps for a bit
+    m_fFramerate = fFramerate;
+    if(m_fFramerate == 0.0)
+        m_fTargetTime = FLT_MAX;    //Avoid division by 0
+    else
+        m_fTargetTime = 1.0 / m_fFramerate;
+}
 
 
 
