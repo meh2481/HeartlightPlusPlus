@@ -20,7 +20,13 @@
 #define SCALE_FAC       2   //By what factor the retro gfx are scaled
 
 #define WIN_COUNT       14  //How many frames the dwarf jumps up and down until you go to the next level
+#define DIE_COUNT       30  //How many frames the dwarf holds his head before he explodes
 #define GAME_FRAMERATE  9   //How many fps the game normally runs at
+
+#define FADE_NONE       0
+#define FADE_IN         1
+#define FADE_OUT        2
+#define FADE_TIME       0.5
 
 class myEngine : public Engine
 {
@@ -33,7 +39,11 @@ private:
     uint32_t m_iHeartsTotal;    //How many hearts total there are in this level
     uint32_t m_iCollectedHearts;    //how many hearts in this level we've collected
     uint16_t m_iWinningCount;   //Counts down when winning a level
+    uint16_t m_iDyingCount; //Counts down when dying, before you explode
     bool m_bTunnelMoved;    //Haven't moved in a tunnel (need this for shallow copy issues)
+    //Variables for fading the screen to/from black
+    float32 m_fEndFade;
+    uint8_t m_iFade;
 
     bool checkGrid(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
 

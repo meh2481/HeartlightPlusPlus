@@ -21,7 +21,7 @@ bool renderFunc()
 void myEngine::frame()
 {
     updateGrid();
-    updateObjects();
+
     if(m_iWinningCount) //If winning a level, make dwarf jump up and down
     {
         if(--m_iWinningCount)
@@ -48,6 +48,56 @@ void myEngine::frame()
             loadLevel();
         }
     }
+    if(m_iDyingCount)
+    {
+        if(!(--m_iDyingCount))
+        {
+            //Start fading to black
+            m_fEndFade = getTime() + FADE_TIME;
+            m_iFade = FADE_OUT;
+        }
+        else if(m_iDyingCount == 2*DIE_COUNT/3)   //Done dying; explode
+        {
+            //Make gnome explode
+            for(uint16_t row = 0; row < LEVEL_HEIGHT; row++)
+            {
+                for(uint16_t col = 0; col < LEVEL_WIDTH; col++)
+                {
+                    if(m_levelGrid[col][row] == NULL)
+                        continue;
+                    if(m_levelGrid[col][row]->getNameChar() == '*')
+                    {
+                        //Make explosion
+                        m_levelGrid[col][row]->kill();
+                        m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                        m_levelGrid[col][row]->setName('X');
+                        m_levelGrid[col][row]->setNumFrames(7);
+                        m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
+                        addObject(m_levelGrid[col][row]);
+                        playSound("res/sfx/orig/explode.ogg");  //Make explosion sound too
+                    }
+                }
+            }
+        }
+        else if(m_iDyingCount > 2*DIE_COUNT/3)
+        {
+            //Make gnome hold his head and rock back and forth
+            for(uint16_t row = 0; row < LEVEL_HEIGHT; row++)
+            {
+                for(uint16_t col = 0; col < LEVEL_WIDTH; col++)
+                {
+                    if(m_levelGrid[col][row] == NULL)
+                        continue;
+                    if(m_levelGrid[col][row]->getNameChar() == '*')
+                    {
+                        m_levelGrid[col][row]->setFrame(m_iDyingCount % 2 + 4);
+                    }
+                }
+            }
+        }
+    }
+
+    updateObjects();    //Update the objects in the game
 }
 
 void myEngine::draw()
@@ -56,6 +106,32 @@ void myEngine::draw()
     drawObjects();
     //And bottom bar
     m_imgHUD->draw(0,getHeight() - m_imgHUD->getHeight());
+
+    //If fading, draw black overlay
+    if(m_iFade != FADE_NONE)
+    {
+        float32 fTimeLeft = m_fEndFade - getTime();
+        if(fTimeLeft < 0)
+        {
+            if(m_iFade == FADE_IN)
+            {
+                m_iFade = FADE_NONE;
+            }
+            else if(m_iFade == FADE_OUT)
+            {
+                m_iFade = FADE_IN;
+                fTimeLeft = -fTimeLeft;
+                m_fEndFade = getTime() - fTimeLeft + FADE_TIME;
+            }
+        }
+        int32_t iFinalAlpha = 0;
+        if(m_iFade == FADE_IN)
+            iFinalAlpha = (fTimeLeft / FADE_TIME) * (float)(255);
+        else if(m_iFade == FADE_OUT)
+            iFinalAlpha = ((FADE_TIME - fTimeLeft) / FADE_TIME) * (float)(255);
+        fillRect(getScreenRect(), 0,0,0, iFinalAlpha);
+
+    }
 }
 
 void myEngine::init()
@@ -74,7 +150,6 @@ void myEngine::init()
         exit(1);    //Abort
     }
     loadLevel();
-    //m_imgHUD->scale(SCALE_FAC);
     //playMusic("res/sfx/orig/menu_music.ogg"); //Start playing menu music
 }
 
@@ -84,6 +159,8 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_imgHUD = NULL;
     m_iCurrentLevel = 0;
     m_iWinningCount = 0;
+    m_iDyingCount = 0;
+    m_iFade = FADE_NONE;
 }
 
 myEngine::~myEngine()
@@ -138,8 +215,8 @@ void myEngine::handleEvent(hgeInputEvent event)
                     break;
 
                 case HGEK_ESCAPE:
-                    //For now, just reload level
-                    loadLevel();
+                    //Make gnome die
+                    m_iDyingCount = DIE_COUNT;
                     break;
 
                 case HGEK_F11:      //F11: Decrease fps
@@ -185,6 +262,7 @@ void myEngine::loadLevel()
     clearObjects(); //If there's any memory hanging around with objects, clear it out
     m_iHeartsTotal = 0; //No hearts in this level yet
     m_iCollectedHearts = 0;     //And we've collected none
+    m_iDyingCount = m_iWinningCount = 0;    //Reset dying and winning counts
     //And clear out our map
     for(uint16_t row = 0; row < LEVEL_HEIGHT; row++)
     {

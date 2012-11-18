@@ -66,6 +66,8 @@ public:
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
     void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
     void scaleImages(uint16_t scaleFac);    //scale all images by scaleFac
+    float32 getTime()      {return m_hge->Timer_GetTime();}; //Get the time the engine's been running
+    Rect getScreenRect()    {Rect rc = {0,0,getWidth(),getHeight()}; return rc;};
 
     //Accessor methods
     void setFramerate(float32 fFramerate);
