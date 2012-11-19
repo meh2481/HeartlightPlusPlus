@@ -31,9 +31,9 @@ private:
     //Engine-use function definitions
     friend bool frameFunc();
     friend bool renderFunc();
-    bool myFrameFunc();
-    bool myRenderFunc();
-    HEFFECT getEffect(string sFilename);
+    bool _myFrameFunc();
+    bool _myRenderFunc();
+    HEFFECT _getEffect(string sFilename);
 
     Engine(){}; //Default constructor isn't callable
 

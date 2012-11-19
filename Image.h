@@ -30,8 +30,8 @@ public:
     uint32_t getWidth()     {return m_iWidth;};
     uint32_t getHeight()    {return m_iHeight;};
     string getFilename()    {return m_sFilename;};
-    uint32_t getID()    {return m_iID;};    //For engine use
-    void setID(uint32_t id) {m_iID = id;};
+    uint32_t _getID()    {return m_iID;};    //For engine use
+    void _setID(uint32_t id) {m_iID = id;};
 
     //public methods
     void draw(Rect rcScreenPos);    //Stretch the image into this rect

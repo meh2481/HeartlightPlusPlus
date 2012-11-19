@@ -51,7 +51,7 @@ public:
     Point getVelocity() {return m_ptVel;};
     void setVelocity(Point pt)  {m_ptVel = pt;};
     void setVelocity(float32 x, float32 y)  {m_ptVel.x = x; m_ptVel.y = y;};
-    uint32_t getID()    {return m_Img->getID();};   //For engine use
+    uint32_t _getID()    {return m_Img->_getID();};   //For engine use
 
     Image* getImage()   {return m_Img;};
     void setImage(Image* img)   {m_Img = img;}; //Use with caution! No error-checking!

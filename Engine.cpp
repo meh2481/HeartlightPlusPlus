@@ -6,7 +6,7 @@
 #include "Engine.h"
 ofstream errlog("err.log");
 
-bool Engine::myFrameFunc()
+bool Engine::_myFrameFunc()
 {
     //Handle input events HGE is giving us
     hgeInputEvent event;
@@ -23,7 +23,7 @@ bool Engine::myFrameFunc()
     return m_bQuitting;
 }
 
-bool Engine::myRenderFunc()
+bool Engine::_myRenderFunc()
 {
     // Begin rendering
 	m_hge->Gfx_BeginScene();
@@ -134,13 +134,13 @@ Image* Engine::getImage(string sFilename)
     {
         Image* img = new Image(sFilename);
         m_mImages[sFilename] = img; //Add to the map
-        img->setID(m_mImages.size());   //For now, just numbering 0...n will work for an ID
+        img->_setID(m_mImages.size());   //For now, just numbering 0...n will work for an ID
         return img;
     }
     return i->second; //Return this image
 }
 
-HEFFECT Engine::getEffect(string sFilename)
+HEFFECT Engine::_getEffect(string sFilename)
 {
     map<string, HEFFECT>::iterator i = m_mSounds.find(sFilename);
     if(i == m_mSounds.end())   //This sound isn't here yet; load
@@ -156,7 +156,7 @@ HEFFECT Engine::getEffect(string sFilename)
 void Engine::addObject(Object* obj)
 {
     pair<uint32_t, Object*> objPair;
-    objPair.first = obj->getID();
+    objPair.first = obj->_getID();
     objPair.second = obj;
     m_mObjects.insert(objPair);
 }
@@ -194,13 +194,13 @@ void Engine::drawObjects(float32 fScale)
 
 void Engine::playSound(string sFilename, int volume, int pan, float32 pitch)
 {
-    HEFFECT eff = getEffect(sFilename);
+    HEFFECT eff = _getEffect(sFilename);
     m_hge->Effect_PlayEx(eff,volume,pan,pitch);
 }
 
 void Engine::playMusic(string sFilename, int volume, int pan, float32 pitch)
 {
-    HEFFECT eff = getEffect(sFilename); //Can take a while, depending on the song
+    HEFFECT eff = _getEffect(sFilename); //Can take a while, depending on the song
     if(!m_bFirstMusic)
         m_hge->Channel_Stop(m_MusicChannel);
     m_MusicChannel = m_hge->Effect_PlayEx(eff,volume,pan,pitch,true);

@@ -46,14 +46,14 @@ private:
     uint32_t m_iHeartsTotal;    //How many hearts total there are in this level
     uint32_t m_iCollectedHearts;    //how many hearts in this level we've collected
     uint16_t m_iWinningCount;   //Counts down when winning a level
-    uint16_t m_iDyingCount; //Counts down when dying, before you explode
+    uint16_t m_iDyingCount; //Counts down when dying, before you explode_retro
     bool m_bTunnelMoved;    //Haven't moved in a tunnel (need this for shallow copy issues)
     //Variables for fading the screen to/from black
     float32 m_fEndFade;
     uint8_t m_iFade;
     bool m_bDebug;  //Whether to draw debug data and stuff or not
 
-    bool moveToGridSquare(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
+    bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
 
 protected:
     void frame();
@@ -65,13 +65,13 @@ public:
     myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle);
     ~myEngine();
 
-    void loadLevel();   //Loads the current level m_iCurrLevel is pointing to into m_levelGrid[][]
+    void loadLevel_retro();   //Loads the current level m_iCurrLevel is pointing to into m_levelGrid[][]
     bool loadLevels(string sFilename);  //Loads in all the levels from the specified text file into m_vLevels
-    void updateGrid();  //Updates the level grid, moving objects around
+    void updateGrid_retro();  //Updates the level grid, moving objects around
     void loadImages(string sListFilename);  //Loads all images listed in this file into memory, so we can batch load easily
     void playSound(string sFilename);   //Plays a sound, with pitch shifting depending on framerate
-    void explode(uint16_t row, uint16_t col, bool bStartFrame1 = false);    //For handling bomb explosions tile by tile
-    bool floatable(retroObject* obj);   //If this object can be pushed upwards by a balloon
+    void explode_retro(uint16_t row, uint16_t col, bool bStartFrame1 = false);    //For handling bomb explosions tile by tile
+    bool floatable_retro(retroObject* obj);   //If this object can be pushed upwards by a balloon
 };
 
 
