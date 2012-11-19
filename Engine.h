@@ -52,16 +52,16 @@ public:
 
     //Methods
     void start();   //Runs HGE and doesn't exit until the engine ends
-    void fillRect(Point p1, Point p2, uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha); //Fill the specified rect with the specified color
-    void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha);
-    void fillRect(Rect rc, uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha);
+    void fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha); //Fill the specified rect with the specified color
+    void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+    void fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
     Image* getImage(string sFilename);  //Retrieves an image from the filename, creating it if need be
     void addObject(Object* obj);    //Add an object to the object handler
     void updateObjects();           //update all objects in the game
-    void drawObjects(float fScale = 1.0);   //draw all objects in the game
+    void drawObjects(float32 fScale = 1.0);   //draw all objects in the game
     void clearObjects();    //Destroy all objects, freeing memory
-    virtual void playSound(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play a sound
-    void playMusic(string sFilename, int volume = 100, int pan = 0, float pitch = 1.0);     //Play looping music
+    virtual void playSound(string sFilename, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play a sound
+    void playMusic(string sFilename, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play looping music
     int32_t randInt(int32_t min, int32_t max) {return m_hge->Random_Int(min, max);};  //Get a random integer
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
     void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely

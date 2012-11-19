@@ -13,7 +13,7 @@ bool Engine::myFrameFunc()
     while(m_hge->Input_GetEvent(&event))
         handleEvent(event);
 
-    float dt = m_hge->Timer_GetDelta();
+    float32 dt = m_hge->Timer_GetDelta();
     m_fAccumulatedTime += dt;
     if(m_fAccumulatedTime >= m_fTargetTime)
     {
@@ -111,18 +111,18 @@ void Engine::start()
     //m_hge->Effect_Free(s);
 }
 
-void Engine::fillRect(Point p1, Point p2, uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha)
+void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
     fillRect(p1.x, p1.y, p2.x, p2.y, red, green, blue, alpha);
 }
 
-void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha)
+void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
     m_sprFill->SetColor(ARGB(alpha,red,green,blue));    //Set the color of the sprite
     m_sprFill->Render4V(x1, y1, x2, y1, x2, y2, x1, y2);    //And draw it
 }
 
-void Engine::fillRect(Rect rc, uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha)
+void Engine::fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
     fillRect(rc.left, rc.top, rc.right, rc.bottom, red, green, blue, alpha);
 }
@@ -163,17 +163,28 @@ void Engine::addObject(Object* obj)
 
 void Engine::updateObjects()
 {
+    //Update all objects
+    //errlog << "Updating " << m_mObjects.size() << " objects" << endl;
+    //int iNum = 0;
+    //int iNumErased = 0;
     for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
-        if(!(*i).second->update())
+    //    iNum++;
+        if(!(*i).second->update())  //Remove this object if it returns true
         {
             delete (*i).second;
             m_mObjects.erase(i);
+    //        iNumErased++;
         }
     }
+    //errlog << "Erased " << iNumErased << " objects. " << iNum << " objects updated total, final object count: " << m_mObjects.size() << endl;
+
+    //Update all object frames also (outside loop so frames aren't put out of sync)
+    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+        (*i).second->updateFrame();
 }
 
-void Engine::drawObjects(float fScale)
+void Engine::drawObjects(float32 fScale)
 {
     for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
@@ -181,13 +192,13 @@ void Engine::drawObjects(float fScale)
     }
 }
 
-void Engine::playSound(string sFilename, int volume, int pan, float pitch)
+void Engine::playSound(string sFilename, int volume, int pan, float32 pitch)
 {
     HEFFECT eff = getEffect(sFilename);
     m_hge->Effect_PlayEx(eff,volume,pan,pitch);
 }
 
-void Engine::playMusic(string sFilename, int volume, int pan, float pitch)
+void Engine::playMusic(string sFilename, int volume, int pan, float32 pitch)
 {
     HEFFECT eff = getEffect(sFilename); //Can take a while, depending on the song
     if(!m_bFirstMusic)

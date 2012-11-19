@@ -20,6 +20,9 @@ bool renderFunc()
 
 void myEngine::frame()
 {
+    if(m_iFade == FADE_IN)
+        return; //Don't do anything if fading in
+
     updateGrid();
 
     if(m_iWinningCount) //If winning a level, make dwarf jump up and down
@@ -56,7 +59,7 @@ void myEngine::frame()
             m_fEndFade = getTime() + FADE_TIME;
             m_iFade = FADE_OUT;
         }
-        else if(m_iDyingCount == 2*DIE_COUNT/3)   //Done dying; explode
+        else if(m_iDyingCount == DIE_COUNT/2)   //Done dying; explode
         {
             //Make gnome explode
             for(uint16_t row = 0; row < LEVEL_HEIGHT; row++)
@@ -70,6 +73,7 @@ void myEngine::frame()
                         //Make explosion
                         m_levelGrid[col][row]->kill();
                         m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                        m_oldGrid[col][row] = m_levelGrid[col][row];
                         m_levelGrid[col][row]->setName('X');
                         m_levelGrid[col][row]->setNumFrames(7);
                         m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
@@ -79,7 +83,7 @@ void myEngine::frame()
                 }
             }
         }
-        else if(m_iDyingCount > 2*DIE_COUNT/3)
+        else if(m_iDyingCount > DIE_COUNT/2)
         {
             //Make gnome hold his head and rock back and forth
             for(uint16_t row = 0; row < LEVEL_HEIGHT; row++)
@@ -110,27 +114,43 @@ void myEngine::draw()
     //If fading, draw black overlay
     if(m_iFade != FADE_NONE)
     {
-        float32 fTimeLeft = m_fEndFade - getTime();
-        if(fTimeLeft < 0)
+        float32 fCurTime = getTime();
+        float32 fTimeLeft = m_fEndFade - fCurTime;
+        if(fTimeLeft <= 0)
         {
             if(m_iFade == FADE_IN)
-            {
                 m_iFade = FADE_NONE;
-            }
             else if(m_iFade == FADE_OUT)
             {
                 m_iFade = FADE_IN;
-                fTimeLeft = -fTimeLeft;
-                m_fEndFade = getTime() - fTimeLeft + FADE_TIME;
+                m_fEndFade = fCurTime + fTimeLeft + FADE_TIME;
+                fTimeLeft = m_fEndFade - fCurTime;
+                loadLevel();      //Reload this level
             }
         }
-        int32_t iFinalAlpha = 0;
+        uint8_t iFinalAlpha = 0;
         if(m_iFade == FADE_IN)
-            iFinalAlpha = (fTimeLeft / FADE_TIME) * (float)(255);
+            iFinalAlpha = (fTimeLeft / FADE_TIME) * (float32)(255);
         else if(m_iFade == FADE_OUT)
-            iFinalAlpha = ((FADE_TIME - fTimeLeft) / FADE_TIME) * (float)(255);
+            iFinalAlpha = ((FADE_TIME - fTimeLeft) / FADE_TIME) * (float32)(255);
         fillRect(getScreenRect(), 0,0,0, iFinalAlpha);
 
+    }
+
+    //Draw debug stuff if we should
+    if(m_bDebug)
+    {
+        for(uint16_t row = 0; row < LEVEL_HEIGHT; row++)
+        {
+            for(uint16_t col = 0; col < LEVEL_WIDTH; col++)
+            {
+                if(m_levelGrid[col][row] != NULL)   //Draw a green box in this grid square if it isn't vacant
+                {
+                    Rect rc = {col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC, (col+1)*GRID_WIDTH*SCALE_FAC, (row+1)*GRID_HEIGHT*SCALE_FAC};
+                    fillRect(rc, 0, 255, 0, 100);
+                }
+            }
+    }
     }
 }
 
@@ -161,6 +181,7 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_iWinningCount = 0;
     m_iDyingCount = 0;
     m_iFade = FADE_NONE;
+    m_bDebug = false;
 }
 
 myEngine::~myEngine()
@@ -216,7 +237,8 @@ void myEngine::handleEvent(hgeInputEvent event)
 
                 case HGEK_ESCAPE:
                     //Make gnome die
-                    m_iDyingCount = DIE_COUNT;
+                    if(!m_iDyingCount)
+                        m_iDyingCount = DIE_COUNT;
                     break;
 
                 case HGEK_F11:      //F11: Decrease fps
@@ -484,7 +506,7 @@ bool myEngine::loadLevels(string sFilename)
     return true;
 }
 
-bool myEngine::checkGrid(int row, int col)
+bool myEngine::moveToGridSquare(int row, int col)
 {
     if(row < 0 ||
        col < 0 ||
@@ -575,6 +597,7 @@ bool myEngine::checkGrid(int row, int col)
                     {
                         m_levelGrid[j][i]->kill();
                         m_levelGrid[j][i] = NULL;
+                        m_oldGrid[j][i] = NULL;
                     }
                 }
             }
@@ -585,10 +608,8 @@ bool myEngine::checkGrid(int row, int col)
         {
             //See if tunnel is obstructed
             bool bObstructed = true;
-            for(uint16_t coltest = col-1; coltest > 0; coltest--)
+            for(uint16_t coltest = col-1; coltest >= 0; coltest--)
             {
-                if(coltest <= 0)
-                    break;
                 retroObject* tunnelTest = m_oldGrid[coltest][row];
                 if(tunnelTest == NULL || tunnelTest->getNameChar() == '.')
                 {
@@ -615,6 +636,7 @@ bool myEngine::checkGrid(int row, int col)
                     {
                         m_levelGrid[j][i]->kill();
                         m_levelGrid[j][i] = NULL;
+                        m_oldGrid[j][i] = NULL;
                     }
                 }
             }
@@ -691,20 +713,25 @@ void myEngine::explode(uint16_t row, uint16_t col, bool bStartFrame1)
             case '$':
             case '!':
             case '*':
+                if(obj->getNameChar() == '*' && m_iWinningCount)
+                    break;  //Don't explode if winning
                 obj->kill();
                 m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                m_oldGrid[col][row] = m_levelGrid[col][row];
                 m_levelGrid[col][row]->setName('X');
                 m_levelGrid[col][row]->setNumFrames(7);
                 if(bStartFrame1)
                     m_levelGrid[col][row]->setFrame(1); //Skip first frame
                 m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
                 addObject(m_levelGrid[col][row]);
+                if(obj->getNameChar() == '*' && !m_iDyingCount)
+                    m_iDyingCount = DIE_COUNT/2;    //Start dying count
                 break;
             case '&':
                 if(bStartFrame1)
-                    obj->setVelocity(0,42);
+                    obj->setData(BOMB_EXPLODEDELAY2);
                 else
-                    obj->setVelocity(0,36);
+                    obj->setData(BOMB_EXPLODEDELAY1);
                 return;
 
         }
@@ -714,12 +741,14 @@ void myEngine::explode(uint16_t row, uint16_t col, bool bStartFrame1)
 void myEngine::updateGrid() //Workhorse for updating the objects in the game
 {
     m_bTunnelMoved = false;
+    //Copy new grid back to old
     for(int row = 0; row < LEVEL_HEIGHT; row++)
     {
         for(int col = 0; col < LEVEL_WIDTH; col++)
             m_oldGrid[col][row] = m_levelGrid[col][row];
     }
 
+    //Loop through and update
     for(int row = 0; row < LEVEL_HEIGHT; row++)
     {
         for(int col = 0; col < LEVEL_WIDTH; col++)
@@ -729,11 +758,12 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                 continue;   //ignore empty spaces
 
             string s = obj->getName();
-            switch(*(s.begin()))
+            switch(obj->getNameChar())
             {
                 case 'x':   //exploding bomb
                     obj->kill();
                     m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                    m_oldGrid[col][row] = m_levelGrid[col][row];
                     m_levelGrid[col][row]->setName('X');
                     m_levelGrid[col][row]->setNumFrames(7);
                     m_levelGrid[col][row]->setFrame(1); //Skip first frame
@@ -747,13 +777,14 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                     if(obj->getFrame() == 6)
                     {
                         obj->kill();
+                        m_oldGrid[col][row] = NULL;
                         m_levelGrid[col][row] = NULL;
                     }
                     break;
                 case '$':   //heart
                 case '@':   //rock
                 case '&':   //bomb
-                    if(obj->getVelocity().y == 36)
+                    if(obj->getData() == BOMB_EXPLODEDELAY1)
                     {
                         //Explode
                         obj->setImage(getImage("res/gfx/orig/bombexplode.png"));
@@ -761,9 +792,9 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                         playSound("res/sfx/orig/explode.ogg");
                         break;
                     }
-                    else if(obj->getVelocity().y == 42)
+                    else if(obj->getData() == BOMB_EXPLODEDELAY2)
                     {
-                        obj->setVelocity(0,36);
+                        obj->setData(BOMB_EXPLODEDELAY1);
                         break;
                     }
 
@@ -776,11 +807,14 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                             {
                                 m_levelGrid[col][row+1]->kill();
                                 m_levelGrid[col][row+1] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                                m_oldGrid[col][row+1] = m_levelGrid[col][row+1];
                                 m_levelGrid[col][row+1]->setName('X');
                                 m_levelGrid[col][row+1]->setNumFrames(7);
                                 m_levelGrid[col][row+1]->setPos(col*GRID_WIDTH*SCALE_FAC, (row+1)*GRID_HEIGHT*SCALE_FAC);
                                 addObject(m_levelGrid[col][row+1]);
                                 playSound("res/sfx/orig/explode.ogg");
+                                if(!m_iDyingCount)
+                                    m_iDyingCount = DIE_COUNT/2;    //Start death countdown timer
                             }
                             float32 fYvel = obj->getVelocity().y;
                             if(fYvel > 0)
@@ -796,17 +830,20 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                                 else
                                     playSound("res/sfx/orig/hit_grass.ogg");
                             }
+                            else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '0')    //Hit a balloon
+                            {
+                                //do nothing for now
+                            }
                             else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '&' && obj->getVelocity().y > 1)    //Hit a bomb
                             {
                                 //Explode
-                                m_oldGrid[col][row+1]->setVelocity(0,36);
+                                m_oldGrid[col][row+1]->setData(BOMB_EXPLODEDELAY1);
                                 //m_oldGrid[col][row+1]->setImage(getImage("res/gfx/orig/bombexplode.png"));
                                 //m_oldGrid[col][row+1]->setName('x');    //Explode
                                 //playSound("res/sfx/orig/explode.ogg");
                                 if(*(s.begin()) == '&')    //bomb hit
                                 {
                                     //Explode
-                                    //obj->setVelocity(0,36);
                                     obj->setImage(getImage("res/gfx/orig/bombexplode.png"));
                                     obj->setName('x');
                                     playSound("res/sfx/orig/explode.ogg");
@@ -850,9 +887,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                            cObj == '@' ||
                            cObj == '&' ||
                            cObj == '=' ||
-                           cObj == '#' ||
-                           cObj == 'x' ||
-                           cObj == 'X')
+                           cObj == '#')
                         {
                             //Check left side first, as per game behavior
                             if(col > 0 && m_levelGrid[col-1][row] == NULL && m_levelGrid[col-1][row+1] == NULL && obj->getVelocity().y == 0)
@@ -888,7 +923,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                     //Move the player if pressing keys
                     if(keyDown(HGEK_RIGHT))
                     {
-                        if(checkGrid(row, col+1))
+                        if(moveToGridSquare(row, col+1))
                             break;
                         if(!keyDown(HGEK_SPACE) && col+1 < LEVEL_WIDTH && m_levelGrid[col+1][row] == NULL)
                         {
@@ -911,7 +946,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                     }
                     else if(keyDown(HGEK_LEFT))
                     {
-                        if(checkGrid(row, col-1))
+                        if(moveToGridSquare(row, col-1))
                             break;
                         if(!keyDown(HGEK_SPACE) && col > 0 && m_levelGrid[col-1][row] == NULL)
                         {
@@ -934,7 +969,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                     }
                     else if(keyDown(HGEK_DOWN))
                     {
-                        checkGrid(row+1, col);
+                        moveToGridSquare(row+1, col);
                         if(!keyDown(HGEK_SPACE) && row+1 < LEVEL_HEIGHT && m_levelGrid[col][row+1] == NULL)
                         {
                             m_levelGrid[col][row+1] = obj;
@@ -957,7 +992,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                     }
                     else if(keyDown(HGEK_UP))
                     {
-                        checkGrid(row-1, col);
+                        moveToGridSquare(row-1, col);
                         if(!keyDown(HGEK_SPACE) && row > 0 && m_levelGrid[col][row-1] == NULL)
                         {
                             m_levelGrid[col][row-1] = obj;
@@ -987,7 +1022,57 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                     break;
 
                 case '0':   //balloon
-                    //TODO
+                    //Move up one slot if we can
+                    if(row > 0 && m_levelGrid[col][row-1] == NULL)
+                    {
+                        m_levelGrid[col][row-1] = m_levelGrid[col][row];
+                        m_levelGrid[col][row] = NULL;
+                        obj->offset(0, -GRID_HEIGHT*SCALE_FAC);
+                        if(obj->isData(BALLOON_FLOATDELAY))
+                            obj->removeData(BALLOON_FLOATDELAY);
+                    }
+                    //Move up this and the slot above it if we can
+                    else if(row > 1 && m_levelGrid[col][row-1] != NULL && floatable(m_levelGrid[col][row-1]) && m_levelGrid[col][row-2] == NULL)
+                    {
+                        if(!obj->isData(BALLOON_FLOATDELAY))
+                        {
+                            obj->addData(BALLOON_FLOATDELAY);
+                            //Scoot both upwards one
+                            m_levelGrid[col][row-2] = m_levelGrid[col][row-1];
+                            m_levelGrid[col][row-1] = obj;
+                            m_levelGrid[col][row] = NULL;
+                            obj->offset(0, -GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col][row-2]->offset(0, -GRID_HEIGHT*SCALE_FAC);
+                        }
+                        else
+                            obj->removeData(BALLOON_FLOATDELAY);
+                    }
+                    //Get pushed down a slot if we can
+                    else if(row > 1 &&
+                            row < LEVEL_HEIGHT-1 &&
+                            m_levelGrid[col][row-1] != NULL &&
+                            m_levelGrid[col][row-2] != NULL &&
+                            m_levelGrid[col][row+1] == NULL &&
+                            floatable(m_levelGrid[col][row-1]) &&
+                            floatable((m_levelGrid[col][row-2])) &&
+                            m_levelGrid[col][row-2]->getNameChar() != '*')
+                    {
+                        if(!obj->isData(BALLOON_FLOATDELAY))
+                        {
+                            obj->addData(BALLOON_FLOATDELAY);
+                            //Scoot both down one (the third will fall)
+                            m_levelGrid[col][row]->offset(0, GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col][row-1]->offset(0, GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col][row+1] = obj;
+                            m_levelGrid[col][row] = m_levelGrid[col][row-1];
+                            m_levelGrid[col][row-1] = NULL;
+                            m_oldGrid[col][row-1] = NULL;
+                        }
+                        else
+                            obj->removeData(BALLOON_FLOATDELAY);
+                    }
+                    else if(obj->isData(BALLOON_FLOATDELAY))
+                        obj->removeData(BALLOON_FLOATDELAY);
                     break;
 
                 case '<':   //Left tunnel
@@ -1002,6 +1087,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                                 nextTunnel->kill();
                             //Create dwarf
                             m_levelGrid[col-1][row] = new Dwarf(getImage("res/gfx/orig/dwarf.png"));
+                            m_oldGrid[col-1][row] = m_levelGrid[col-1][row];
                             m_levelGrid[col-1][row]->setNumFrames(8);
                             m_levelGrid[col-1][row]->setFrame(1);
                             m_levelGrid[col-1][row]->setPos((col-1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
@@ -1037,6 +1123,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                                 nextTunnel->kill();
                             //Create dwarf
                             m_levelGrid[col+1][row] = new Dwarf(getImage("res/gfx/orig/dwarf.png"));
+                            m_oldGrid[col+1][row] = m_levelGrid[col+1][row];
                             m_levelGrid[col+1][row]->setNumFrames(8);
                             m_levelGrid[col+1][row]->setPos((col+1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                             m_levelGrid[col+1][row]->setName('*');
@@ -1062,9 +1149,22 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
     }
 }
 
+bool myEngine::floatable(retroObject* obj)
+{
+    switch(obj->getNameChar())
+    {
+        case '*':
+        case '&':
+        case '@':
+        case '$':
+            return true;
+    }
+    return false;
+}
+
 void myEngine::playSound(string sFilename)
 {
-    Engine::playSound(sFilename, 100, 0, (float32)(getFramerate()/(float)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
+    Engine::playSound(sFilename, 100, 0, (float32)(getFramerate()/(float32)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
 }
 
 

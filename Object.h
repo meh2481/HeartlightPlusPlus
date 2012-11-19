@@ -25,16 +25,14 @@ protected:
     Point m_ptVel;  //Velocity
     bool m_bDying;  //If sprite should be destroyed or no
 
-    //Helper methods
-    virtual void updateFrame();
-
 public:
     Object(Image* img);
     ~Object();
 
     //Helper methods
     virtual bool update();  //Return false to destroy the object
-    void draw(float fScaleFactor = 1.0);
+    virtual void updateFrame();
+    void draw(float32 fScaleFactor = 1.0);
     void offset(float32 x, float32 y)   {m_ptPos.x += x; m_ptPos.y += y;};
     void offset(Point pt)               {m_ptPos += pt;};
     void kill() {m_bDying = true;};    //Destroy sprite
@@ -64,6 +62,7 @@ class retroObject : public Object
 {
 protected:
     string m_sName;   //Name, for use by your game code (the way you'll be able to tell what object's what)
+    uint64_t m_iData;   //For use by game code
 
 public:
     retroObject(Image* img);
@@ -71,31 +70,34 @@ public:
     void setName(char cName)  {m_sName.clear(); m_sName.push_back(cName);};
     string getName()    {return m_sName;};
     char getNameChar()  {return *(m_sName.begin());};
+
+    uint64_t getData()  {return m_iData;};
+    void    setData(uint64_t data) {m_iData = data;};
+    void    addData(uint64_t iAdd)  {m_iData |= iAdd;};
+    void    removeData(uint64_t iRem)   {m_iData ^= iRem;};
+    bool    isData(uint64_t iTest) {return(m_iData & iTest);};
 };
 
 //Objects specific to our game
 class Brick : public retroObject
 {
-protected:
-    void updateFrame();
 public:
     Brick(Image* img);
+    void updateFrame();
 };
 
 class Door : public retroObject
 {
-protected:
-    void updateFrame();
 public:
     Door(Image* img);
+    void updateFrame();
 };
 
 class Dwarf : public retroObject
 {
-protected:
-    void updateFrame();
 public:
     Dwarf(Image* img);
+    void updateFrame();
 };
 
 

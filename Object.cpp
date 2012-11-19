@@ -37,11 +37,10 @@ void Object::updateFrame()
 
 bool Object::update()
 {
-    updateFrame();
     return !m_bDying;
 }
 
-void Object::draw(float fScaleFactor)
+void Object::draw(float32 fScaleFactor)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
     m_Img->drawCentered(m_ptPos, rcImgPos, 0.0, fScaleFactor);
@@ -58,6 +57,7 @@ void Object::setNumFrames(uint16_t iNumFrames, bool bAnimateOnce)
 retroObject::retroObject(Image* img) : Object(img)
 {
     m_sName = "";
+    m_iData = 0;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
