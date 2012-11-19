@@ -31,8 +31,9 @@
 //Bitfields for object data
 #define BOMB_EXPLODEDELAY1  1
 #define BOMB_EXPLODEDELAY2  2
-
-#define BALLOON_FLOATDELAY  1
+#define BALLOON_FLOATDELAY  4
+#define FALLING_1           8
+#define FALLING_2           16
 
 class myEngine : public Engine
 {

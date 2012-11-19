@@ -798,7 +798,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                         break;
                     }
 
-                    if((row == LEVEL_HEIGHT-1 || m_oldGrid[col][row+1] != NULL) && obj->getVelocity().y > 0)   //Hitting something
+                    if((row == LEVEL_HEIGHT-1 || m_oldGrid[col][row+1] != NULL) && obj->isData(FALLING_1|FALLING_2))   //Hitting something
                     {
                         if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '*') //Hit player
                         {
@@ -816,14 +816,18 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                                 if(!m_iDyingCount)
                                     m_iDyingCount = DIE_COUNT/2;    //Start death countdown timer
                             }
-                            float32 fYvel = obj->getVelocity().y;
-                            if(fYvel > 0)
-                                obj->setVelocity(0,fYvel-1);  //Hitting something, stop falling
+                            obj->removeData(FALLING_1);
+                            if(obj->isData(FALLING_2))
+                            {
+                                obj->removeData(FALLING_2);
+                                obj->addData(FALLING_1);
+                            }
+
 
                         }
                         else  //Hit ground
                         {
-                            if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '.' && obj->getVelocity().y > 1) //Hit grass
+                            if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '.' && obj->isData(FALLING_2)) //Hit grass
                             {
                                 if(*(s.begin()) == '$') //Heart hit
                                     playSound("res/sfx/orig/heart_hit_grass.ogg");
@@ -834,7 +838,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                             {
                                 //do nothing for now
                             }
-                            else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '&' && obj->getVelocity().y > 1)    //Hit a bomb
+                            else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '&' && obj->isData(FALLING_2))    //Hit a bomb
                             {
                                 //Explode
                                 m_oldGrid[col][row+1]->setData(BOMB_EXPLODEDELAY1);
@@ -849,7 +853,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                                     playSound("res/sfx/orig/explode.ogg");
                                 }
                             }
-                            else if(obj->getVelocity().y > 1)
+                            else if(obj->isData(FALLING_2))
                             {
                                 if(*(s.begin()) == '$') //Heart hit
                                 {
@@ -867,9 +871,12 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                                 else    //rock hit
                                     playSound("res/sfx/orig/rock_hit.ogg");
                             }
-                            float32 fYvel = obj->getVelocity().y;
-                            if(fYvel > 0)
-                                obj->setVelocity(0,fYvel-1);  //Hitting something, stop falling
+                            obj->removeData(FALLING_1);
+                            if(obj->isData(FALLING_2))
+                            {
+                                obj->removeData(FALLING_2);
+                                obj->addData(FALLING_1);
+                            }
                         }
                     }
                     else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1] == NULL)   //Fall down
@@ -877,7 +884,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                         obj->offset(0,GRID_HEIGHT*SCALE_FAC);
                         m_levelGrid[col][row+1] = obj;
                         m_levelGrid[col][row] = NULL;
-                        obj->setVelocity(0,2);
+                        obj->addData(FALLING_2);
                     }
                     if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1] != NULL)   //Check and see if we should move over to fall
                     {
@@ -890,7 +897,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                            cObj == '#')
                         {
                             //Check left side first, as per game behavior
-                            if(col > 0 && m_levelGrid[col-1][row] == NULL && m_levelGrid[col-1][row+1] == NULL && obj->getVelocity().y == 0)
+                            if(col > 0 && m_levelGrid[col-1][row] == NULL && m_levelGrid[col-1][row+1] == NULL && !obj->isData(FALLING_1|FALLING_2))
                             {
                                 if(row < 1 || m_levelGrid[col-1][row-1] == NULL || (m_levelGrid[col-1][row-1]->getNameChar() != '$' &&
                                                                                     m_levelGrid[col-1][row-1]->getNameChar() != '&' &&
@@ -902,7 +909,7 @@ void myEngine::updateGrid() //Workhorse for updating the objects in the game
                                 }
                             }
                             //Then check right side
-                            else if(col < LEVEL_WIDTH-1 && m_levelGrid[col+1][row] == NULL && m_levelGrid[col+1][row+1] == NULL && obj->getVelocity().y == 0)
+                            else if(col < LEVEL_WIDTH-1 && m_levelGrid[col+1][row] == NULL && m_levelGrid[col+1][row+1] == NULL && !obj->isData(FALLING_1|FALLING_2))
                             {
                                 if(row < 1 || m_levelGrid[col+1][row-1] == NULL || (m_levelGrid[col+1][row-1]->getNameChar() != '$' &&
                                                                                     m_levelGrid[col+1][row-1]->getNameChar() != '&' &&

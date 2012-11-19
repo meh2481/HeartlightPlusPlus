@@ -74,7 +74,7 @@ public:
     uint64_t getData()  {return m_iData;};
     void    setData(uint64_t data) {m_iData = data;};
     void    addData(uint64_t iAdd)  {m_iData |= iAdd;};
-    void    removeData(uint64_t iRem)   {m_iData ^= iRem;};
+    void    removeData(uint64_t iRem)   {m_iData &= ~iRem;};
     bool    isData(uint64_t iTest) {return(m_iData & iTest);};
 };
 
