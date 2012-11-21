@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<font name="blue">
+  <image path="res/gfx/orig/text_blue.png" />
+  
+  <char ascii="a" rect="0,0,15,9" />
+  <char ascii="b" rect="16,0,31,9" />
+  <char ascii="c" rect="32,0,47,9" />
+  <char ascii="d" rect="48,0,63,9" />
+  <char ascii="e" rect="64,0,79,9" />
+  <char ascii="f" rect="80,0,95,9" />
+  <char ascii="g" rect="96,0,111,9" />
+  <char ascii="h" rect="112,0,127,9" />
+  <char ascii="i" rect="128,0,142,9" />
+  <char ascii="j" rect="143,0,159,9" />
+  <char ascii="k" rect="160,0,175,9" />
+  <char ascii="l" rect="176,0,191,9" />
+  <char ascii="m" rect="192,0,207,9" />
+  <char ascii="n" rect="208,0,223,9" />
+  <char ascii="o" rect="224,0,239,9" />
+  <char ascii="p" rect="240,0,255,9" />
+  <char ascii="q" rect="256,0,271,9" />
+  <char ascii="r" rect="272,0,287,9" />
+  <char ascii="s" rect="288,0,303,9" />
+  <char ascii="t" rect="304,0,319,9" />
+  <char ascii="u" rect="320,0,335,9" />
+  <char ascii="v" rect="336,0,351,9" />
+  <char ascii="w" rect="352,0,367,9" />
+  <char ascii="x" rect="368,0,383,9" />
+  <char ascii="y" rect="384,0,399,9" />
+  <char ascii="z" rect="400,0,415,9" />
+  <char ascii="1" rect="416,0,431,9" />
+  <char ascii="2" rect="432,0,447,9" />
+  <char ascii="3" rect="448,0,463,9" />
+  <char ascii="4" rect="464,0,479,9" />
+  <char ascii="5" rect="480,0,495,9" />
+  <char ascii="6" rect="496,0,511,9" />
+  <char ascii="7" rect="512,0,527,9" />
+  <char ascii="8" rect="528,0,543,9" />
+  <char ascii="9" rect="544,0,559,9" />
+  <char ascii="0" rect="560,0,575,9" />
+  <char ascii="." rect="576,0,591,9" />
+  <char ascii=" " rect="592,0,607,9" />
+  
+</font>

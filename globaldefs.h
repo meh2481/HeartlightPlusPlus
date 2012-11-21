@@ -14,6 +14,7 @@ using namespace std;
 #include "hgeparticle.h"
 #include "Box2D.h"
 #include "tinyxml2.h"
+using namespace tinyxml2;
 #include "VFS.h"
 
 #define Point b2Vec2    //Our point structure

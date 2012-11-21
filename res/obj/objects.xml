@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects>
+  <object name="rock" xml="res/obj/rock.xml" />
+  <object name="dwarf" xml="res/obj/dwarf.xml" />
+  <object name="explosion" xml="res/obj/explosion.xml" />
+  <object name="heart" xml="res/obj/heart.xml" />
+  <object name="grass" xml="res/obj/grass.xml" />
+  <object name="door" xml="res/obj/door.xml" />
+  <object name="bomb" xml="res/obj/bomb.xml" />
+  <object name="balloon" xml="res/obj/balloon.xml" />
+  <object name="plasma" xml="res/obj/plasma.xml" />
+  <object name="brick" xml="res/obj/brick.xml" />
+  <object name="metal" xml="res/obj/metal.xml" />
+  <object name="ltunnel" xml="res/obj/ltunnel.xml" />
+  <object name="rtunnel" xml="res/obj/rtunnel.xml" />
+</objects>

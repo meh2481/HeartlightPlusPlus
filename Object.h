@@ -61,7 +61,7 @@ public:
 class retroObject : public Object
 {
 protected:
-    string m_sName;   //Name, for use by your game code (the way you'll be able to tell what object's what)
+    string m_sName;   //Name, for use by the game code (the way you'll be able to tell what object's what)
     uint64_t m_iData;   //For use by game code
 
 public:

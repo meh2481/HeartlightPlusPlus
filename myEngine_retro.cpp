@@ -31,13 +31,13 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
                         if(m_levelGrid[col][row]->getNameChar() == '!')
                         {
                             m_levelGrid[col][row]->setFrame(1);
-                            playSound("res/sfx/orig/door_open.ogg");
+                            playSound("o_door");
                         }
                     }
                 }
             }
             else    //Otherwise, play getting heart noise
-                playSound("res/sfx/orig/get_heart.ogg");
+                playSound("o_heart");
             m_levelGrid[col][row]->kill();
             m_levelGrid[col][row] = NULL;
             m_oldGrid[col][row] = NULL;
@@ -56,7 +56,7 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
                 m_levelGrid[col][row] = NULL;
                 m_oldGrid[col][row] = NULL;
                 m_iWinningCount = WIN_COUNT+2;  //+2 here because we'll miss a couple frames
-                playSound("res/sfx/orig/applause.ogg");
+                playSound("o_applause");
             }
             break;
 
@@ -82,10 +82,10 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
                 break;  //We can't go through this tunnel (also will prevent you from going the wrong way through tunnels)
 
             //Enter the tunnel
-            obj->setImage(getImage("res/gfx/orig/tunnelR_up.png"));
+            obj->setImage(getImage("o_tunnelrup"));
             obj->setName(">*"); //Player is in here
             m_bTunnelMoved = true;  //Entered this tunnel
-            playSound("res/sfx/orig/subway.ogg");
+            playSound("o_subway");
 
             //Destroy the current dwarf object
             for(uint32_t i = 0; i < LEVEL_HEIGHT; i++)
@@ -122,9 +122,9 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
                 break;  //We can't go through this tunnel (also will prevent you from going the wrong way through tunnels)
 
             //Enter the tunnel
-            obj->setImage(getImage("res/gfx/orig/tunnelL_up.png"));
+            obj->setImage(getImage("tunnellup"));
             obj->setName("<*"); //Player is in here
-            playSound("res/sfx/orig/subway.ogg");
+            playSound("o_subway");
 
             //Destroy the current dwarf object
             for(uint32_t i = 0; i < LEVEL_HEIGHT; i++)
@@ -183,19 +183,8 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
 
 void myEngine::loadLevel_retro()
 {
-    //Grab all images
-    Image* heart = getImage("res/gfx/orig/heart.png");
-    Image* rock = getImage("res/gfx/orig/rock.png");
-    Image* grass = getImage("res/gfx/orig/grass.png");
-    Image* dwarf = getImage("res/gfx/orig/dwarf.png");
-    Image* exitdoor = getImage("res/gfx/orig/door.png");
-    Image* bomb = getImage("res/gfx/orig/bomb.png");
-    Image* balloon = getImage("res/gfx/orig/balloon.png");
-    Image* plasma = getImage("res/gfx/orig/plasma.png");
-    Image* brick = getImage("res/gfx/orig/brick.png");
-    Image* metalwall = getImage("res/gfx/orig/metalwall.png");
-    Image* Ltunnel = getImage("res/gfx/orig/tunnelL.png");
-    Image* Rtunnel = getImage("res/gfx/orig/tunnelR.png");
+    //Clear image cache
+    clearImages();
     if(m_iCurrentLevel >= m_vLevels.size()) //At the end, when we shouldn't be
     {
         errlog << "No levels loaded! Abort. " << endl;
@@ -231,7 +220,7 @@ void myEngine::loadLevel_retro()
 
                 case '$':   //Heart
                     m_iHeartsTotal++;   //Increment the total number of hearts in this level
-                    m_levelGrid[col][row] = new retroObject(heart);
+                    m_levelGrid[col][row] = new retroObject(getImage("o_heart"));
                     m_levelGrid[col][row]->setNumFrames(6);
                     m_levelGrid[col][row]->setFrame(randInt(0,5));    //randomize the frame it starts at
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
@@ -240,21 +229,21 @@ void myEngine::loadLevel_retro()
                     break;
 
                 case '@':   //rock
-                    m_levelGrid[col][row] = new retroObject(rock);
+                    m_levelGrid[col][row] = new retroObject(getImage("o_rock"));
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
 
                 case '.':   //grass
-                    m_levelGrid[col][row] = new retroObject(grass);
+                    m_levelGrid[col][row] = new retroObject(getImage("o_grass"));
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
 
                 case '*':   //the dwarf
-                    m_levelGrid[col][row] = new Dwarf(dwarf);
+                    m_levelGrid[col][row] = new Dwarf(getImage("o_dwarf"));
                     m_levelGrid[col][row]->setNumFrames(8);
                     //Set to facing left if on right side of the screen
                     if(col >= LEVEL_WIDTH/2)
@@ -265,7 +254,7 @@ void myEngine::loadLevel_retro()
                     break;
 
                 case '!':   //exit door
-                    m_levelGrid[col][row] = new Door(exitdoor);
+                    m_levelGrid[col][row] = new Door(getImage("o_door"));
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
@@ -273,14 +262,14 @@ void myEngine::loadLevel_retro()
                     break;
 
                 case '&':   //bomb
-                    m_levelGrid[col][row] = new retroObject(bomb);
+                    m_levelGrid[col][row] = new retroObject(getImage("o_bomb"));
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
 
                 case '0':   //balloon
-                    m_levelGrid[col][row] = new retroObject(balloon);
+                    m_levelGrid[col][row] = new retroObject(getImage("o_balloon"));
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setFrame(randInt(0,3));
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
@@ -289,7 +278,7 @@ void myEngine::loadLevel_retro()
                     break;
 
                 case '=':   //plasma
-                    m_levelGrid[col][row] = new retroObject(plasma);
+                    m_levelGrid[col][row] = new retroObject(getImage("o_plasma"));
                     m_levelGrid[col][row]->setNumFrames(8);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
@@ -297,7 +286,7 @@ void myEngine::loadLevel_retro()
                     break;
 
                 case '#':   //brick wall
-                    m_levelGrid[col][row] = new Brick(brick);
+                    m_levelGrid[col][row] = new Brick(getImage("o_brick"));
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setFrame(m_iCurrentLevel % 4);  //Color depends on level number, like original game
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
@@ -306,13 +295,13 @@ void myEngine::loadLevel_retro()
                     break;
 
                 case '%':   //metal wall
-                    m_levelGrid[col][row] = new retroObject(metalwall);
+                    m_levelGrid[col][row] = new retroObject(getImage("o_metalwall"));
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
                 case '<':   //left tunnel
-                    m_levelGrid[col][row] = new retroObject(Ltunnel);
+                    m_levelGrid[col][row] = new retroObject(getImage("o_tunnell"));
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
@@ -320,7 +309,7 @@ void myEngine::loadLevel_retro()
                     break;
 
                 case '>':   //right tunnel
-                    m_levelGrid[col][row] = new retroObject(Rtunnel);
+                    m_levelGrid[col][row] = new retroObject(getImage("o_tunnelr"));
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
@@ -356,7 +345,7 @@ void myEngine::loadLevel_retro()
                 if(m_levelGrid[col][row]->getNameChar() == '!')
                 {
                     m_levelGrid[col][row]->setFrame(1);
-                    playSound("res/sfx/orig/door_open.ogg");
+                    playSound("o_door");
                 }
             }
         }
@@ -387,7 +376,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
             {
                 case 'x':   //exploding bomb
                     obj->kill();
-                    m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                    m_levelGrid[col][row] = new retroObject(getImage("o_explode"));
                     m_oldGrid[col][row] = m_levelGrid[col][row];
                     m_levelGrid[col][row]->setName('X');
                     m_levelGrid[col][row]->setNumFrames(7);
@@ -412,9 +401,9 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                     if(obj->getData() == BOMB_EXPLODEDELAY1)
                     {
                         //Explode
-                        obj->setImage(getImage("res/gfx/orig/bombexplode.png"));
+                        obj->setImage(getImage("o_bombexplode"));
                         obj->setName('x');
-                        playSound("res/sfx/orig/explode_retro.ogg");
+                        playSound("o_explode");
                         break;
                     }
                     else if(obj->getData() == BOMB_EXPLODEDELAY2)
@@ -431,13 +420,13 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             if(m_levelGrid[col][row+1]->getFrame() < 4) //But only if not dying or winning
                             {
                                 m_levelGrid[col][row+1]->kill();
-                                m_levelGrid[col][row+1] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                                m_levelGrid[col][row+1] = new retroObject(getImage("o_explode"));
                                 m_oldGrid[col][row+1] = m_levelGrid[col][row+1];
                                 m_levelGrid[col][row+1]->setName('X');
                                 m_levelGrid[col][row+1]->setNumFrames(7);
                                 m_levelGrid[col][row+1]->setPos(col*GRID_WIDTH*SCALE_FAC, (row+1)*GRID_HEIGHT*SCALE_FAC);
                                 addObject(m_levelGrid[col][row+1]);
-                                playSound("res/sfx/orig/explode_retro.ogg");
+                                playSound("o_explode");
                                 if(!m_iDyingCount)
                                     m_iDyingCount = DIE_COUNT/2;    //Start death countdown timer
                             }
@@ -455,9 +444,9 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '.' && obj->isData(FALLING_2)) //Hit grass
                             {
                                 if(*(s.begin()) == '$') //Heart hit
-                                    playSound("res/sfx/orig/heart_hit_grass.ogg");
+                                    playSound("o_heartgrass");
                                 else
-                                    playSound("res/sfx/orig/hit_grass.ogg");
+                                    playSound("o_grass");
                             }
                             else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1]->getNameChar() == '0')    //Hit a balloon
                             {
@@ -470,9 +459,9 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                                 if(*(s.begin()) == '&')    //bomb hit
                                 {
                                     //Explode
-                                    obj->setImage(getImage("res/gfx/orig/bombexplode.png"));
+                                    obj->setImage(getImage("o_bombexplode"));
                                     obj->setName('x');
-                                    playSound("res/sfx/orig/explode_retro.ogg");
+                                    playSound("o_explode");
                                 }
                             }
                             else if(obj->isData(FALLING_2))
@@ -480,18 +469,18 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                                 if(*(s.begin()) == '$') //Heart hit
                                 {
                                     char cName[256];
-                                    sprintf(cName, "res/sfx/orig/heart_hit%d.ogg", randInt(1,4));
+                                    sprintf(cName, "o_hearthit%d", randInt(1,4));
                                     playSound(string(cName));   //Random hit noise
                                 }
                                 else if(*(s.begin()) == '&')    //bomb hit
                                 {
                                     //Explode
-                                    obj->setImage(getImage("res/gfx/orig/bombexplode.png"));
+                                    obj->setImage(getImage("o_bombexplode"));
                                     obj->setName('x');
-                                    playSound("res/sfx/orig/explode_retro.ogg");
+                                    playSound("o_explode");
                                 }
                                 else    //rock hit
-                                    playSound("res/sfx/orig/rock_hit.ogg");
+                                    playSound("o_rock");
                             }
                             obj->removeData(FALLING_1);
                             if(obj->isData(FALLING_2))
@@ -715,7 +704,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             if(nextTunnel != NULL)
                                 nextTunnel->kill();
                             //Create dwarf
-                            m_levelGrid[col-1][row] = new Dwarf(getImage("res/gfx/orig/dwarf.png"));
+                            m_levelGrid[col-1][row] = new Dwarf(getImage("o_dwarf"));
                             m_oldGrid[col-1][row] = m_levelGrid[col-1][row];
                             m_levelGrid[col-1][row]->setNumFrames(8);
                             m_levelGrid[col-1][row]->setFrame(1);
@@ -723,7 +712,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             m_levelGrid[col-1][row]->setName('*');
                             addObject(m_levelGrid[col-1][row]);
                             obj->setName('<');
-                            obj->setImage(getImage("res/gfx/orig/tunnelL.png"));
+                            obj->setImage(getImage("o_tunnell"));
 
                         }
                         else if(nextTunnel->getNameChar() == '<')    //Next tunnel
@@ -751,14 +740,14 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             if(nextTunnel != NULL)
                                 nextTunnel->kill();
                             //Create dwarf
-                            m_levelGrid[col+1][row] = new Dwarf(getImage("res/gfx/orig/dwarf.png"));
+                            m_levelGrid[col+1][row] = new Dwarf(getImage("o_dwarf"));
                             m_oldGrid[col+1][row] = m_levelGrid[col+1][row];
                             m_levelGrid[col+1][row]->setNumFrames(8);
                             m_levelGrid[col+1][row]->setPos((col+1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                             m_levelGrid[col+1][row]->setName('*');
                             addObject(m_levelGrid[col+1][row]);
                             obj->setName('>');
-                            obj->setImage(getImage("res/gfx/orig/tunnelR.png"));
+                            obj->setImage(getImage("o_tunnelr"));
 
                         }
                         else if(nextTunnel->getNameChar() == '>')    //Next tunnel
@@ -790,7 +779,7 @@ void myEngine::explode_retro(uint16_t row, uint16_t col, bool bStartFrame1)
     retroObject* obj = m_levelGrid[col][row];
     if(obj == NULL) //If null, go ahead and create explosion
     {
-        m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+        m_levelGrid[col][row] = new retroObject(getImage("o_explode"));
         m_levelGrid[col][row]->setName('X');
         m_levelGrid[col][row]->setNumFrames(7);
         if(bStartFrame1)
@@ -812,7 +801,7 @@ void myEngine::explode_retro(uint16_t row, uint16_t col, bool bStartFrame1)
                 if(obj->getNameChar() == '*' && m_iWinningCount)
                     break;  //Don't explode_retro if winning
                 obj->kill();
-                m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                m_levelGrid[col][row] = new retroObject(getImage("o_explode"));
                 m_oldGrid[col][row] = m_levelGrid[col][row];
                 m_levelGrid[col][row]->setName('X');
                 m_levelGrid[col][row]->setNumFrames(7);

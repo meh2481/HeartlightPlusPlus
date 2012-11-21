@@ -8,6 +8,11 @@
 
 Object::Object(Image* img)
 {
+    if(img == NULL)
+    {
+        errlog << "Error: NULL image encountered in Object::Object()" << endl;
+        exit(1);
+    }
     m_ptPos.x = m_ptPos.y = 0;
     m_Img = img;
     m_iNumFrames = 1;

@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <object>
   <orig>
-    <image path="res/gfx/orig/rock.png" />
+    <image name="o_rock" />
   </orig>
   <new>
-    <image path="res/gfx/new/rock.png" />
+    <image name="n_rock" />
     <circle radius="59.5" mass="90" center="63,62" />
   </new>
 </object>

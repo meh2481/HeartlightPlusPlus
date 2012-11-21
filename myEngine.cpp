@@ -18,6 +18,23 @@ bool renderFunc()
     return g_pGlobalEngine->_myRenderFunc();
 }
 
+myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iWidth, iHeight, sTitle)
+{
+    g_pGlobalEngine = this;
+    m_iCurrentLevel = 0;
+    m_iWinningCount = 0;
+    m_iDyingCount = 0;
+    m_iFade = FADE_NONE;
+    m_bDebug = false;
+    m_Font = new Text("res/font/blue.xml");
+    m_Font->setScale(2);
+}
+
+myEngine::~myEngine()
+{
+    delete m_Font;
+}
+
 void myEngine::frame()
 {
     if(m_iFade == FADE_IN)
@@ -72,13 +89,13 @@ void myEngine::frame()
                     {
                         //Make explosion
                         m_levelGrid[col][row]->kill();
-                        m_levelGrid[col][row] = new retroObject(getImage("res/gfx/orig/explosion.png"));
+                        m_levelGrid[col][row] = new retroObject(getImage("o_explode"));
                         m_oldGrid[col][row] = m_levelGrid[col][row];
                         m_levelGrid[col][row]->setName('X');
                         m_levelGrid[col][row]->setNumFrames(7);
                         m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
                         addObject(m_levelGrid[col][row]);
-                        playSound("res/sfx/orig/explode_retro.ogg");  //Make explosion sound too
+                        playSound("o_explode");  //Make explosion sound too
                     }
                 }
             }
@@ -109,7 +126,6 @@ void myEngine::draw()
     //Just draw all objects
     drawObjects();
     //And bottom bar
-    m_imgHUD->draw(0,getHeight() - m_imgHUD->getHeight());
 
     //If fading, draw black overlay
     if(m_iFade != FADE_NONE)
@@ -150,61 +166,98 @@ void myEngine::draw()
                     fillRect(rc, 0, 255, 0, 100);
                 }
             }
+        }
     }
-    }
+
+    m_Font->render("abcdefghijklmnopqrstuvwxyz.123456789", 0, SCREEN_HEIGHT*SCALE_FAC-16);
 }
 
 void myEngine::init()
 {
     //Load all images, so we can scale all of them up from the start
-    loadImages("res/gfx/orig.txt");
-
-    m_imgHUD = getImage("res/gfx/orig/bottombar.png");  //Hang onto this image
+    loadImages("res/gfx/orig.xml");
 
     //Now scale all the images up
     scaleImages(SCALE_FAC);
 
-    if(!loadLevels("res/LEVELS.HL"))
+    //Load all sounds as well
+    loadSounds("res/sfx/orig.xml");
+
+    if(!loadLevels("res/levels/LEVELS.HL"))
     {
         errlog << "Aborting..." << endl;
         exit(1);    //Abort
     }
     loadLevel_retro();
-    //playMusic("res/sfx/orig/menu_music.ogg"); //Start playing menu music
-}
-
-myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iWidth, iHeight, sTitle)
-{
-    g_pGlobalEngine = this;
-    m_imgHUD = NULL;
-    m_iCurrentLevel = 0;
-    m_iWinningCount = 0;
-    m_iDyingCount = 0;
-    m_iFade = FADE_NONE;
-    m_bDebug = false;
-}
-
-myEngine::~myEngine()
-{
+    //playMusic("o_mus_menu"); //Start playing menu music
 }
 
 void myEngine::loadImages(string sListFilename)
 {
-    ifstream infile(sListFilename.c_str());
-    if(infile.fail())
+    //  File format:
+    //
+    //  <?xml version="1.0" encoding="UTF-8"?>
+    //  <images>
+    //      <image name="o_balloon" path="res/gfx/orig/balloon.png" />
+    //      ...
+    //  </images>
+
+    //If you wish to reference the image in your code, use the text in the "name" field
+
+    XMLDocument doc;
+    doc.LoadFile(sListFilename.c_str());
+
+    XMLElement* elem = doc.FirstChildElement("images");
+    if(elem == NULL) return;
+    elem = elem->FirstChildElement("image");
+    if(elem == NULL) return;
+    for(;;) //Load all elements
     {
-        errlog << "Couldn't open image list file " << sListFilename << " for reading. Abort." << endl;
-        exit(1);
+        const char* cPath = elem->Attribute("path");
+        if(cPath == NULL) return;
+        const char* cName = elem->Attribute("name");
+        if(cName == NULL) return;
+        createImage(cPath, cName);  //Create this image
+
+        //Move to the next sibling
+        if(elem->NextSibling() == NULL) break;
+        elem = elem->NextSibling()->ToElement();
+        if(elem == NULL) break;
     }
-    while(!infile.fail() && !infile.eof())
+}
+
+void myEngine::loadSounds(string sListFilename)
+{
+    //  File format:
+    //
+    //  <?xml version="1.0" encoding="UTF-8"?>
+    //  <sounds>
+    //      <sound name="o_applause" path="res/sfx/orig/applause.ogg" />
+    //      ...
+    //  </sounds>
+
+    //If you wish to reference the sound in your code, use the text in the "name" field
+
+    XMLDocument doc;
+    doc.LoadFile(sListFilename.c_str());
+
+    XMLElement* elem = doc.FirstChildElement("sounds");
+    if(elem == NULL) return;
+    elem = elem->FirstChildElement("sound");
+    if(elem == NULL) return;
+    for(;;) //Load all elements
     {
-        char name[256];
-        infile.getline(name, 256);
-        string s(name);
-        if(s.size())
-            getImage(s);    //load this image
+        const char* cPath = elem->Attribute("path");
+        if(cPath == NULL) return;
+        const char* cName = elem->Attribute("name");
+        if(cName == NULL) return;
+        createSound(cPath, cName);  //Create this sound
+
+        //Move to the next sibling
+        if(elem->NextSibling() == NULL) break;
+        elem = elem->NextSibling()->ToElement();
+        if(elem == NULL) break;
     }
-    infile.close();
 }
 
 void myEngine::handleEvent(hgeInputEvent event)
@@ -247,6 +300,10 @@ void myEngine::handleEvent(hgeInputEvent event)
 
                 case HGEK_F12:      //F12: Increase fps
                     setFramerate(getFramerate()+1.0);
+                    break;
+
+                case HGEK_V:
+                    m_bDebug = !m_bDebug;
                     break;
             }
             break;
@@ -323,9 +380,9 @@ bool myEngine::loadLevels(string sFilename)
     return true;
 }
 
-void myEngine::playSound(string sFilename)
+void myEngine::playSound(string sName)
 {
-    Engine::playSound(sFilename, 100, 0, (float32)(getFramerate()/(float32)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
+    Engine::playSound(sName, 100, 0, (float32)(getFramerate()/(float32)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
 }
 
 

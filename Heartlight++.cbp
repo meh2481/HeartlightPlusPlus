@@ -58,10 +58,13 @@
 		<Unit filename="Image.h" />
 		<Unit filename="Object.cpp" />
 		<Unit filename="Object.h" />
+		<Unit filename="Text.cpp" />
+		<Unit filename="Text.h" />
 		<Unit filename="globaldefs.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="myEngine.cpp" />
 		<Unit filename="myEngine.h" />
+		<Unit filename="myEngine_retro.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

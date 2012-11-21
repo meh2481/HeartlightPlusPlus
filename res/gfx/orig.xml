@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<images>
+  <image name="o_balloon" path="res/gfx/orig/balloon.png" />
+  <image name="o_bombexplode" path="res/gfx/orig/bombexplode.png" />
+  <image name="o_bomb" path="res/gfx/orig/bomb.png" />
+  <image name="o_brick" path="res/gfx/orig/brick.png" />
+  <image name="o_door" path="res/gfx/orig/door.png" />
+  <image name="o_dwarf" path="res/gfx/orig/dwarf.png" />
+  <image name="o_explode" path="res/gfx/orig/explosion.png" />
+  <image name="o_grass" path="res/gfx/orig/grass.png" />
+  <image name="o_heart" path="res/gfx/orig/heart.png" />
+  <image name="o_metalwall" path="res/gfx/orig/metalwall.png" />
+  <image name="o_plasma" path="res/gfx/orig/plasma.png" />
+  <image name="o_rock" path="res/gfx/orig/rock.png" />
+  <image name="o_tunnell" path="res/gfx/orig/tunnelL.png" />
+  <image name="o_tunnellup" path="res/gfx/orig/tunnelL_up.png" />
+  <image name="o_tunnelr" path="res/gfx/orig/tunnelR.png" />
+  <image name="o_tunnelrup" path="res/gfx/orig/tunnelR_up.png" />
+</images>

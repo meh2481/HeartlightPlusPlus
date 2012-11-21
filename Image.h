@@ -45,6 +45,8 @@ public:
     void drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at x,y
     void drawCentered(Point pt, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at pt
 
+    void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);  //Set the image to this color
+    void setColor(DWORD dwCol);
     void scale(uint16_t iScaleFac); //Scales this image up by a given factor from the original, without interpolation. (scale(1) to reset to original size)
 
 };

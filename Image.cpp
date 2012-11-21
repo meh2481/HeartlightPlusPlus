@@ -74,7 +74,7 @@ void Image::draw(Point pt)
 
 void Image::draw(float32 x, float32 y, Rect rcImgPos)
 {
-    Rect rcScr = {x, y, m_iWidth+x, m_iHeight+y};
+    Rect rcScr = {x, y, rcImgPos.width()+x, rcImgPos.height()+y};
     draw(rcScr, rcImgPos);
 }
 
@@ -108,6 +108,18 @@ void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, 
 void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactor)
 {
     drawCentered(pt.x, pt.y, rcImgPos, rotation, stretchFactor);
+}
+
+//Set the color of this image
+void Image::setColor(DWORD dwCol)
+{
+    m_hSprite->SetColor(dwCol);
+}
+
+void Image::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+    DWORD dwCol = ARGB(a,r,g,b);
+    setColor(dwCol);
 }
 
 //Stretch this image onto a larger one, without interpolation

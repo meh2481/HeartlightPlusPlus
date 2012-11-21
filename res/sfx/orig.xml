@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sounds>
+  <sound name="o_applause" path="res/sfx/orig/applause.ogg" />
+  <sound name="o_door" path="res/sfx/orig/door_open.ogg" />
+  <sound name="o_explode" path="res/sfx/orig/explode.ogg" />
+  <sound name="o_heart" path="res/sfx/orig/get_heart.ogg" />
+  <sound name="o_hearthit1" path="res/sfx/orig/heart_hit1.ogg" />
+  <sound name="o_hearthit2" path="res/sfx/orig/heart_hit2.ogg" />
+  <sound name="o_hearthit3" path="res/sfx/orig/heart_hit3.ogg" />
+  <sound name="o_hearthit4" path="res/sfx/orig/heart_hit4.ogg" />
+  <sound name="o_heartgrass" path="res/sfx/orig/heart_hit_grass.ogg" />
+  <sound name="o_grass" path="res/sfx/orig/hit_grass.ogg" />
+  <sound name="o_mus_menu" path="res/sfx/orig/menu_music.ogg" />
+  <sound name="o_rock" path="res/sfx/orig/rock_hit.ogg" />
+  <sound name="o_subway" path="res/sfx/orig/subway.ogg" />
+  <sound name="o_mus_theme" path="res/sfx/orig/theme_music.ogg" />
+  <sound name="o_toggle" path="res/sfx/orig/toggle.ogg" />
+</sounds>

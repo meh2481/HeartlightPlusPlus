@@ -69,15 +69,16 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 	m_bFirstMusic = true;
 	m_bQuitting = false;
 	m_hge->Random_Seed();   //Seed the random number generator
+	m_iImgScaleFac = 0;
 }
 
 Engine::~Engine()
 {
+    //Clear up our object map
     clearObjects();
 
     //Clean up our image map
-    for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
-        delete (i->second);    //Delete each image
+    clearImages();
 
     //Clean up our sound effects
     for(map<string, HEFFECT>::iterator i = m_mSounds.begin(); i != m_mSounds.end(); i++)
@@ -98,6 +99,14 @@ void Engine::clearObjects()
     for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
         delete (*i).second;
     m_mObjects.clear();
+}
+
+void Engine::clearImages()
+{
+    //Note that this clears the memory associated with the images, not the filenames. We can reload images as the need arises
+    for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
+        delete (i->second);    //Delete each image
+    m_mImages.clear();
 }
 
 void Engine::start()
@@ -127,27 +136,38 @@ void Engine::fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t
     fillRect(rc.left, rc.top, rc.right, rc.bottom, red, green, blue, alpha);
 }
 
-Image* Engine::getImage(string sFilename)
+Image* Engine::getImage(string sName)
 {
-    map<string, Image*>::iterator i = m_mImages.find(sFilename);
-    if(i == m_mImages.end())   //This image isn't here yet; load
+    map<string, Image*>::iterator i = m_mImages.find(sName);
+    if(i == m_mImages.end())   //This image isn't here; load it
     {
-        Image* img = new Image(sFilename);
-        m_mImages[sFilename] = img; //Add to the map
+        Image* img = new Image(m_mImageNames[sName]);   //Create this image
+        m_mImages[sName] = img; //Add to the map
         img->_setID(m_mImages.size());   //For now, just numbering 0...n will work for an ID
+        img->scale(m_iImgScaleFac); //Scale this image on creation
         return img;
     }
     return i->second; //Return this image
 }
 
-HEFFECT Engine::_getEffect(string sFilename)
+void Engine::createImage(string sPath, string sName)
 {
-    map<string, HEFFECT>::iterator i = m_mSounds.find(sFilename);
+    m_mImageNames[sName] = sPath;
+}
+
+void Engine::createSound(string sPath, string sName)
+{
+    m_mSoundNames[sName] = sPath;
+}
+
+HEFFECT Engine::_getEffect(string sName)
+{
+    map<string, HEFFECT>::iterator i = m_mSounds.find(sName);
     if(i == m_mSounds.end())   //This sound isn't here yet; load
     {
-        errlog << "Loading sound effect " << sFilename << endl;
-        HEFFECT eff = m_hge->Effect_Load(sFilename.c_str());
-        m_mSounds[sFilename] = eff; //Add to the map
+        errlog << "Loading sound effect " << m_mSoundNames[sName] << endl;
+        HEFFECT eff = m_hge->Effect_Load(m_mSoundNames[sName].c_str());
+        m_mSounds[sName] = eff; //Add to the map
         return eff;
     }
     return i->second; //Return this sound
@@ -192,15 +212,15 @@ void Engine::drawObjects(float32 fScale)
     }
 }
 
-void Engine::playSound(string sFilename, int volume, int pan, float32 pitch)
+void Engine::playSound(string sName, int volume, int pan, float32 pitch)
 {
-    HEFFECT eff = _getEffect(sFilename);
+    HEFFECT eff = _getEffect(sName);
     m_hge->Effect_PlayEx(eff,volume,pan,pitch);
 }
 
-void Engine::playMusic(string sFilename, int volume, int pan, float32 pitch)
+void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
 {
-    HEFFECT eff = _getEffect(sFilename); //Can take a while, depending on the song
+    HEFFECT eff = _getEffect(sName); //Can take a while, depending on the song
     if(!m_bFirstMusic)
         m_hge->Channel_Stop(m_MusicChannel);
     m_MusicChannel = m_hge->Effect_PlayEx(eff,volume,pan,pitch,true);
@@ -218,6 +238,7 @@ void Engine::scaleImages(uint16_t scaleFac)
     {
         i->second->scale(scaleFac);
     }
+    m_iImgScaleFac = scaleFac;
 }
 
 void Engine::setFramerate(float32 fFramerate)
