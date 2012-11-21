@@ -60,7 +60,10 @@
 		<Unit filename="Object.h" />
 		<Unit filename="Text.cpp" />
 		<Unit filename="Text.h" />
+		<Unit filename="globaldefs.cpp" />
 		<Unit filename="globaldefs.h" />
+		<Unit filename="hud.cpp" />
+		<Unit filename="hud.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="myEngine.cpp" />
 		<Unit filename="myEngine.h" />

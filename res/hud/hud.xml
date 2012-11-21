@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hud>
-  <orig>
-    <images>
-      <image name="o_bottombar" path="res/gfx/orig/bottombar.png" />
-      <image name="o_levelclear" path="res/gfx/orig/level_cleared.png" />
-      <!--image name="o_logo" path="res/gfx/orig/logo.png" /-->
-      <image name="o_musicoff" path="res/gfx/orig/music_off.png" />
-      <image name="o_musicon" path="res/gfx/orig/music_on.png" />
-      <image name="o_radoff" path="res/gfx/orig/radioactive_thing_off.png" />
-      <image name="o_radon" path="res/gfx/orig/radioactive_thing_on.png" />
-      <image name="o_soundoff" path="res/gfx/orig/sound_off.png" />
-      <image name="o_soundon" path="res/gfx/orig/sound_on.png" />
-      <!--image name="o_title" path="res/gfx/orig/title.png" /-->
-    </images>
-    
-    <group fadedelay="3.0" fadetime="1.0" >
-      <toggleitem name="sound" default="true" img_on="o_soundon" img_off="o_soundoff" key="118" signal="soundtoggle" pos="28,3" />
-      <toggleitem name="music" default="true" img_on="o_musicon" img_off="o_musicoff" key="117" signal="musictoggle" pos="4,3" />
-      <toggleitem name="rad" default="false" img_on="o_radon" img_off="o_radoff" key="119" signal="radtoggle" pos="52,3" />
-    </group>
-    <toggleitem name="defeated" default="false" img_on="o_levelclear" img_off="" slot="defeated" pos="176,193" />
-    
-    <bgimage img="o_bottombar" pos="0,192" />
-    
-    <textbox name="curlevel" default="1" pos="303,192" align="right,bottom" fill="0,0,0,255" font="green" slot="levelchanged" />
-    <textbox name="levelsbeaten" default="0" pos="192,192" align="left,bottom" fill="0,0,0,255" font="blue" slot="levelbeaten" />
-    <textbox name="levelstotal" default="0" pos="175,192" align="right,bottom" fill="0,0,0,255" font="blue" slot="levelstotal" />
-    <textbox name="heartsgotten" default="0" pos="64,192" align="left,bottom" fill="0,0,0,255" font="yellow" slot="heartsgotten" />
-    <textbox name="heartstotal" default="0" pos="47,192" align="right,bottom" fill="0,0,0,255" font="yellow" slot="heartstotal" />
-    
-  </orig>
-
+<hud name="levelhud">
+  <!-- Images and fonts must be declared first, before they're used -->
+  <images>
+    <image name="o_bottombar" path="res/gfx/orig/bottombar.png" />
+    <image name="o_levelclear" path="res/gfx/orig/level_cleared.png" />
+    <image name="o_musicoff" path="res/gfx/orig/music_off.png" />
+    <image name="o_musicon" path="res/gfx/orig/music_on.png" />
+    <image name="o_radoff" path="res/gfx/orig/radioactive_thing_off.png" />
+    <image name="o_radon" path="res/gfx/orig/radioactive_thing_on.png" />
+    <image name="o_soundoff" path="res/gfx/orig/sound_off.png" />
+    <image name="o_soundon" path="res/gfx/orig/sound_on.png" />
+  </images>
+  
+  <fonts>
+    <font name="green" path="res/font/green.xml" />
+    <font name="yellow" path="res/font/yellow.xml" />
+    <font name="blue" path="res/font/blue.xml" />
+  </fonts>
+  
+  <group name="sfxtoggle" fadedelay="3.0" fadetime="1.0" >
+    <toggleitem name="sound" default="true" img_on="o_soundon" img_off="o_soundoff" key="118" signal="soundtoggle" pos="28,3" />
+    <toggleitem name="music" default="true" img_on="o_musicon" img_off="o_musicoff" key="117" signal="musictoggle" pos="4,3" />
+    <toggleitem name="rad" default="false" img_on="o_radon" img_off="o_radoff" key="119" signal="radtoggle" pos="52,3" />
+  </group>
+  <toggleitem name="defeated" default="false" img_on="o_levelclear" img_off="" slot="defeated" pos="176,193" />
+  
+  <!-- Order here matters. The background image needs to be first, and thus drawn first, before the text boxes -->
+  
+  <bgimage name="bottombar" img="o_bottombar" pos="0,192" />
+  
+  <textbox name="curlevel" default="1" pos="303,192" align="left,bottom" fill="0,0,0,255" font="green" />
+  <textbox name="levelsbeaten" default="0" pos="192,192" align="right,bottom" fill="0,0,0,255" font="blue" />
+  <textbox name="levelstotal" default="0" pos="175,192" align="left,bottom" fill="0,0,0,255" font="blue" />
+  <textbox name="heartsgotten" default="0" pos="64,192" align="right,bottom" fill="0,0,0,255" font="yellow" />
+  <textbox name="heartstotal" default="0" pos="47,192" align="left,bottom" fill="0,0,0,255" font="yellow" />
 </hud>

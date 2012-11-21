@@ -26,13 +26,11 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_iDyingCount = 0;
     m_iFade = FADE_NONE;
     m_bDebug = false;
-    m_Font = new Text("res/font/blue.xml");
-    m_Font->setScale(2);
 }
 
 myEngine::~myEngine()
 {
-    delete m_Font;
+    delete m_hud;
 }
 
 void myEngine::frame()
@@ -62,6 +60,7 @@ void myEngine::frame()
         }
         else    //End of winning count
         {
+            m_mLevelsBeaten[m_iCurrentLevel] = true;    //We've beaten this level
             m_iCurrentLevel++;  //Go to next level
             if(m_iCurrentLevel >= m_vLevels.size())
                 m_iCurrentLevel = 0;
@@ -125,7 +124,22 @@ void myEngine::draw()
 {
     //Just draw all objects
     drawObjects();
-    //And bottom bar
+
+    //Draw debug stuff if we should
+    if(m_bDebug)
+    {
+        for(uint16_t row = 0; row < LEVEL_HEIGHT; row++)
+        {
+            for(uint16_t col = 0; col < LEVEL_WIDTH; col++)
+            {
+                if(m_levelGrid[col][row] != NULL)   //Draw a green box in this grid square if it isn't vacant
+                {
+                    Rect rc = {col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC, (col+1)*GRID_WIDTH*SCALE_FAC, (row+1)*GRID_HEIGHT*SCALE_FAC};
+                    fillRect(rc, 0, 255, 0, 100);
+                }
+            }
+        }
+    }
 
     //If fading, draw black overlay
     if(m_iFade != FADE_NONE)
@@ -153,23 +167,25 @@ void myEngine::draw()
 
     }
 
-    //Draw debug stuff if we should
-    if(m_bDebug)
-    {
-        for(uint16_t row = 0; row < LEVEL_HEIGHT; row++)
-        {
-            for(uint16_t col = 0; col < LEVEL_WIDTH; col++)
-            {
-                if(m_levelGrid[col][row] != NULL)   //Draw a green box in this grid square if it isn't vacant
-                {
-                    Rect rc = {col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC, (col+1)*GRID_WIDTH*SCALE_FAC, (row+1)*GRID_HEIGHT*SCALE_FAC};
-                    fillRect(rc, 0, 255, 0, 100);
-                }
-            }
-        }
-    }
+    //Update our textboxes in our HUD
+    HUDTextbox* tex = (HUDTextbox*)m_hud->getChild("curlevel");
+    if(tex != NULL)
+        tex->setText(m_iCurrentLevel+1);
+    tex = (HUDTextbox*)m_hud->getChild("levelstotal");
+    if(tex != NULL)
+        tex->setText(m_vLevels.size());
+    tex = (HUDTextbox*)m_hud->getChild("levelsbeaten");
+    if(tex != NULL)
+        tex->setText(m_mLevelsBeaten.size());
+    tex = (HUDTextbox*)m_hud->getChild("heartsgotten");
+    if(tex != NULL)
+        tex->setText(m_iCollectedHearts);
+    tex = (HUDTextbox*)m_hud->getChild("heartstotal");
+    if(tex != NULL)
+        tex->setText(m_iHeartsTotal);
 
-    m_Font->render("abcdefghijklmnopqrstuvwxyz.123456789", 0, SCREEN_HEIGHT*SCALE_FAC-16);
+    //Draw our HUD
+    m_hud->draw(getTime());
 }
 
 void myEngine::init()
@@ -189,6 +205,11 @@ void myEngine::init()
         exit(1);    //Abort
     }
     loadLevel_retro();
+
+    m_hud = new HUD("levelhud");
+    m_hud->create("res/hud/hud.xml");
+    m_hud->setScale(2);
+
     //playMusic("o_mus_menu"); //Start playing menu music
 }
 
@@ -221,7 +242,15 @@ void myEngine::loadImages(string sListFilename)
 
         //Move to the next sibling
         if(elem->NextSibling() == NULL) break;
-        elem = elem->NextSibling()->ToElement();
+        XMLNode* temp = elem->NextSibling();
+        while(temp != NULL)
+        {
+            if(temp->ToElement() != NULL)
+                break;
+            temp = temp->NextSibling();
+        }
+        if(temp == NULL) break;
+        elem = temp->ToElement();
         if(elem == NULL) break;
     }
 }
@@ -255,7 +284,15 @@ void myEngine::loadSounds(string sListFilename)
 
         //Move to the next sibling
         if(elem->NextSibling() == NULL) break;
-        elem = elem->NextSibling()->ToElement();
+        XMLNode* temp = elem->NextSibling();
+        while(temp != NULL)
+        {
+            if(temp->ToElement() != NULL)
+                break;
+            temp = temp->NextSibling();
+        }
+        if(temp == NULL) break;
+        elem = temp->ToElement();
         if(elem == NULL) break;
     }
 }

@@ -122,7 +122,7 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
                 break;  //We can't go through this tunnel (also will prevent you from going the wrong way through tunnels)
 
             //Enter the tunnel
-            obj->setImage(getImage("tunnellup"));
+            obj->setImage(getImage("o_tunnellup"));
             obj->setName("<*"); //Player is in here
             playSound("o_subway");
 

@@ -4,7 +4,6 @@
 */
 
 #include "Text.h"
-#include <sstream>
 
 Text::Text(string sXMLFilename)
 {
@@ -30,10 +29,17 @@ Text::Text(string sXMLFilename)
     const char* cName = elem->Attribute("name");
     if(cName != NULL)
         m_sName = cName;
+    errlog << "Creating font " << m_sName << endl;
     elem = elem->FirstChildElement();
-    if(elem == NULL) return;
-    for(;;) //Load all elements
+    //if(elem == NULL) return;
+    XMLNode* temp = elem;
+    for(; elem != NULL; temp = elem->NextSibling())
     {
+        while(temp != NULL && temp->ToElement() == NULL)
+            temp = temp->NextSibling();
+        if(temp == NULL) break;
+        elem = temp->ToElement();
+
         cName = elem->Name();
         if(cName == NULL) return;
         string sName(cName);
@@ -53,16 +59,12 @@ Text::Text(string sXMLFilename)
             Rect rc = rectFromString(cRect);
             m_mRectangles[cChar[0]] = rc;   //Stick this into the list
         }
-
-        //Move to the next sibling
-        if(elem->NextSibling() == NULL) break;
-        elem = elem->NextSibling()->ToElement();
-        if(elem == NULL) break;
     }
 }
 
 Text::~Text()
 {
+    errlog << "Destroying font " << m_sName << endl;
     if(m_imgFont != NULL)
         delete m_imgFont;
 }
@@ -155,25 +157,6 @@ void Text::setScale(uint16_t iScaleFac)
 void Text::setAlign(uint8_t iAlign)
 {
     m_iAlign = iAlign;
-}
-
-Rect rectFromString(string s)
-{
-    //First, replace all ',' characters with ' '
-    for(int i = 0; ; i++)
-    {
-        size_t iPos = s.find(',', i);
-        if(iPos == s.npos)
-            break;  //Done
-
-        s.replace(iPos, 1, " ");
-    }
-
-    //Now, parse
-    istringstream iss(s);
-    Rect rc;
-    iss >> rc.left >> rc.top >> rc.right >> rc.bottom;
-    return rc;
 }
 
 

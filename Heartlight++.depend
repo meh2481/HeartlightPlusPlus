@@ -26,11 +26,12 @@
 1353427981 source:/home/mark/repos/HeartlightPlusPlus/Engine.cpp
 	"Engine.h"
 
-1353455050 /home/mark/repos/HeartlightPlusPlus/Engine.h
+1353517914 /home/mark/repos/HeartlightPlusPlus/Engine.h
 	"globaldefs.h"
 	"Image.h"
 	"Object.h"
 	"Text.h"
+	"hud.h"
 	<map>
 
 1352165982 /home/mark/repos/HeartlightPlusPlus/include//hgesprite.h
@@ -285,14 +286,14 @@
 	<string>
 	"VFSDefines.h"
 
-1353455050 /home/mark/repos/HeartlightPlusPlus/myEngine.h
+1353532088 /home/mark/repos/HeartlightPlusPlus/myEngine.h
 	"Engine.h"
 	<vector>
 
-1353456842 source:/home/mark/repos/HeartlightPlusPlus/myEngine.cpp
+1353531521 source:/home/mark/repos/HeartlightPlusPlus/myEngine.cpp
 	"myEngine.h"
 
-1353369556 /home/mark/repos/HeartlightPlusPlus/globaldefs.h
+1353530971 /home/mark/repos/HeartlightPlusPlus/globaldefs.h
 	<string>
 	<fstream>
 	"hge.h"
@@ -315,15 +316,33 @@
 	"globaldefs.h"
 	"Image.h"
 
-1353455050 source:/home/mark/repos/HeartlightPlusPlus/myEngine_retro.cpp
+1353516356 source:/home/mark/repos/HeartlightPlusPlus/myEngine_retro.cpp
 	"myEngine.h"
 
-1353456465 source:/home/mark/repos/HeartlightPlusPlus/Text.cpp
+1353525080 source:/home/mark/repos/HeartlightPlusPlus/Text.cpp
 	"Text.h"
-	<sstream>
 
-1353454544 /home/mark/repos/HeartlightPlusPlus/Text.h
+1353527384 /home/mark/repos/HeartlightPlusPlus/Text.h
 	"globaldefs.h"
 	"Image.h"
 	<map>
+
+1353462102 source:/home/mark/repos/HeartlightPlusPlus/globaldefs.cpp
+	"globaldefs.h"
+	<sstream>
+
+1353517579 source:/home/mark/repos/HeartlightPlusPlus/hudItem.cpp
+	"hudItem.h"
+
+1353517579 /home/mark/repos/HeartlightPlusPlus/hudItem.h
+	"globaldefs.h"
+	"Image.h"
+
+1353531425 /home/mark/repos/HeartlightPlusPlus/hud.h
+	"globaldefs.h"
+	"Image.h"
+	"Text.h"
+
+1353531533 source:/home/mark/repos/HeartlightPlusPlus/hud.cpp
+	"hud.h"
 

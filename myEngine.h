@@ -41,6 +41,7 @@ private:
     retroObject* m_levelGrid[LEVEL_WIDTH][LEVEL_HEIGHT];    //Object grid for the game
     retroObject* m_oldGrid[LEVEL_WIDTH][LEVEL_HEIGHT];  //And old positions for use when updating
     vector<string> m_vLevels;         //List of levels read in from LEVELS.HL
+    map<uint32_t, bool> m_mLevelsBeaten;    //List of levels we've beaten
     uint32_t m_iCurrentLevel;    //And integer of it
     uint32_t m_iHeartsTotal;    //How many hearts total there are in this level
     uint32_t m_iCollectedHearts;    //how many hearts in this level we've collected
@@ -51,7 +52,7 @@ private:
     float32 m_fEndFade;
     uint8_t m_iFade;
     bool m_bDebug;  //Whether to draw debug data and stuff or not
-    Text* m_Font;
+    HUD* m_hud;
 
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
 

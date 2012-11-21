@@ -10,6 +10,7 @@
 #include "Image.h"
 #include "Object.h"
 #include "Text.h"
+#include "hud.h"
 #include <map>
 
 class Engine

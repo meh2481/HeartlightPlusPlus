@@ -40,15 +40,12 @@ public:
 
     void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);  //Set the font to this color
     void setColor(DWORD dwCol);
-
     void setScale(uint16_t iScaleFac);  //Scale the font up by this amount
     void setAlign(uint8_t iAlign);  //Set alignment of the text (align left = to the left of pt, align right = to the right of pt)
-
     string getName()    {return m_sName;};
-};
+    void   setName(string sName)    {m_sName = sName;};
 
-//Helper function
-Rect rectFromString(string s);
+};
 
 
 
