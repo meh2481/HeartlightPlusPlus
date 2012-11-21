@@ -7,9 +7,9 @@
 #include "globaldefs.h"
 #include <sstream>
 
-Rect rectFromString(string s)
+string stripCommas(string s)
 {
-    //First, replace all ',' characters with ' '
+    //Replace all ',' characters with ' '
     for(int i = 0; ; i++)
     {
         size_t iPos = s.find(',', i);
@@ -18,6 +18,12 @@ Rect rectFromString(string s)
 
         s.replace(iPos, 1, " ");
     }
+    return s;
+}
+
+Rect rectFromString(string s)
+{
+    s = stripCommas(s);
 
     //Now, parse
     istringstream iss(s);
@@ -28,15 +34,7 @@ Rect rectFromString(string s)
 
 Point pointFromString(string s)
 {
-    //First, replace all ',' characters with ' '
-    for(int i = 0; ; i++)
-    {
-        size_t iPos = s.find(',', i);
-        if(iPos == s.npos)
-            break;  //Done
-
-        s.replace(iPos, 1, " ");
-    }
+    s = stripCommas(s);
 
     //Now, parse
     istringstream iss(s);
@@ -47,13 +45,12 @@ Point pointFromString(string s)
 
 DWORD colorFromString(string s)
 {
-    Rect rc = rectFromString(s);    //Just grab the stuff this way, for simplicity and so it doesn't treat these integers as characters
+    s = stripCommas(s);
 
+    //Now, parse
     uint8_t r,g,b,a;
-    r = rc.left;
-    g = rc.top;
-    b = rc.right;
-    a = rc.bottom;
+    istringstream iss(s);
+    iss >> r >> g >> b >> a;
     return ARGB(a,r,g,b);
 }
 

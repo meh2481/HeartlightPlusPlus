@@ -32,9 +32,10 @@ public:
 extern ofstream errlog;
 
 //Helper functions
-Rect rectFromString(string s);
-Point pointFromString(string s);
-DWORD colorFromString(string s);
+string stripCommas(string s);       //Strip all the commas from s, leaving spaces in their place
+Rect rectFromString(string s);      //Get a rectangle from comma-separated values in a string
+Point pointFromString(string s);    //Get a point from comma-separated values in a string
+DWORD colorFromString(string s);    //Get a color from comma-separated values in a string
 
 
 #endif
