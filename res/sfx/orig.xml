@@ -10,9 +10,9 @@
   <sound name="o_hearthit4" path="res/sfx/orig/heart_hit4.ogg" />
   <sound name="o_heartgrass" path="res/sfx/orig/heart_hit_grass.ogg" />
   <sound name="o_grass" path="res/sfx/orig/hit_grass.ogg" />
-  <sound name="o_mus_menu" path="res/sfx/orig/menu_music.ogg" />
   <sound name="o_rock" path="res/sfx/orig/rock_hit.ogg" />
   <sound name="o_subway" path="res/sfx/orig/subway.ogg" />
-  <sound name="o_mus_theme" path="res/sfx/orig/theme_music.ogg" />
   <sound name="o_toggle" path="res/sfx/orig/toggle.ogg" />
+  <sound name="o_mus_menu" path="res/sfx/orig/menu_music.ogg" />
+  <sound name="o_mus_theme" path="res/sfx/orig/theme_music.ogg" />
 </sounds>

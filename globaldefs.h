@@ -16,6 +16,7 @@ using namespace std;
 #include "tinyxml2.h"
 using namespace tinyxml2;
 #include "VFS.h"
+#include "VFSTools.h"
 
 #define Point b2Vec2    //Our point structure
 

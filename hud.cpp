@@ -10,6 +10,7 @@
 //-------------------------------------------------------------------------------------
 HUDItem::HUDItem(string sName)
 {
+    m_ptPos.SetZero();
     m_sName = sName;
     m_signalHandler = stubSignal;
     m_iSCALE_FAC = 1;
@@ -19,13 +20,6 @@ HUDItem::~HUDItem()
 {
     for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
         delete (*i);    //Clean up all children also
-}
-
-void HUDItem::slot(string sSignal)
-{
-    //Base class does nothing with this, except pass on
-    for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
-        (*i)->slot(sSignal);
 }
 
 void HUDItem::event(hgeInputEvent event)
@@ -141,6 +135,7 @@ void HUDTextbox::draw(float32 fCurTime, DWORD dwCol)
 
     //Render a box around where this text will be
     Point ptSize = m_txtFont->sizeString(m_sValue);
+
     Rect rcText = {m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC, m_ptPos.x*m_iSCALE_FAC + ptSize.x, m_ptPos.y*m_iSCALE_FAC + ptSize.y};
 
     //Deal with alignment issues
@@ -161,13 +156,6 @@ void HUDTextbox::draw(float32 fCurTime, DWORD dwCol)
 
     //Render the text
     m_txtFont->render(m_sValue, m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
-}
-
-void HUDTextbox::slot(string sSignal)
-{
-    HUDItem::slot(sSignal);
-    //if()
-    m_sValue = sSignal;
 }
 
 void HUDTextbox::setFill(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -191,6 +179,77 @@ void HUDTextbox::setText(uint64_t iNum)
     char c[256];
     sprintf(c, "%ld", iNum);
     setText(c);
+}
+
+//-------------------------------------------------------------------------------------
+// HUD class functions
+//-------------------------------------------------------------------------------------
+HUDToggle::HUDToggle(string sName) : HUDItem(sName)
+{
+    m_iKey = 0; //No HGEK_ code has this value. Convenient, wot wot?
+    m_imgEnabled = NULL;
+    m_imgDisabled = NULL;
+    m_bValue = false;   //Default is disabled
+}
+
+HUDToggle::~HUDToggle()
+{
+
+}
+
+void HUDToggle::event(hgeInputEvent event)
+{
+    HUDItem::event(event);
+    if(event.type == INPUT_KEYDOWN && event.key == m_iKey)
+    {
+        m_signalHandler(m_sSignal); //Generate signal
+        m_bValue = !m_bValue;   //Toggle
+    }
+}
+
+void HUDToggle::draw(float32 fCurTime, DWORD dwCol)
+{
+    HUDItem::draw(fCurTime, dwCol);
+
+    if(m_bValue)    //Draw enabled image
+    {
+        if(m_imgEnabled != NULL)
+        {
+            m_imgEnabled->setColor(dwCol);
+            m_imgEnabled->draw(m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
+        }
+    }
+    else    //Draw disabled image
+    {
+        if(m_imgDisabled != NULL)
+        {
+            m_imgDisabled->setColor(dwCol);
+            m_imgDisabled->draw(m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
+        }
+    }
+}
+
+void HUDToggle::setScale(uint16_t iScale)
+{
+    HUDItem::setScale(iScale);
+    if(m_imgEnabled != NULL)
+        m_imgEnabled->scale(iScale);
+    if(m_imgDisabled != NULL)
+        m_imgDisabled->scale(iScale);
+}
+
+void HUDToggle::setEnabledImage(Image* img)
+{
+    m_imgEnabled = img;
+    if(m_imgEnabled != NULL)
+        m_imgEnabled->scale(m_iSCALE_FAC);
+}
+
+void HUDToggle::setDisabledImage(Image* img)
+{
+    m_imgDisabled = img;
+    if(m_imgDisabled != NULL)
+        m_imgDisabled->scale(m_iSCALE_FAC);
 }
 
 
@@ -291,7 +350,31 @@ void HUD::create(string sXMLFilename)
         }
         else if(sName == "toggleitem")
         {
-
+            const char* cToggleName = elem->Attribute("name");
+            if(cToggleName == NULL) continue;
+            HUDToggle* tog = new HUDToggle(cToggleName);
+            const char* cToggleImgOn = elem->Attribute("img_on");
+            if(cToggleImgOn != NULL && cToggleImgOn[0] != '\0')
+                tog->setEnabledImage(m_mImages[cToggleImgOn]);
+            const char* cToggleImgOff = elem->Attribute("img_off");
+            if(cToggleImgOff != NULL && cToggleImgOff[0] != '\0')
+                tog->setDisabledImage(m_mImages[cToggleImgOff]);
+            const char* cPosi = elem->Attribute("pos");
+            if(cPosi != NULL)
+            {
+                Point ptPos = pointFromString(cPosi);
+                tog->setPos(ptPos);
+            }
+            const char* cSig = elem->Attribute("signal");
+            if(cSig != NULL)
+                tog->setSignal(cSig);
+            int32_t iKey = 0;
+            elem->QueryIntAttribute("key", &iKey);
+            tog->setKey(iKey);
+            bool bEnabled = false;
+            elem->QueryBoolAttribute("default", &bEnabled);
+            tog->setEnabled(bEnabled);
+            addChild(tog);
         }
         else if(sName == "bgimage")
         {

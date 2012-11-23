@@ -53,6 +53,7 @@ private:
     uint8_t m_iFade;
     bool m_bDebug;  //Whether to draw debug data and stuff or not
     HUD* m_hud;
+    bool m_bSound, m_bMusic, m_bRad;    //Booleans for music settings and such
 
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
 
@@ -68,14 +69,17 @@ public:
 
     void loadLevel_retro();   //Loads the current level m_iCurrLevel is pointing to into m_levelGrid[][]
     bool loadLevels(string sFilename);  //Loads in all the levels from the specified text file into m_vLevels
+    void loadLevelDirectory(string sFilePath);  //Loads all the level files in the specified folder
     void updateGrid_retro();  //Updates the level grid, moving objects around
     void loadImages(string sListFilename);  //Loads all images listed in this file into memory, so we can batch load easily
     void loadSounds(string sListFilename);  //Loads all sounds listed in this file into memory
     void playSound(string sName);   //Plays a sound, with pitch shifting depending on framerate
     void explode_retro(uint16_t row, uint16_t col, bool bStartFrame1 = false);    //For handling bomb explosions tile by tile
     bool floatable_retro(retroObject* obj);   //If this object can be pushed upwards by a balloon
+    void hudSignalHandler(string sSignal);  //For handling signals that come from the HUD
 };
 
+void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine
 
 
 #endif

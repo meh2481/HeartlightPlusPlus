@@ -112,9 +112,9 @@ void Text::render(string sText, float32 x, float32 y)
 Point Text::sizeString(string sText)
 {
     Point ptResult;
+    ptResult.SetZero();
     if(!sText.size())
         return ptResult;
-
     for(string::iterator i = sText.begin(); i != sText.end(); i++)
     {
         unsigned char c = *i;

@@ -218,11 +218,26 @@ void Engine::playSound(string sName, int volume, int pan, float32 pitch)
     m_hge->Effect_PlayEx(eff,volume,pan,pitch);
 }
 
+void Engine::pauseMusic()
+{
+    if(!m_bFirstMusic)
+        m_hge->Channel_Pause(m_MusicChannel);
+}
+
 void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
 {
     HEFFECT eff = _getEffect(sName); //Can take a while, depending on the song
     if(!m_bFirstMusic)
-        m_hge->Channel_Stop(m_MusicChannel);
+    {
+        if(sName == m_sLastMusic)
+        {
+            m_hge->Channel_Resume(m_MusicChannel);
+            return;
+        }
+        else
+            m_hge->Channel_Stop(m_MusicChannel);
+    }
+    m_sLastMusic = sName;
     m_MusicChannel = m_hge->Effect_PlayEx(eff,volume,pan,pitch,true);
     m_bFirstMusic = false;
 }

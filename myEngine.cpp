@@ -18,6 +18,11 @@ bool renderFunc()
     return g_pGlobalEngine->_myRenderFunc();
 }
 
+void signalHandler(string sSignal)
+{
+    g_pGlobalEngine->hudSignalHandler(sSignal);
+}
+
 myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iWidth, iHeight, sTitle)
 {
     g_pGlobalEngine = this;
@@ -26,6 +31,9 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_iDyingCount = 0;
     m_iFade = FADE_NONE;
     m_bDebug = false;
+    m_bSound = true;
+    m_bMusic = true;
+    m_bRad  = false;
 }
 
 myEngine::~myEngine()
@@ -167,7 +175,7 @@ void myEngine::draw()
 
     }
 
-    //Update our textboxes in our HUD
+    //Update our HUD
     HUDTextbox* tex = (HUDTextbox*)m_hud->getChild("curlevel");
     if(tex != NULL)
         tex->setText(m_iCurrentLevel+1);
@@ -183,6 +191,16 @@ void myEngine::draw()
     tex = (HUDTextbox*)m_hud->getChild("heartstotal");
     if(tex != NULL)
         tex->setText(m_iHeartsTotal);
+    HUDToggle* tog = (HUDToggle*)m_hud->getChild("defeated");
+    if(tog != NULL)
+    {
+        map<uint32_t, bool>::iterator itCurLev = m_mLevelsBeaten.find(m_iCurrentLevel);
+        if(itCurLev != m_mLevelsBeaten.end())   //If this item is here
+            tog->setEnabled(true);  //This level is beaten
+        else
+            tog->setEnabled(false); //We haven't beaten this level yet
+    }
+
 
     //Draw our HUD
     m_hud->draw(getTime());
@@ -199,18 +217,17 @@ void myEngine::init()
     //Load all sounds as well
     loadSounds("res/sfx/orig.xml");
 
-    if(!loadLevels("res/levels/LEVELS.HL"))
-    {
-        errlog << "Aborting..." << endl;
-        exit(1);    //Abort
-    }
+    loadLevelDirectory("res/levels");
+
     loadLevel_retro();
 
     m_hud = new HUD("levelhud");
     m_hud->create("res/hud/hud.xml");
     m_hud->setScale(2);
+    m_hud->setSignalHandler(signalHandler);
 
-    //playMusic("o_mus_menu"); //Start playing menu music
+    if(m_bMusic)
+        playMusic("o_mus_menu"); //Start playing menu music
 }
 
 void myEngine::loadImages(string sListFilename)
@@ -297,8 +314,33 @@ void myEngine::loadSounds(string sListFilename)
     }
 }
 
+void myEngine::hudSignalHandler(string sSignal)
+{
+    if(sSignal == "soundtoggle")
+    {
+        m_bSound = !m_bSound;
+    }
+    else if(sSignal == "musictoggle")
+    {
+        m_bMusic = !m_bMusic;
+        if(!m_bMusic)
+            pauseMusic();
+        else
+            playMusic("o_mus_menu");
+    }
+    else if(sSignal == "radtoggle")
+    {
+        m_bRad = !m_bRad;       //Toggle this... TODO: Find out what this even does in the original game, and do whatever it is it does
+    }
+    else
+        errlog << "Warning: Unrecognized signal \"" << sSignal << "\" received from HUD." << endl;
+
+    playSound("o_toggle");  //Play sound for toggling hud item
+}
+
 void myEngine::handleEvent(hgeInputEvent event)
 {
+    m_hud->event(event);    //Let our HUD handle any events it needs to
     switch(event.type)
     {
         //Key pressed
@@ -355,6 +397,23 @@ void myEngine::handleEvent(hgeInputEvent event)
     }
 }
 
+
+void myEngine::loadLevelDirectory(string sFilePath)
+{
+    //Get directory listing
+    ttvfs::VFSHelper vfs;
+    vfs.Prepare();
+    ttvfs::StringList slFiles;
+    ttvfs::GetFileList(sFilePath.c_str(), slFiles);
+
+    for(ttvfs::StringList::iterator il = slFiles.begin(); il != slFiles.end(); il++)
+    {
+        errlog << "Loading level file " << *il << endl;
+        if(!loadLevels(sFilePath + "/" + (*il)))    //Load each file in this folder
+            errlog << "Warning: Malformed file. May not load some levels properly." << endl;
+    }
+}
+
 bool myEngine::loadLevels(string sFilename)
 {
     ifstream infile(sFilename.c_str(), ios_base::in | ios_base::binary);
@@ -366,8 +425,6 @@ bool myEngine::loadLevels(string sFilename)
     //Loop until we hit eof or fail
     while(!infile.eof() && !infile.fail())
     {
-        static int iLevelNum = 0;
-        iLevelNum++;
         //Spin through characters, ignoring them, until we hit the next '{' character
         for(;;)
         {
@@ -377,7 +434,17 @@ bool myEngine::loadLevels(string sFilename)
             if(c == '{')
             {
                 c=infile.get(); //Skip over \n char
+                if(c != '\n' &&
+                   c != '\r')
+                {
+                    infile.putback(c);
+                }
                 c=infile.get(); //Skip over \n char
+                if(c != '\n' &&
+                   c != '\r')
+                {
+                    infile.putback(c);
+                }
                 break;
             }
         }
@@ -419,7 +486,8 @@ bool myEngine::loadLevels(string sFilename)
 
 void myEngine::playSound(string sName)
 {
-    Engine::playSound(sName, 100, 0, (float32)(getFramerate()/(float32)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
+    if(m_bSound)    //If sounds are off, don't play them
+        Engine::playSound(sName, 100, 0, (float32)(getFramerate()/(float32)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
 }
 
 

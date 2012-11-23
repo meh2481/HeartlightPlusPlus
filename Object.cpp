@@ -13,7 +13,8 @@ Object::Object(Image* img)
         errlog << "Error: NULL image encountered in Object::Object()" << endl;
         exit(1);
     }
-    m_ptPos.x = m_ptPos.y = 0;
+    m_ptPos.SetZero();
+    m_ptVel.SetZero();
     m_Img = img;
     m_iNumFrames = 1;
     m_iCurFrame = 0;

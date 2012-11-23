@@ -16,7 +16,6 @@
 class Engine
 {
 private:
-
     //Variables for use by the engine
     HGE* m_hge;
     float32 m_fFramerate;
@@ -30,6 +29,7 @@ private:
     multimap<uint32_t, Object*> m_mObjects;       //Object handler
     HCHANNEL m_MusicChannel;        //Sound channel we play our music on
     bool m_bFirstMusic; //Don't stop a previous song playing if there is none
+    string m_sLastMusic;    //Last song we played, so we can pause/resume songs instead of restarting them
     bool m_bQuitting;   //Stop the game if this turns true
     uint16_t m_iImgScaleFac;    //How much images are scaled up by
 
@@ -69,7 +69,8 @@ public:
     void clearObjects();    //Destroy all objects, freeing memory
     void clearImages();     //Free memory associated with the images in our image map
     virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play a sound
-    void playMusic(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play looping music
+    void playMusic(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play looping music, or resume paused music
+    void pauseMusic();                                                                     //Pause music that's currently playing
     int32_t randInt(int32_t min, int32_t max) {return m_hge->Random_Int(min, max);};  //Get a random integer
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
     void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely

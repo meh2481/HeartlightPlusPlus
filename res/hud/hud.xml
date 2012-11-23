@@ -18,16 +18,17 @@
     <font name="blue" path="res/font/blue.xml" />
   </fonts>
   
-  <group name="sfxtoggle" fadedelay="3.0" fadetime="1.0" >
+  <!--group name="sfxtoggle" fadedelay="5.0" fadetime="1.0" -->
     <toggleitem name="sound" default="true" img_on="o_soundon" img_off="o_soundoff" key="118" signal="soundtoggle" pos="28,3" />
     <toggleitem name="music" default="true" img_on="o_musicon" img_off="o_musicoff" key="117" signal="musictoggle" pos="4,3" />
     <toggleitem name="rad" default="false" img_on="o_radon" img_off="o_radoff" key="119" signal="radtoggle" pos="52,3" />
-  </group>
-  <toggleitem name="defeated" default="false" img_on="o_levelclear" img_off="" slot="defeated" pos="176,193" />
+  <!--/group-->
   
-  <!-- Order here matters. The background image needs to be first, and thus drawn first, before the text boxes -->
+  <!-- Order here matters. The background image needs to be first, and thus drawn first, before the text boxes and such -->
   
   <bgimage name="bottombar" img="o_bottombar" pos="0,192" />
+  
+  <toggleitem name="defeated" default="false" img_on="o_levelclear" img_off="" slot="defeated" pos="176,193" />
   
   <textbox name="curlevel" default="1" pos="303,192" align="left,bottom" fill="0,0,0,255" font="green" />
   <textbox name="levelsbeaten" default="0" pos="192,192" align="right,bottom" fill="0,0,0,255" font="blue" />
