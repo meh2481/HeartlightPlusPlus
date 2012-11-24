@@ -258,16 +258,7 @@ void myEngine::loadImages(string sListFilename)
         createImage(cPath, cName);  //Create this image
 
         //Move to the next sibling
-        if(elem->NextSibling() == NULL) break;
-        XMLNode* temp = elem->NextSibling();
-        while(temp != NULL)
-        {
-            if(temp->ToElement() != NULL)
-                break;
-            temp = temp->NextSibling();
-        }
-        if(temp == NULL) break;
-        elem = temp->ToElement();
+        elem = elem->NextSiblingElement();
         if(elem == NULL) break;
     }
 }
@@ -300,16 +291,7 @@ void myEngine::loadSounds(string sListFilename)
         createSound(cPath, cName);  //Create this sound
 
         //Move to the next sibling
-        if(elem->NextSibling() == NULL) break;
-        XMLNode* temp = elem->NextSibling();
-        while(temp != NULL)
-        {
-            if(temp->ToElement() != NULL)
-                break;
-            temp = temp->NextSibling();
-        }
-        if(temp == NULL) break;
-        elem = temp->ToElement();
+        elem = elem->NextSiblingElement();
         if(elem == NULL) break;
     }
 }
@@ -408,7 +390,7 @@ void myEngine::loadLevelDirectory(string sFilePath)
 
     for(ttvfs::StringList::iterator il = slFiles.begin(); il != slFiles.end(); il++)
     {
-        errlog << "Loading level file " << *il << endl;
+        errlog << "Loading level file \"" << *il << "\"" << endl;
         if(!loadLevels(sFilePath + "/" + (*il)))    //Load each file in this folder
             errlog << "Warning: Malformed file. May not load some levels properly." << endl;
     }

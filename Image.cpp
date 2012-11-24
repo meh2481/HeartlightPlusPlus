@@ -25,7 +25,7 @@ Image::Image(string sFilename)
     {
         m_iWidth = hge->Texture_GetWidth(m_hTex, true);
         m_iHeight = hge->Texture_GetHeight(m_hTex, true);
-        errlog << "Creating image " << sFilename << " Width: " << m_iWidth << " Height: " << m_iHeight << endl;
+        errlog << "Loading image \"" << sFilename << "\"" << endl;
     }
 
     m_hSprite = new hgeSprite(m_hTex, 0, 0, m_iWidth, m_iHeight);
@@ -35,7 +35,7 @@ Image::Image(string sFilename)
 
 Image::~Image()
 {
-    errlog << "Destroying image " << m_sFilename << endl;
+    errlog << "Freeing image \"" << m_sFilename << "\"" << endl;
     HGE* hge = hgeCreate(HGE_VERSION);
     delete m_hSprite;
     hge->Texture_Free(m_hTex);

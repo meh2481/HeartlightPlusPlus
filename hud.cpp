@@ -4,6 +4,7 @@
 */
 
 #include "hud.h"
+#include <sstream>
 
 //-------------------------------------------------------------------------------------
 // HUDItem class functions
@@ -132,6 +133,7 @@ void HUDTextbox::draw(float32 fCurTime, DWORD dwCol)
     if(m_txtFont == NULL) return;
 
     m_txtFont->setAlign(m_iAlign);
+    m_txtFont->setColor(dwCol);
 
     //Render a box around where this text will be
     Point ptSize = m_txtFont->sizeString(m_sValue);
@@ -252,6 +254,46 @@ void HUDToggle::setDisabledImage(Image* img)
         m_imgDisabled->scale(m_iSCALE_FAC);
 }
 
+//-------------------------------------------------------------------------------------
+// HUDGroup class functions
+//-------------------------------------------------------------------------------------
+HUDGroup::HUDGroup(string sName) : HUDItem(sName)
+{
+    m_fFadeDelay = FLT_MAX;
+    m_fFadeTime = FLT_MAX;
+    m_fStartTime = FLT_MIN;
+}
+
+HUDGroup::~HUDGroup()
+{
+
+}
+
+void HUDGroup::draw(float32 fCurTime, DWORD dwCol)
+{
+    if(m_fStartTime == FLT_MIN)
+        m_fStartTime = fCurTime;
+
+    if(m_fFadeDelay != FLT_MAX && m_fFadeTime != FLT_MAX && fCurTime > m_fFadeDelay+m_fStartTime)
+    {
+        //We're using GETA() here so that we can nest groups safely. Why would we want to? I have no idea
+        dwCol = SETA(dwCol, (m_fFadeTime - ((fCurTime - (m_fFadeDelay+m_fStartTime)))/(m_fFadeTime))*GETA(dwCol));
+    }
+
+    //Draw all the children with this alpha, if we aren't at alpha = 0
+    if(fCurTime < m_fFadeDelay+m_fStartTime+m_fFadeTime)
+        HUDItem::draw(fCurTime, dwCol);
+}
+
+void HUDGroup::event(hgeInputEvent event)
+{
+    HUDItem::event(event);
+
+    if(event.type == INPUT_KEYDOWN && m_mKeys.find(event.key) != m_mKeys.end())
+    {
+        m_fStartTime = FLT_MIN; //Cause this to reset
+    }
+}
 
 //-------------------------------------------------------------------------------------
 // HUD class functions
@@ -262,7 +304,7 @@ HUD::HUD(string sName) : HUDItem(sName)
 
 HUD::~HUD()
 {
-    errlog << "Destroying HUD " << m_sName << endl;
+    errlog << "Destroying HUD \"" << m_sName << "\"" << endl;
 
     //Delete all images
     for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
@@ -271,6 +313,181 @@ HUD::~HUD()
     //And all fonts
     for(map<string, Text*>::iterator i = m_mFonts.begin(); i != m_mFonts.end(); i++)
         delete i->second;
+}
+
+HUDItem* HUD::_getItem(XMLElement* elem)
+{
+    if(elem == NULL)
+        return NULL;
+
+    const char* cName = elem->Name();
+    if(cName == NULL) return NULL;
+    string sName(cName);
+    if(sName == "images")    //Image list
+    {
+        for(XMLElement* elemImage = elem->FirstChildElement("image"); elemImage != NULL; elemImage = elemImage->NextSiblingElement())
+        {
+            if(elemImage == NULL) break;    //Done
+            const char* cImgName = elemImage->Attribute("name");
+            if(cImgName == NULL) continue;
+            string sImgName(cImgName);
+            const char* cImgPath = elemImage->Attribute("path");
+            if(cImgPath == NULL) continue;
+            Image* img = new Image(cImgPath);   //Load image
+            m_mImages[sImgName] = img;          //Stick it into our list
+        }
+    }
+    else if(sName == "fonts")    //Font list
+    {
+        //Load all fonts
+        for(XMLElement* elemFont = elem->FirstChildElement("font"); elemFont != NULL; elemFont = elemFont->NextSiblingElement())
+        {
+            if(elemFont == NULL) break; //Done
+            const char* cFontName = elemFont->Attribute("name");
+            if(cFontName == NULL) continue;
+            string sFontName(cFontName);
+            const char* cFontPath = elemFont->Attribute("path");
+            if(cFontPath == NULL) continue;
+            Text* fon = new Text(cFontPath);   //Load font
+            m_mFonts[sFontName] = fon;          //Stick it into our list
+        }
+    }
+    else if(sName == "group")
+    {
+        //Loop through children, and add recursively
+        const char* cGroupName = elem->Attribute("name");
+        if(cGroupName == NULL) return NULL;
+        HUDGroup* hGroup = new HUDGroup(cGroupName);
+        bool bDefault = false;
+        elem->QueryBoolAttribute("defaultenabled", &bDefault);
+        if(!bDefault)
+            hGroup->hide(); //Hide initially if we should
+        float32 fDelay = FLT_MAX;
+        elem->QueryFloatAttribute("fadedelay", &fDelay);
+        hGroup->setFadeDelay(fDelay);
+        float32 fTime = FLT_MAX;
+        elem->QueryFloatAttribute("fadetime", &fTime);
+        hGroup->setFadeTime(fTime);
+
+        //-----------Parse keys and key nums
+        int32_t iNumKeys = 0;
+        elem->QueryIntAttribute("keynum", &iNumKeys);
+        const char* cKeys = elem->Attribute("keys");
+        if(cKeys != NULL && iNumKeys)
+        {
+            string sKeys = stripCommas(cKeys);
+            istringstream iss(sKeys);
+            for(int i = 0; i < iNumKeys; i++)
+            {
+                int32_t iKey = 0;
+                iss >> iKey;
+                hGroup->addKey(iKey);
+            }
+        }
+
+        //Load all children of this group
+        for(XMLElement* elemGroup = elem->FirstChildElement(); elemGroup != NULL; elemGroup = elemGroup->NextSiblingElement())
+        {
+            HUDItem* it = _getItem(elemGroup);  //Recursive call for group items
+            hGroup->addChild(it);
+        }
+        return hGroup;
+    }
+    else if(sName == "toggleitem")
+    {
+        const char* cToggleName = elem->Attribute("name");
+        if(cToggleName == NULL) return NULL;
+        HUDToggle* tog = new HUDToggle(cToggleName);
+        const char* cToggleImgOn = elem->Attribute("img_on");
+        if(cToggleImgOn != NULL && cToggleImgOn[0] != '\0')
+            tog->setEnabledImage(m_mImages[cToggleImgOn]);
+        const char* cToggleImgOff = elem->Attribute("img_off");
+        if(cToggleImgOff != NULL && cToggleImgOff[0] != '\0')
+            tog->setDisabledImage(m_mImages[cToggleImgOff]);
+        const char* cPosi = elem->Attribute("pos");
+        if(cPosi != NULL)
+        {
+            Point ptPos = pointFromString(cPosi);
+            tog->setPos(ptPos);
+        }
+        const char* cSig = elem->Attribute("signal");
+        if(cSig != NULL)
+            tog->setSignal(cSig);
+        int32_t iKey = 0;
+        elem->QueryIntAttribute("key", &iKey);
+        tog->setKey(iKey);
+        bool bEnabled = false;
+        elem->QueryBoolAttribute("default", &bEnabled);
+        tog->setEnabled(bEnabled);
+        return (tog);
+    }
+    else if(sName == "bgimage")
+    {
+        const char* cHudImageName = elem->Attribute("name");
+        if(cHudImageName == NULL) return NULL;
+        const char* cImg = elem->Attribute("img");
+        if(cImg == NULL) return NULL;
+        //Create HUDImage
+        HUDImage* hImg = new HUDImage(cHudImageName);
+        hImg->setImage(m_mImages[cImg]);
+        const char* cPos = elem->Attribute("pos");
+        if(cPos != NULL)
+        {
+            Point ptPos = pointFromString(cPos);
+            hImg->setPos(ptPos);
+        }
+        return (hImg); //Add this as a child of our HUD
+    }
+    else if(sName == "textbox")
+    {
+        const char* cTextName = elem->Attribute("name");
+        if(cTextName == NULL) return NULL;
+        const char* cTextFont = elem->Attribute("font");
+        if(cTextFont == NULL) return NULL;
+        HUDTextbox* tb = new HUDTextbox(cTextName);
+        tb->setFont(m_mFonts[cTextFont]);
+        const char* cDefaultText = elem->Attribute("default");
+        if(cDefaultText != NULL)
+            tb->setText(cDefaultText);
+        const char* cPos = elem->Attribute("pos");
+        if(cPos != NULL)
+        {
+            Point ptTextPos = pointFromString(cPos);
+            tb->setPos(ptTextPos);
+        }
+        const char* cAlign = elem->Attribute("align");
+        if(cAlign != NULL)
+        {
+            //Set font alignment
+            string sAlign(cAlign);
+            uint8_t iFontAlign = 0;
+            if(sAlign.find("right") != sAlign.npos)
+                iFontAlign |= ALIGN_RIGHT;
+            if(sAlign.find("left") != sAlign.npos)
+                iFontAlign |= ALIGN_LEFT;
+            if(sAlign.find("center") != sAlign.npos)
+                iFontAlign |= ALIGN_CENTER;
+            if(sAlign.find("top") != sAlign.npos)
+                iFontAlign |= ALIGN_TOP;
+            if(sAlign.find("middle") != sAlign.npos)
+                iFontAlign |= ALIGN_MIDDLE;
+            if(sAlign.find("bottom") != sAlign.npos)
+                iFontAlign |= ALIGN_BOTTOM;
+            tb->setAlign(iFontAlign);
+        }
+        const char* cFill = elem->Attribute("fill");
+        if(cFill != NULL)
+        {
+            //Get color to fill in background of textbox
+            DWORD dwFillCol = colorFromString(cFill);
+            tb->setFill(dwFillCol);
+        }
+
+        return(tb);
+    }
+    else
+        errlog << "Unknown HUD item \"" << sName << "\". Ignoring..." << endl;
+    return NULL;
 }
 
 void HUD::create(string sXMLFilename)
@@ -285,167 +502,15 @@ void HUD::create(string sXMLFilename)
     const char* cName = elem->Attribute("name");
     if(cName != NULL)
         m_sName = cName;    //Grab the name
-    errlog << "Creating HUD " << m_sName << endl;
-    elem = elem->FirstChildElement();
+    errlog << "Creating HUD \"" << m_sName << "\"" << endl;
     //Load all elements
-    XMLNode* temp = elem;
-    for(; elem != NULL; temp = elem->NextSibling())
+    for(elem = elem->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
     {
-        //If there are non-element items, skip over them safely
-        while(temp != NULL && temp->ToElement() == NULL)
-            temp = temp->NextSibling();
-        if(temp == NULL) break;
-        elem = temp->ToElement();
-
         if(elem == NULL) break;
-        cName = elem->Name();
-        if(cName == NULL) return;
-        string sName(cName);
-        if(sName == "images")    //Image list
-        {
-            //Load all images
-            XMLElement* elemImage = elem->FirstChildElement("image");
-            XMLNode* temp2 = elemImage;
-            for(; elemImage != NULL; temp2 = elemImage->NextSibling())
-            {
-                while(temp2 != NULL && temp2->ToElement() == NULL)
-                    temp2 = temp2->NextSibling();
-                if(temp2 == NULL) break;
-                elemImage = temp2->ToElement();
+        HUDItem* it = _getItem(elem);
+        if(it != NULL)
+            addChild(it);
 
-                if(elemImage == NULL) break;    //Done
-                const char* cImgName = elemImage->Attribute("name");
-                if(cImgName == NULL) continue;
-                string sImgName(cImgName);
-                const char* cImgPath = elemImage->Attribute("path");
-                if(cImgPath == NULL) continue;
-                Image* img = new Image(cImgPath);   //Load image
-                m_mImages[sImgName] = img;          //Stick it into our list
-            }
-        }
-        else if(sName == "fonts")    //Font list
-        {
-            //Load all fonts
-            XMLElement* elemFont = elem->FirstChildElement("font");
-            XMLNode* temp2 = elemFont;
-            for(; elemFont != NULL; temp2 = elemFont->NextSibling())
-            {
-                while(temp2 != NULL && temp2->ToElement() == NULL)
-                    temp2 = temp2->NextSibling();
-                if(temp2 == NULL) break;
-                elemFont = temp2->ToElement();
-
-                const char* cFontName = elemFont->Attribute("name");
-                if(cFontName == NULL) continue;
-                string sFontName(cFontName);
-                const char* cFontPath = elemFont->Attribute("path");
-                if(cFontPath == NULL) continue;
-                Text* fon = new Text(cFontPath);   //Load font
-                m_mFonts[sFontName] = fon;          //Stick it into our list
-            }
-        }
-        else if(sName == "group")
-        {
-
-        }
-        else if(sName == "toggleitem")
-        {
-            const char* cToggleName = elem->Attribute("name");
-            if(cToggleName == NULL) continue;
-            HUDToggle* tog = new HUDToggle(cToggleName);
-            const char* cToggleImgOn = elem->Attribute("img_on");
-            if(cToggleImgOn != NULL && cToggleImgOn[0] != '\0')
-                tog->setEnabledImage(m_mImages[cToggleImgOn]);
-            const char* cToggleImgOff = elem->Attribute("img_off");
-            if(cToggleImgOff != NULL && cToggleImgOff[0] != '\0')
-                tog->setDisabledImage(m_mImages[cToggleImgOff]);
-            const char* cPosi = elem->Attribute("pos");
-            if(cPosi != NULL)
-            {
-                Point ptPos = pointFromString(cPosi);
-                tog->setPos(ptPos);
-            }
-            const char* cSig = elem->Attribute("signal");
-            if(cSig != NULL)
-                tog->setSignal(cSig);
-            int32_t iKey = 0;
-            elem->QueryIntAttribute("key", &iKey);
-            tog->setKey(iKey);
-            bool bEnabled = false;
-            elem->QueryBoolAttribute("default", &bEnabled);
-            tog->setEnabled(bEnabled);
-            addChild(tog);
-        }
-        else if(sName == "bgimage")
-        {
-            const char* cHudImageName = elem->Attribute("name");
-            if(cHudImageName == NULL) continue;
-            const char* cImg = elem->Attribute("img");
-            if(cImg == NULL) continue;
-            //Create HUDImage
-            HUDImage* hImg = new HUDImage(cHudImageName);
-            hImg->setImage(m_mImages[cImg]);
-            const char* cPos = elem->Attribute("pos");
-            if(cPos != NULL)
-            {
-                Point ptPos = pointFromString(cPos);
-                hImg->setPos(ptPos);
-            }
-            addChild(hImg); //Add this as a child of our HUD
-        }
-        else if(sName == "textbox")
-        {
-            const char* cTextName = elem->Attribute("name");
-            if(cTextName == NULL) continue;
-            const char* cTextFont = elem->Attribute("font");
-            if(cTextFont == NULL) continue;
-            HUDTextbox* tb = new HUDTextbox(cTextName);
-            tb->setFont(m_mFonts[cTextFont]);
-            const char* cDefaultText = elem->Attribute("default");
-            if(cDefaultText != NULL)
-                tb->setText(cDefaultText);
-            const char* cPos = elem->Attribute("pos");
-            if(cPos != NULL)
-            {
-                Point ptTextPos = pointFromString(cPos);
-                tb->setPos(ptTextPos);
-            }
-            const char* cAlign = elem->Attribute("align");
-            if(cAlign != NULL)
-            {
-                //Set font alignment
-                string sAlign(cAlign);
-                uint8_t iFontAlign = 0;
-                if(sAlign.find("right") != sAlign.npos)
-                    iFontAlign |= ALIGN_RIGHT;
-                if(sAlign.find("left") != sAlign.npos)
-                    iFontAlign |= ALIGN_LEFT;
-                if(sAlign.find("center") != sAlign.npos)
-                    iFontAlign |= ALIGN_CENTER;
-                if(sAlign.find("top") != sAlign.npos)
-                    iFontAlign |= ALIGN_TOP;
-                if(sAlign.find("middle") != sAlign.npos)
-                    iFontAlign |= ALIGN_MIDDLE;
-                if(sAlign.find("bottom") != sAlign.npos)
-                    iFontAlign |= ALIGN_BOTTOM;
-                tb->setAlign(iFontAlign);
-            }
-            const char* cFill = elem->Attribute("fill");
-            if(cFill != NULL)
-            {
-                //Get color to fill in background of textbox
-                Rect rcCol = rectFromString(cFill); //Yes, I'm using a rect to get a color
-                uint8_t r = rcCol.left;
-                uint8_t g = rcCol.top;
-                uint8_t b = rcCol.right;
-                uint8_t a = rcCol.bottom;
-                tb->setFill(r,g,b,a);
-            }
-
-            addChild(tb);
-        }
-        else
-            errlog << "Unknown HUD item \"" << sName << "\". Ignoring..." << endl;
     }
 }
 

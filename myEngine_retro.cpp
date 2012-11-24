@@ -320,6 +320,9 @@ void myEngine::loadLevel_retro()
                     bSkip = true;
                     break;
 
+                case '\r':
+                    break;
+
                 default:
                     errlog << "Warning: Invalid char \'" << cObj << "\'. Ignoring..." << endl;
                     break;  //Ignore

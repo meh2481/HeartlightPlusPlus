@@ -83,7 +83,7 @@ Engine::~Engine()
     //Clean up our sound effects
     for(map<string, HEFFECT>::iterator i = m_mSounds.begin(); i != m_mSounds.end(); i++)
     {
-        errlog << "Freeing sound effect " << i->first << endl;
+        errlog << "Freeing sound effect \"" << i->first << "\"" << endl;
         m_hge->Effect_Free(i->second);
     }
 
@@ -165,7 +165,7 @@ HEFFECT Engine::_getEffect(string sName)
     map<string, HEFFECT>::iterator i = m_mSounds.find(sName);
     if(i == m_mSounds.end())   //This sound isn't here yet; load
     {
-        errlog << "Loading sound effect " << m_mSoundNames[sName] << endl;
+        errlog << "Loading sound effect \"" << sName << "\" from file \"" << m_mSoundNames[sName] << "\"" << endl;
         HEFFECT eff = m_hge->Effect_Load(m_mSoundNames[sName].c_str());
         m_mSounds[sName] = eff; //Add to the map
         return eff;

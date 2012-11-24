@@ -119,11 +119,29 @@ public:
 
 };
 
-//HUDGroup class -- For clumping HUDToggle items together
-//class HUDGroup : public HUDItem
-//{
+//HUDGroup class -- For clumping HUD items together
+class HUDGroup : public HUDItem
+{
+protected:
+    float32 m_fFadeDelay;
+    float32 m_fFadeTime;
+    float32 m_fStartTime;
+    map<int32_t,bool> m_mKeys;  //The keys our children are responding to, that we'll set our alpha to 255 for
 
-//};
+public:
+    HUDGroup(string sName);
+    ~HUDGroup();
+
+    void event(hgeInputEvent event);                        //If this event matches any of our keys, set alpha to 255
+    void draw(float32 fCurTime, DWORD dwCol = 0xFFFFFFFF);  //Override draw so can draw members with low alpha and such
+
+    void    setFadeDelay(float32 fDelay)    {m_fFadeDelay = fDelay;};
+    float32 getFadeDelay()                  {return m_fFadeDelay;};
+    void    setFadeTime(float32 fTime)      {m_fFadeTime = fTime;};
+    float32 getFadeTime()                   {return m_fFadeTime;};
+    void    addKey(int32_t iKey)            {m_mKeys[iKey] = true;};
+    void    hide()                          {m_fStartTime -= m_fFadeTime + m_fFadeDelay;};    //Used as a hack to make this hidable to begin with
+};
 
 //HUD class -- High-level handler of Heads-Up-Display and subclasses
 class HUD : public HUDItem
@@ -131,6 +149,8 @@ class HUD : public HUDItem
 protected:
     map<string, Image*> m_mImages;
     map<string, Text*>  m_mFonts;
+
+    HUDItem* _getItem(XMLElement* elem);    //Load the specific item pointed to (assumes elem != NULL)
 
 public:
     HUD(string sName);

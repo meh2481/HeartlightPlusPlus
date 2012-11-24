@@ -29,17 +29,9 @@ Text::Text(string sXMLFilename)
     const char* cName = elem->Attribute("name");
     if(cName != NULL)
         m_sName = cName;
-    errlog << "Creating font " << m_sName << endl;
-    elem = elem->FirstChildElement();
-    //if(elem == NULL) return;
-    XMLNode* temp = elem;
-    for(; elem != NULL; temp = elem->NextSibling())
+    errlog << "Creating font \"" << m_sName << "\"" << endl;
+    for(elem = elem->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
     {
-        while(temp != NULL && temp->ToElement() == NULL)
-            temp = temp->NextSibling();
-        if(temp == NULL) break;
-        elem = temp->ToElement();
-
         cName = elem->Name();
         if(cName == NULL) return;
         string sName(cName);
@@ -64,7 +56,7 @@ Text::Text(string sXMLFilename)
 
 Text::~Text()
 {
-    errlog << "Destroying font " << m_sName << endl;
+    errlog << "Destroying font \"" << m_sName << "\"" << endl;
     if(m_imgFont != NULL)
         delete m_imgFont;
 }
