@@ -8,6 +8,7 @@
 
 Image::Image(string sFilename)
 {
+    m_iScaleFac = 1;
     m_sFilename = sFilename;
 
     HGE* hge = hgeCreate(HGE_VERSION);
@@ -25,7 +26,7 @@ Image::Image(string sFilename)
     {
         m_iWidth = hge->Texture_GetWidth(m_hTex, true);
         m_iHeight = hge->Texture_GetHeight(m_hTex, true);
-        errlog << "Loading image \"" << sFilename << "\"" << endl;
+        errlog << "Loading image \"" << sFilename << "\" Width: " << m_iWidth << ", Height: " << m_iHeight << endl;
     }
 
     m_hSprite = new hgeSprite(m_hTex, 0, 0, m_iWidth, m_iHeight);
@@ -125,8 +126,11 @@ void Image::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 //Stretch this image onto a larger one, without interpolation
 void Image::scale(uint16_t iScaleFac)
 {
-    if(iScaleFac < 1)   //Don't scale up any if 0
+    if(iScaleFac < 1 || iScaleFac == m_iScaleFac)   //Don't scale up any if 0
         return;
+
+    m_iScaleFac = iScaleFac;
+    errlog << "Scaling " << m_sFilename << endl;
 
     HGE* hge = hgeCreate(HGE_VERSION);
     if(m_hscaledTex)
@@ -135,6 +139,7 @@ void Image::scale(uint16_t iScaleFac)
         m_hscaledTex = 0;
         m_iWidth = hge->Texture_GetWidth(m_hTex, true);
         m_iHeight = hge->Texture_GetHeight(m_hTex, true);
+        errlog << "OrigWidth: " << m_iWidth << ", OrigHeight: " << m_iHeight << endl;
         if(iScaleFac == 1)  //Rescale down to the original image
         {
             m_hSprite->SetTexture(m_hTex);
@@ -148,6 +153,8 @@ void Image::scale(uint16_t iScaleFac)
         hge->Release();
         return;
     }
+    uint32_t m_iTexWidth = hge->Texture_GetWidth(m_hTex, false);    //Since the original texture width may not be a power of two, hang
+                                                                    // on to this.
     m_hscaledTex = hge->Texture_Create(m_iWidth * iScaleFac, m_iHeight * iScaleFac);  //Create a new texture of the right size
     DWORD* src = hge->Texture_Lock(m_hTex); //Grab our original texture data
     DWORD* dest = hge->Texture_Lock(m_hscaledTex, false);   //And our new data
@@ -157,12 +164,12 @@ void Image::scale(uint16_t iScaleFac)
     {
         for(uint32_t y = 0; y < m_iHeight; y++)
         {
-            DWORD srcPixel = src[y*m_iWidth+x]; //Grab this pixel
+            DWORD srcPixel = src[y*m_iTexWidth+x]; //Grab this pixel
             //loop and make all the neighboring pixels this color too (Yeah, I don't understand this code either)
             for(uint16_t i = 0; i < iScaleFac; i++)
             {
                 for(uint16_t j = 0; j < iScaleFac; j++)
-                    dest[(iScaleFac*y+j)*m_iWidth*iScaleFac+(x*iScaleFac)+i] = srcPixel;
+                    dest[(iScaleFac*y+j)*m_iTexWidth*iScaleFac+(x*iScaleFac)+i] = srcPixel;
             }
         }
     }
@@ -173,8 +180,6 @@ void Image::scale(uint16_t iScaleFac)
     m_iWidth *= iScaleFac;              //Set to new dimensions
     m_iHeight *= iScaleFac;
     m_hSprite->SetTextureRect(0,0,m_iWidth,m_iHeight);  //Set the sprite to this new texture rectangle
-    //hge->Texture_Free(m_hTex);  //Clean up old texture
-    //m_hTex = scaledTex; //Save new texture
     hge->Release();
 }
 

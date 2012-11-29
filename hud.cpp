@@ -496,10 +496,16 @@ void HUD::create(string sXMLFilename)
 
     }
     delete doc;
-    //errlog << "Exit HUD::create()" << endl;
 }
 
-
+void HUD::setScale(uint16_t iScale)
+{
+    HUDItem::setScale(iScale);
+    for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
+        i->second->scale(iScale);
+    for(map<string, Text*>::iterator i = m_mFonts.begin(); i != m_mFonts.end(); i++)
+        i->second->setScale(iScale);
+}
 
 
 

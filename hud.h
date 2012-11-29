@@ -159,6 +159,7 @@ public:
     ~HUD();
 
     void create(string sXMLFilename);   //Create this HUD from an XML file
+    void setScale(uint16_t iScale);
 };
 
 

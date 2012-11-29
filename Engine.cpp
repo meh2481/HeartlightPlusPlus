@@ -241,9 +241,7 @@ bool Engine::keyDown(int32_t keyCode)
 void Engine::scaleImages(uint16_t scaleFac)
 {
     for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
-    {
         i->second->scale(scaleFac);
-    }
     m_iImgScaleFac = scaleFac;
 }
 

@@ -20,6 +20,7 @@ private:
     uint32_t m_iWidth, m_iHeight;
     uint32_t m_iID;  //Used to differentiate objects easily so can draw in batches
                     // (it's faster to draw one image several times in a row than it is to draw images in random order)
+    uint16_t m_iScaleFac;
 
 public:
     //Constructor/destructor
