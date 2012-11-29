@@ -26,7 +26,7 @@ Image::Image(string sFilename)
     {
         m_iWidth = hge->Texture_GetWidth(m_hTex, true);
         m_iHeight = hge->Texture_GetHeight(m_hTex, true);
-        errlog << "Loading image \"" << sFilename << "\" Width: " << m_iWidth << ", Height: " << m_iHeight << endl;
+        errlog << "Loading image \"" << sFilename << endl;
     }
 
     m_hSprite = new hgeSprite(m_hTex, 0, 0, m_iWidth, m_iHeight);
@@ -130,7 +130,6 @@ void Image::scale(uint16_t iScaleFac)
         return;
 
     m_iScaleFac = iScaleFac;
-    errlog << "Scaling " << m_sFilename << endl;
 
     HGE* hge = hgeCreate(HGE_VERSION);
     if(m_hscaledTex)
@@ -139,7 +138,6 @@ void Image::scale(uint16_t iScaleFac)
         m_hscaledTex = 0;
         m_iWidth = hge->Texture_GetWidth(m_hTex, true);
         m_iHeight = hge->Texture_GetHeight(m_hTex, true);
-        errlog << "OrigWidth: " << m_iWidth << ", OrigHeight: " << m_iHeight << endl;
         if(iScaleFac == 1)  //Rescale down to the original image
         {
             m_hSprite->SetTexture(m_hTex);
