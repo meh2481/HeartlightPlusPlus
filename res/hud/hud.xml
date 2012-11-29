@@ -2,14 +2,14 @@
 <hud name="levelhud">
   <!-- Images and fonts must be declared first, before they're used -->
   <images>
-    <image name="o_bottombar" path="res/gfx/orig/bottombar.png" />
-    <image name="o_levelclear" path="res/gfx/orig/level_cleared.png" />
-    <image name="o_musicoff" path="res/gfx/orig/music_off.png" />
-    <image name="o_musicon" path="res/gfx/orig/music_on.png" />
-    <image name="o_radoff" path="res/gfx/orig/radioactive_thing_off.png" />
-    <image name="o_radon" path="res/gfx/orig/radioactive_thing_on.png" />
-    <image name="o_soundoff" path="res/gfx/orig/sound_off.png" />
-    <image name="o_soundon" path="res/gfx/orig/sound_on.png" />
+    <image name="o_bottombar" path="res/hud/bottombar.png" />
+    <image name="o_levelclear" path="res/hud/level_cleared.png" />
+    <image name="o_musicoff" path="res/hud/music_off.png" />
+    <image name="o_musicon" path="res/hud/music_on.png" />
+    <image name="o_radoff" path="res/hud/radioactive_thing_off.png" />
+    <image name="o_radon" path="res/hud/radioactive_thing_on.png" />
+    <image name="o_soundoff" path="res/hud/sound_off.png" />
+    <image name="o_soundon" path="res/hud/sound_on.png" />
   </images>
   
   <fonts>

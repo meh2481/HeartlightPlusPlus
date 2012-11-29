@@ -11,7 +11,9 @@
 #include "Image.h"
 #include "Text.h"
 
+//Global functions for use with HUD objects
 inline void stubSignal(string sSignal){errlog << "Generating signal: " << sSignal << endl;}; //For stubbing out HUD signal handling functions
+void fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = 255); //For filling rectangles for our HUD
 
 // HUDItem class -- base class for HUD items
 class HUDItem
@@ -72,7 +74,7 @@ protected:
     Text* m_txtFont;
     string m_sValue;
     uint8_t m_iAlign;
-    hgeSprite* m_spFill;    //for filling the background
+    DWORD m_dwFill; //for filling the background
 
 public:
     HUDTextbox(string sName);
@@ -88,8 +90,8 @@ public:
     string  getText()                   {return m_sValue;};
     void    setAlign(uint8_t iAlign)    {m_iAlign = iAlign;};   //Set the font alignment for this textbox
     uint8_t getAlign()                  {return m_iAlign;};
-    void    setFill(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-    void    setFill(DWORD dwFill);
+    void    setFill(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) {m_dwFill = ARGB(a,r,g,b);};
+    void    setFill(DWORD dwFill)       {m_dwFill = dwFill;};
 
 };
 

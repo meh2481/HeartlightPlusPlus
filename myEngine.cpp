@@ -23,6 +23,11 @@ void signalHandler(string sSignal)
     g_pGlobalEngine->hudSignalHandler(sSignal);
 }
 
+void fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+{
+    g_pGlobalEngine->fillRect(rc, red, green, blue, alpha);
+}
+
 myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iWidth, iHeight, sTitle)
 {
     g_pGlobalEngine = this;

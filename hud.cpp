@@ -118,13 +118,11 @@ HUDTextbox::HUDTextbox(string sName) : HUDItem(sName)
 {
     m_iAlign = ALIGN_RIGHT | ALIGN_BOTTOM;
     m_txtFont = NULL;
-    m_spFill = new hgeSprite(0, 0, 0, 32, 32);
-    m_spFill->SetColor(0x00000000);
+    m_dwFill = 0;
 }
 
 HUDTextbox::~HUDTextbox()
 {
-    delete m_spFill;
 }
 
 void HUDTextbox::draw(float32 fCurTime, DWORD dwCol)
@@ -138,7 +136,7 @@ void HUDTextbox::draw(float32 fCurTime, DWORD dwCol)
     //Render a box around where this text will be
     Point ptSize = m_txtFont->sizeString(m_sValue);
 
-    Rect rcText = {m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC, m_ptPos.x*m_iSCALE_FAC + ptSize.x, m_ptPos.y*m_iSCALE_FAC + ptSize.y};
+    Rect rcText = {m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC, (m_ptPos.x+1)*m_iSCALE_FAC + ptSize.x, (m_ptPos.y+1)*m_iSCALE_FAC + ptSize.y};
 
     //Deal with alignment issues
     if(m_iAlign & ALIGN_CENTER)
@@ -151,23 +149,10 @@ void HUDTextbox::draw(float32 fCurTime, DWORD dwCol)
         rcText.offset(0,-rcText.height());
 
     //Fill in bg
-    m_spFill->Render4V(rcText.left, rcText.top,
-                       rcText.left+rcText.width()+m_iSCALE_FAC, rcText.top,
-                       rcText.left+rcText.width()+m_iSCALE_FAC, rcText.top+rcText.height()+m_iSCALE_FAC,
-                       rcText.left, rcText.top+rcText.height()+m_iSCALE_FAC);
+    fillRect(rcText, GETR(m_dwFill), GETG(m_dwFill), GETB(m_dwFill), GETA(m_dwFill));
 
     //Render the text
     m_txtFont->render(m_sValue, m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
-}
-
-void HUDTextbox::setFill(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-    setFill(ARGB(a,r,g,b));
-}
-
-void HUDTextbox::setFill(DWORD dwFill)
-{
-    m_spFill->SetColor(dwFill);
 }
 
 void HUDTextbox::setScale(uint16_t iScale)
