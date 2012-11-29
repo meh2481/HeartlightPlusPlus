@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Heartlight++" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="Heartlight++" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="`sdl-config --libs`" />
+					<Add option="-lSDLmain -lSDL -lhge -lhgehelp -lttvfs -ltinyxml2" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="Heartlight++-release" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".obj\Release\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="`sdl-config --libs`" />
+					<Add option="-lSDLmain -lSDL -lhge -lhgehelp -lttvfs -ltinyxml2" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-O2" />
+			<Add option="-Wall" />
+			<Add option="`sdl-config --cflags` -lSDL -lSDLmain" />
+			<Add directory=".\include\Win32\" />
+			<Add directory=".\include\" />
+		</Compiler>
+		<Linker>
+			<Add option="`sdl-config --libs`" />
+			<Add option="-lSDLmain -lSDL -lhge -lhgehelp -lttvfs -ltinyxml2" />
+			<Add directory=".\lib\Win32\" />
+		</Linker>
+		<Unit filename="Engine.cpp" />
+		<Unit filename="Engine.h" />
+		<Unit filename="Image.cpp" />
+		<Unit filename="Image.h" />
+		<Unit filename="Object.cpp" />
+		<Unit filename="Object.h" />
+		<Unit filename="Text.cpp" />
+		<Unit filename="Text.h" />
+		<Unit filename="globaldefs.cpp" />
+		<Unit filename="globaldefs.h" />
+		<Unit filename="hud.cpp" />
+		<Unit filename="hud.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="myEngine.cpp" />
+		<Unit filename="myEngine.h" />
+		<Unit filename="myEngine_retro.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

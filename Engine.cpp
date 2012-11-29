@@ -49,6 +49,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 	m_hge->System_SetState(HGE_RENDERFUNC, renderFunc);
 	m_hge->System_SetState(HGE_TITLE, sTitle.c_str());
 	m_hge->System_SetState(HGE_FPS, HGEFPS_VSYNC);
+	m_hge->System_SetState(HGE_SHOWSPLASH, false);
 
 	// Set up video mode
 	m_hge->System_SetState(HGE_WINDOWED, true);
@@ -113,11 +114,8 @@ void Engine::start()
 {
     // Load all that we need to
     init();
-    //HEFFECT s = m_hge->Effect_Load("res/sfx/new/theme_music.ogg");
-    //m_hge->Effect_PlayEx(s,100,0,1.0,true);
     // Let's rock now!
     m_hge->System_Start();
-    //m_hge->Effect_Free(s);
 }
 
 void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
@@ -183,21 +181,14 @@ void Engine::addObject(Object* obj)
 
 void Engine::updateObjects()
 {
-    //Update all objects
-    //errlog << "Updating " << m_mObjects.size() << " objects" << endl;
-    //int iNum = 0;
-    //int iNumErased = 0;
     for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
-    //    iNum++;
         if(!(*i).second->update())  //Remove this object if it returns true
         {
             delete (*i).second;
             m_mObjects.erase(i);
-    //        iNumErased++;
         }
     }
-    //errlog << "Erased " << iNumErased << " objects. " << iNum << " objects updated total, final object count: " << m_mObjects.size() << endl;
 
     //Update all object frames also (outside loop so frames aren't put out of sync)
     for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)

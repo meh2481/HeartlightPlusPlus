@@ -222,12 +222,15 @@ void myEngine::init()
     loadLevel_retro();
 
     m_hud = new HUD("levelhud");
+    //errlog << "Creating HUD" << endl;
     m_hud->create("res/hud/hud.xml");
+    //errlog << "Done creating HUD" << endl;
     m_hud->setScale(2);
     m_hud->setSignalHandler(signalHandler);
 
     if(m_bMusic)
         playMusic("o_mus_menu"); //Start playing menu music
+
 }
 
 void myEngine::loadImages(string sListFilename)
@@ -242,10 +245,10 @@ void myEngine::loadImages(string sListFilename)
 
     //If you wish to reference the image in your code, use the text in the "name" field
 
-    XMLDocument doc;
-    doc.LoadFile(sListFilename.c_str());
+    XMLDocument* doc = new XMLDocument();
+    doc->LoadFile(sListFilename.c_str());
 
-    XMLElement* elem = doc.FirstChildElement("images");
+    XMLElement* elem = doc->FirstChildElement("images");
     if(elem == NULL) return;
     elem = elem->FirstChildElement("image");
     if(elem == NULL) return;
@@ -261,6 +264,7 @@ void myEngine::loadImages(string sListFilename)
         elem = elem->NextSiblingElement();
         if(elem == NULL) break;
     }
+    delete doc;
 }
 
 void myEngine::loadSounds(string sListFilename)
@@ -275,10 +279,10 @@ void myEngine::loadSounds(string sListFilename)
 
     //If you wish to reference the sound in your code, use the text in the "name" field
 
-    XMLDocument doc;
-    doc.LoadFile(sListFilename.c_str());
+    XMLDocument* doc = new XMLDocument();
+    doc->LoadFile(sListFilename.c_str());
 
-    XMLElement* elem = doc.FirstChildElement("sounds");
+    XMLElement* elem = doc->FirstChildElement("sounds");
     if(elem == NULL) return;
     elem = elem->FirstChildElement("sound");
     if(elem == NULL) return;
@@ -294,6 +298,7 @@ void myEngine::loadSounds(string sListFilename)
         elem = elem->NextSiblingElement();
         if(elem == NULL) break;
     }
+    delete doc;
 }
 
 void myEngine::hudSignalHandler(string sSignal)

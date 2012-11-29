@@ -102,7 +102,7 @@ void HUDImage::draw(float32 fCurTime, DWORD dwCol)
 void HUDImage::setScale(uint16_t iScale)
 {
     HUDItem::setScale(iScale);
-    m_img->scale(m_iSCALE_FAC);
+    m_img->scale(iScale);
 }
 
 void HUDImage::setImage(Image* img)
@@ -179,7 +179,7 @@ void HUDTextbox::setScale(uint16_t iScale)
 void HUDTextbox::setText(uint64_t iNum)
 {
     char c[256];
-    sprintf(c, "%ld", iNum);
+    sprintf(c, "%lu", iNum);
     setText(c);
 }
 
@@ -482,7 +482,6 @@ HUDItem* HUD::_getItem(XMLElement* elem)
             DWORD dwFillCol = colorFromString(cFill);
             tb->setFill(dwFillCol);
         }
-
         return(tb);
     }
     else
@@ -493,11 +492,10 @@ HUDItem* HUD::_getItem(XMLElement* elem)
 void HUD::create(string sXMLFilename)
 {
     //Load in the XML document
+    XMLDocument* doc = new XMLDocument();
+    doc->LoadFile(sXMLFilename.c_str());
 
-    XMLDocument doc;
-    doc.LoadFile(sXMLFilename.c_str());
-
-    XMLElement* elem = doc.FirstChildElement("hud");
+    XMLElement* elem = doc->FirstChildElement("hud");
     if(elem == NULL) return;
     const char* cName = elem->Attribute("name");
     if(cName != NULL)
@@ -512,6 +510,8 @@ void HUD::create(string sXMLFilename)
             addChild(it);
 
     }
+    delete doc;
+    //errlog << "Exit HUD::create()" << endl;
 }
 
 

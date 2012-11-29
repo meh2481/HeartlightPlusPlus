@@ -21,10 +21,10 @@ Text::Text(string sXMLFilename)
     //      ...
     //  </font>
 
-    XMLDocument doc;
-    doc.LoadFile(sXMLFilename.c_str());
+    XMLDocument* doc = new XMLDocument();
+    doc->LoadFile(sXMLFilename.c_str());
 
-    XMLElement* elem = doc.FirstChildElement("font");
+    XMLElement* elem = doc->FirstChildElement("font");
     if(elem == NULL) return;
     const char* cName = elem->Attribute("name");
     if(cName != NULL)
@@ -52,6 +52,7 @@ Text::Text(string sXMLFilename)
             m_mRectangles[cChar[0]] = rc;   //Stick this into the list
         }
     }
+    delete doc;
 }
 
 Text::~Text()

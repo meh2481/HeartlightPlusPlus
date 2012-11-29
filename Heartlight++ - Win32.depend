@@ -1,0 +1,581 @@
+# depslib dependency file v1.0
+1354153058 source:c:\users\mark\repos\heartlightplusplus\engine.cpp
+	"Engine.h"
+
+1354142002 c:\users\mark\repos\heartlightplusplus\engine.h
+	"globaldefs.h"
+	"Image.h"
+	"Object.h"
+	"Text.h"
+	"hud.h"
+	<map>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\globaldefs.h
+	<string>
+	<fstream>
+	"hge.h"
+	"hgesprite.h"
+	"hgeparticle.h"
+	"Box2D.h"
+	"tinyxml2.h"
+	"VFS.h"
+	"VFSTools.h"
+
+1338502482 c:\users\mark\repos\heartlightplusplus\include\win32\\hge.h
+	<windows.h>
+
+1338502483 c:\users\mark\repos\heartlightplusplus\include\win32\\hgesprite.h
+	"hge.h"
+	"hgerect.h"
+
+1338502483 c:\users\mark\repos\heartlightplusplus\include\win32\\hgerect.h
+
+1338502482 c:\users\mark\repos\heartlightplusplus\include\win32\\hgeparticle.h
+	"hge.h"
+	"hgesprite.h"
+	"hgevector.h"
+	"hgecolor.h"
+	"hgerect.h"
+
+1338502483 c:\users\mark\repos\heartlightplusplus\include\win32\\hgevector.h
+	"hge.h"
+	<math.h>
+
+1338502482 c:\users\mark\repos\heartlightplusplus\include\win32\\hgecolor.h
+	"hge.h"
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d.h
+	<Box2D/Common/b2Settings.h>
+	<Box2D/Common/b2Draw.h>
+	<Box2D/Common/b2Timer.h>
+	<Box2D/Collision/Shapes/b2CircleShape.h>
+	<Box2D/Collision/Shapes/b2EdgeShape.h>
+	<Box2D/Collision/Shapes/b2ChainShape.h>
+	<Box2D/Collision/Shapes/b2PolygonShape.h>
+	<Box2D/Collision/b2BroadPhase.h>
+	<Box2D/Collision/b2Distance.h>
+	<Box2D/Collision/b2DynamicTree.h>
+	<Box2D/Collision/b2TimeOfImpact.h>
+	<Box2D/Dynamics/b2Body.h>
+	<Box2D/Dynamics/b2Fixture.h>
+	<Box2D/Dynamics/b2WorldCallbacks.h>
+	<Box2D/Dynamics/b2TimeStep.h>
+	<Box2D/Dynamics/b2World.h>
+	<Box2D/Dynamics/Contacts/b2Contact.h>
+	<Box2D/Dynamics/Joints/b2DistanceJoint.h>
+	<Box2D/Dynamics/Joints/b2FrictionJoint.h>
+	<Box2D/Dynamics/Joints/b2GearJoint.h>
+	<Box2D/Dynamics/Joints/b2WheelJoint.h>
+	<Box2D/Dynamics/Joints/b2MouseJoint.h>
+	<Box2D/Dynamics/Joints/b2PrismaticJoint.h>
+	<Box2D/Dynamics/Joints/b2PulleyJoint.h>
+	<Box2D/Dynamics/Joints/b2RevoluteJoint.h>
+	<Box2D/Dynamics/Joints/b2RopeJoint.h>
+	<Box2D/Dynamics/Joints/b2WeldJoint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\common\b2settings.h
+	<cassert>
+	<cmath>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\common\b2draw.h
+	<Box2D/Common/b2Math.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\common\b2math.h
+	<Box2D/Common/b2Settings.h>
+	<cmath>
+	<cfloat>
+	<cstddef>
+	<limits>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\common\b2timer.h
+	<Box2D/Common/b2Settings.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\shapes\b2circleshape.h
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\shapes\b2shape.h
+	<Box2D/Common/b2BlockAllocator.h>
+	<Box2D/Common/b2Math.h>
+	<Box2D/Collision/b2Collision.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\common\b2blockallocator.h
+	<Box2D/Common/b2Settings.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\b2collision.h
+	<Box2D/Common/b2Math.h>
+	<climits>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\shapes\b2edgeshape.h
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\shapes\b2chainshape.h
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\shapes\b2polygonshape.h
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\b2broadphase.h
+	<Box2D/Common/b2Settings.h>
+	<Box2D/Collision/b2Collision.h>
+	<Box2D/Collision/b2DynamicTree.h>
+	<algorithm>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\b2dynamictree.h
+	<Box2D/Collision/b2Collision.h>
+	<Box2D/Common/b2GrowableStack.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\common\b2growablestack.h
+	<Box2D/Common/b2Settings.h>
+	<cstring>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\b2distance.h
+	<Box2D/Common/b2Math.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\collision\b2timeofimpact.h
+	<Box2D/Common/b2Math.h>
+	<Box2D/Collision/b2Distance.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\b2body.h
+	<Box2D/Common/b2Math.h>
+	<Box2D/Collision/Shapes/b2Shape.h>
+	<memory>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\b2fixture.h
+	<Box2D/Dynamics/b2Body.h>
+	<Box2D/Collision/b2Collision.h>
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\b2worldcallbacks.h
+	<Box2D/Common/b2Settings.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\b2timestep.h
+	<Box2D/Common/b2Math.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\b2world.h
+	<Box2D/Common/b2Math.h>
+	<Box2D/Common/b2BlockAllocator.h>
+	<Box2D/Common/b2StackAllocator.h>
+	<Box2D/Dynamics/b2ContactManager.h>
+	<Box2D/Dynamics/b2WorldCallbacks.h>
+	<Box2D/Dynamics/b2TimeStep.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\common\b2stackallocator.h
+	<Box2D/Common/b2Settings.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\b2contactmanager.h
+	<Box2D/Collision/b2BroadPhase.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\contacts\b2contact.h
+	<Box2D/Common/b2Math.h>
+	<Box2D/Collision/b2Collision.h>
+	<Box2D/Collision/Shapes/b2Shape.h>
+	<Box2D/Dynamics/b2Fixture.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2distancejoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2joint.h
+	<Box2D/Common/b2Math.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2frictionjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2gearjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2wheeljoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2mousejoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2prismaticjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2pulleyjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2revolutejoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2ropejoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\win32\\box2d\dynamics\joints\b2weldjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\tinyxml2.h
+	<ctype.h>
+	<limits.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdarg.h>
+	<cctype>
+	<climits>
+	<cstdio>
+	<cstdlib>
+	<cstring>
+	<cstdarg>
+	<android/log.h>
+	<assert.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfs.h
+	"VFSDefines.h"
+	<cstring>
+	<string>
+	"VFSHelper.h"
+	"VFSFile.h"
+	"VFSDir.h"
+	"VFSSystemPaths.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfsdefines.h
+	<stdlib.h>
+	<malloc.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfshelper.h
+	<vector>
+	<list>
+	<string>
+	<iostream>
+	"VFSAtomic.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfsatomic.h
+	"VFSDefines.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfsfile.h
+	"VFSBase.h"
+	<string>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfsbase.h
+	<string>
+	"VFSDefines.h"
+	"VFSSelfRefCounter.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfsselfrefcounter.h
+	"VFSDefines.h"
+	"VFSAtomic.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfsdir.h
+	"VFSBase.h"
+	<map>
+	<cstring>
+	"VFSHashmap.h"
+	"VFSTools.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfshashmap.h
+	<vector>
+	"VFSDefines.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfstools.h
+	<deque>
+	<string>
+	"VFSDefines.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\win32\\vfssystempaths.h
+	<cstddef>
+	<string>
+	"VFSDefines.h"
+
+1354142002 c:\users\mark\repos\heartlightplusplus\image.h
+	"globaldefs.h"
+
+1354142002 c:\users\mark\repos\heartlightplusplus\object.h
+	"globaldefs.h"
+	"Image.h"
+
+1354142002 c:\users\mark\repos\heartlightplusplus\text.h
+	"globaldefs.h"
+	"Image.h"
+	<map>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\hud.h
+	"globaldefs.h"
+	"Image.h"
+	"Text.h"
+
+1354142002 source:c:\users\mark\repos\heartlightplusplus\image.cpp
+	"Image.h"
+
+1354142002 source:c:\users\mark\repos\heartlightplusplus\object.cpp
+	"Object.h"
+
+1354151508 source:c:\users\mark\repos\heartlightplusplus\text.cpp
+	"Text.h"
+
+1354142002 source:c:\users\mark\repos\heartlightplusplus\globaldefs.cpp
+	"globaldefs.h"
+	<sstream>
+
+1354153012 source:c:\users\mark\repos\heartlightplusplus\hud.cpp
+	"hud.h"
+	<sstream>
+
+1354151208 source:c:\users\mark\repos\heartlightplusplus\main.cpp
+	"myEngine.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\myengine.h
+	"Engine.h"
+	<vector>
+
+1354153162 source:c:\users\mark\repos\heartlightplusplus\myengine.cpp
+	"myEngine.h"
+
+1354142003 source:c:\users\mark\repos\heartlightplusplus\myengine_retro.cpp
+	"myEngine.h"
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d.h
+	<Box2D/Common/b2Settings.h>
+	<Box2D/Common/b2Draw.h>
+	<Box2D/Common/b2Timer.h>
+	<Box2D/Collision/Shapes/b2CircleShape.h>
+	<Box2D/Collision/Shapes/b2EdgeShape.h>
+	<Box2D/Collision/Shapes/b2ChainShape.h>
+	<Box2D/Collision/Shapes/b2PolygonShape.h>
+	<Box2D/Collision/b2BroadPhase.h>
+	<Box2D/Collision/b2Distance.h>
+	<Box2D/Collision/b2DynamicTree.h>
+	<Box2D/Collision/b2TimeOfImpact.h>
+	<Box2D/Dynamics/b2Body.h>
+	<Box2D/Dynamics/b2Fixture.h>
+	<Box2D/Dynamics/b2WorldCallbacks.h>
+	<Box2D/Dynamics/b2TimeStep.h>
+	<Box2D/Dynamics/b2World.h>
+	<Box2D/Dynamics/Contacts/b2Contact.h>
+	<Box2D/Dynamics/Joints/b2DistanceJoint.h>
+	<Box2D/Dynamics/Joints/b2FrictionJoint.h>
+	<Box2D/Dynamics/Joints/b2GearJoint.h>
+	<Box2D/Dynamics/Joints/b2WheelJoint.h>
+	<Box2D/Dynamics/Joints/b2MouseJoint.h>
+	<Box2D/Dynamics/Joints/b2PrismaticJoint.h>
+	<Box2D/Dynamics/Joints/b2PulleyJoint.h>
+	<Box2D/Dynamics/Joints/b2RevoluteJoint.h>
+	<Box2D/Dynamics/Joints/b2RopeJoint.h>
+	<Box2D/Dynamics/Joints/b2WeldJoint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\common\b2settings.h
+	<cassert>
+	<cmath>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\common\b2draw.h
+	<Box2D/Common/b2Math.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\common\b2math.h
+	<Box2D/Common/b2Settings.h>
+	<cmath>
+	<cfloat>
+	<cstddef>
+	<limits>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\common\b2timer.h
+	<Box2D/Common/b2Settings.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\shapes\b2circleshape.h
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\shapes\b2shape.h
+	<Box2D/Common/b2BlockAllocator.h>
+	<Box2D/Common/b2Math.h>
+	<Box2D/Collision/b2Collision.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\common\b2blockallocator.h
+	<Box2D/Common/b2Settings.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\b2collision.h
+	<Box2D/Common/b2Math.h>
+	<climits>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\shapes\b2edgeshape.h
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\shapes\b2chainshape.h
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\shapes\b2polygonshape.h
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\b2broadphase.h
+	<Box2D/Common/b2Settings.h>
+	<Box2D/Collision/b2Collision.h>
+	<Box2D/Collision/b2DynamicTree.h>
+	<algorithm>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\b2dynamictree.h
+	<Box2D/Collision/b2Collision.h>
+	<Box2D/Common/b2GrowableStack.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\common\b2growablestack.h
+	<Box2D/Common/b2Settings.h>
+	<cstring>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\b2distance.h
+	<Box2D/Common/b2Math.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\collision\b2timeofimpact.h
+	<Box2D/Common/b2Math.h>
+	<Box2D/Collision/b2Distance.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\b2body.h
+	<Box2D/Common/b2Math.h>
+	<Box2D/Collision/Shapes/b2Shape.h>
+	<memory>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\b2fixture.h
+	<Box2D/Dynamics/b2Body.h>
+	<Box2D/Collision/b2Collision.h>
+	<Box2D/Collision/Shapes/b2Shape.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\b2worldcallbacks.h
+	<Box2D/Common/b2Settings.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\b2timestep.h
+	<Box2D/Common/b2Math.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\b2world.h
+	<Box2D/Common/b2Math.h>
+	<Box2D/Common/b2BlockAllocator.h>
+	<Box2D/Common/b2StackAllocator.h>
+	<Box2D/Dynamics/b2ContactManager.h>
+	<Box2D/Dynamics/b2WorldCallbacks.h>
+	<Box2D/Dynamics/b2TimeStep.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\common\b2stackallocator.h
+	<Box2D/Common/b2Settings.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\b2contactmanager.h
+	<Box2D/Collision/b2BroadPhase.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\contacts\b2contact.h
+	<Box2D/Common/b2Math.h>
+	<Box2D/Collision/b2Collision.h>
+	<Box2D/Collision/Shapes/b2Shape.h>
+	<Box2D/Dynamics/b2Fixture.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2distancejoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2joint.h
+	<Box2D/Common/b2Math.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2frictionjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2gearjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2wheeljoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2mousejoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2prismaticjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2pulleyjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2revolutejoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2ropejoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142002 c:\users\mark\repos\heartlightplusplus\include\\box2d\dynamics\joints\b2weldjoint.h
+	<Box2D/Dynamics/Joints/b2Joint.h>
+
+1354142808 c:\users\mark\repos\heartlightplusplus\include\\tinyxml2.h
+	<ctype.h>
+	<limits.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdarg.h>
+	<cctype>
+	<climits>
+	<cstdio>
+	<cstdlib>
+	<cstring>
+	<cstdarg>
+	<android/log.h>
+	<assert.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfs.h
+	"VFSDefines.h"
+	<cstring>
+	<string>
+	"VFSHelper.h"
+	"VFSFile.h"
+	"VFSDir.h"
+	"VFSSystemPaths.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfsdefines.h
+	<stdlib.h>
+	<malloc.h>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfshelper.h
+	<vector>
+	<list>
+	<string>
+	<iostream>
+	"VFSAtomic.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfsatomic.h
+	"VFSDefines.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfsfile.h
+	"VFSBase.h"
+	<string>
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfsbase.h
+	<string>
+	"VFSDefines.h"
+	"VFSSelfRefCounter.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfsselfrefcounter.h
+	"VFSDefines.h"
+	"VFSAtomic.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfsdir.h
+	"VFSBase.h"
+	<map>
+	<cstring>
+	"VFSHashmap.h"
+	"VFSTools.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfshashmap.h
+	<vector>
+	"VFSDefines.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfstools.h
+	<deque>
+	<string>
+	"VFSDefines.h"
+
+1354142003 c:\users\mark\repos\heartlightplusplus\include\\vfssystempaths.h
+	<cstddef>
+	<string>
+	"VFSDefines.h"
+
+1354142808 c:\users\mark\repos\heartlightplusplus\tinyxml2.h
+	<ctype.h>
+	<limits.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdarg.h>
+	<cctype>
+	<climits>
+	<cstdio>
+	<cstdlib>
+	<cstring>
+	<cstdarg>
+	<android/log.h>
+	<assert.h>
+
+1354142808 source:c:\users\mark\repos\heartlightplusplus\tinyxml2.cpp
+	"tinyxml2.h"
+	<new>
+	<stddef.h>
+	<cstddef>
+
