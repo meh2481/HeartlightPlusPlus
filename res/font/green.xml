@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <font name="green">
-  <image path="res/gfx/orig/text_green.png" />
+  <image path="res/font/text_green.png" />
   
   <char ascii="a" rect="0,0,15,9" />
   <char ascii="b" rect="16,0,31,9" />

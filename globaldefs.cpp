@@ -48,7 +48,7 @@ DWORD colorFromString(string s)
     s = stripCommas(s);
 
     //Now, parse
-    uint8_t r,g,b,a;
+    uint16_t r,g,b,a;
     istringstream iss(s);
     iss >> r >> g >> b >> a;
     return ARGB(a,r,g,b);

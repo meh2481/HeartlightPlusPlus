@@ -27,7 +27,8 @@ public:
     float32 height() {return bottom-top;};
     void    offset(float32 x, float32 y)    {left+=x;right+=x;top+=y;bottom+=y;};
     void    offset(Point pt)                {offset(pt.x,pt.y);};
-    Point center() {Point pt; pt.x = (right-left)/2.0 + right; pt.y = (bottom-top)/2.0 + top; return pt;};
+    Point   center() {Point pt; pt.x = (right-left)/2.0 + right; pt.y = (bottom-top)/2.0 + top; return pt;};
+    void    center(float32* x, float32* y)    {Point pt = center(); *x = pt.x; *y = pt.y;};
 };
 
 extern ofstream errlog;
