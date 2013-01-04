@@ -46,10 +46,11 @@ bool Object::update()
     return !m_bDying;
 }
 
-void Object::draw(float32 fScaleFactor)
+void Object::draw(float32 fScreenHeight, float32 fScaleFactor)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
-    m_Img->drawCentered(m_ptPos, rcImgPos, 0.0, fScaleFactor);
+    Point ptDrawPos = m_ptPos;
+    m_Img->drawCentered(ptDrawPos, rcImgPos, 0.0, fScaleFactor);
 }
 
 void Object::setNumFrames(uint16_t iNumFrames, bool bAnimateOnce)
@@ -97,9 +98,20 @@ void Dwarf::updateFrame()
     //Don't update frame on dwarf
 }
 
+//-----------------------------------------------------------------------------------------------------------------------
+physicsObject::physicsObject(Image* img) : Object(img)
+{
+    m_physicsBody = NULL;
+}
 
-
-
+void physicsObject::draw(float32 fScreenHeight, float32 fScaleFactor)
+{
+    Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
+    b2Vec2 pos = m_physicsBody->GetPosition();
+    pos *= SCALE_UP_FACTOR;
+    pos.y = fScreenHeight-pos.y;
+    m_Img->drawCentered(pos, rcImgPos, 2.0*pi - m_physicsBody->GetAngle(), fScaleFactor);
+}
 
 
 

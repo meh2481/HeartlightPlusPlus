@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "Text.h"
 #include "hud.h"
+#include "Cursor.h"
 #include <map>
 
 class Engine
@@ -18,6 +19,9 @@ class Engine
 private:
     //Variables for use by the engine
     HGE* m_hge;
+    b2World* m_physicsWorld;
+    Cursor* m_cursor;
+    Point m_ptCursorPos;
     float32 m_fFramerate;
     float32 m_fAccumulatedTime;
     float32 m_fTargetTime;
@@ -77,6 +81,8 @@ public:
     void scaleImages(uint16_t scaleFac);    //scale all images by scaleFac
     float32 getTime()      {return m_hge->Timer_GetTime();}; //Get the time the engine's been running
     Rect getScreenRect()    {Rect rc = {0,0,getWidth(),getHeight()}; return rc;};
+    b2Body* createBody(b2BodyDef* bdef) {return m_physicsWorld->CreateBody(bdef);};
+    void setCursor(Cursor* cur);
 
     //Accessor methods
     void setFramerate(float32 fFramerate);

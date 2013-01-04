@@ -59,6 +59,7 @@ void Image::draw(Rect rcScreenPos, Rect rcImgPos)
         return;
     }
     m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
+    m_hSprite->SetHotSpot(0,0); //In case we've set this hot spot before
     m_hSprite->RenderStretch(rcScreenPos.left, rcScreenPos.top, rcScreenPos.right, rcScreenPos.bottom);
 }
 
@@ -103,7 +104,8 @@ void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, 
         return;
     }
     m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
-    m_hSprite->RenderEx(x - rcImgPos.width()/2.0, y - rcImgPos.height()/2.0, rotation, stretchFactor);
+    m_hSprite->SetHotSpot(rcImgPos.width()/2.0, rcImgPos.height()/2.0);
+    m_hSprite->RenderEx(x, y, rotation, stretchFactor);
 }
 
 void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactor)

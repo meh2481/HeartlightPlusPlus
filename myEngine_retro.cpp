@@ -251,6 +251,7 @@ void myEngine::loadLevel_retro()
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
+                    m_cur->setTrack(m_levelGrid[col][row]);
                     break;
 
                 case '!':   //exit door

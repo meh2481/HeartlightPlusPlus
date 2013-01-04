@@ -32,9 +32,9 @@ public:
     //Helper methods
     virtual bool update();  //Return false to destroy the object
     virtual void updateFrame();
-    void draw(float32 fScaleFactor = 1.0);
-    void offset(float32 x, float32 y)   {m_ptPos.x += x; m_ptPos.y += y;};
-    void offset(Point pt)               {m_ptPos += pt;};
+    virtual void draw(float32 fScreenHeight, float32 fScaleFactor = 1.0);
+    virtual void offset(float32 x, float32 y)   {m_ptPos.x += x; m_ptPos.y += y;};
+    virtual void offset(Point pt)               {m_ptPos += pt;};
     void kill() {m_bDying = true;};    //Destroy sprite
 
     //Accessor methods
@@ -47,7 +47,7 @@ public:
     void setCenter(float32 x, float32 y)    {m_ptPos.x = x; m_ptPos.y = y;};
     void setPos(float32 x, float32 y)   {m_ptPos.x = x + m_iWidth/2.0; m_ptPos.y = y + m_iHeight/2.0;};
     void setPos(Point ptULCorner)   {setPos(ptULCorner.x, ptULCorner.y);};
-    Point getCenter()  {return m_ptPos;};
+    virtual Point getCenter()  {return m_ptPos;};
     Point getVelocity() {return m_ptVel;};
     void setVelocity(Point pt)  {m_ptVel = pt;};
     void setVelocity(float32 x, float32 y)  {m_ptVel.x = x; m_ptVel.y = y;};
@@ -100,7 +100,26 @@ public:
     void updateFrame();
 };
 
+#define VELOCITY_ITERATIONS 8
+#define PHYSICS_ITERATIONS 3
+#define SCALE_UP_FACTOR 16.0
+#define SCALE_DOWN_FACTOR 0.0625
 
+class physicsObject : public Object
+{
+protected:
+    b2Body* m_physicsBody;
+
+public:
+    physicsObject(Image* img);
+
+    void addFixture(b2FixtureDef* def)   {m_physicsBody->CreateFixture(def);};  //Add a physics fixture to this object
+    void addBody(b2Body* body)   {body->SetUserData(this); m_physicsBody = body;};
+
+    virtual void draw(float32 fScreenHeight, float32 fScaleFactor = 1.0);
+
+    b2Body* getBody() {return m_physicsBody;};
+};
 
 
 

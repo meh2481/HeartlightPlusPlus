@@ -43,6 +43,7 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
 
 myEngine::~myEngine()
 {
+    delete m_cur;
     delete m_hud;
 }
 
@@ -224,6 +225,11 @@ void myEngine::init()
 
     loadLevelDirectory("res/levels");
 
+    m_cur = new Cursor("res/gfx/new/cursor.png");
+    m_cur->setHotSpot(m_cur->getWidth()/2.0, m_cur->getHeight()/2.0);
+    m_cur->setType(CURSOR_BREATHE);
+    setCursor(m_cur);
+
     loadLevel_retro();
 
     m_hud = new HUD("levelhud");
@@ -233,9 +239,45 @@ void myEngine::init()
     m_hud->setScale(2);
     m_hud->setSignalHandler(signalHandler);
 
-    if(m_bMusic)
-        playMusic("o_mus_menu"); //Start playing menu music
+    //if(m_bMusic)
+    //    playMusic("o_mus_menu"); //Start playing menu music
 
+    physicsObject* obj = new physicsObject(getImage("o_metalwall"));
+    b2BodyDef def;
+    def.type = b2_dynamicBody;
+    def.position.Set(10.0f, 20.0f);
+    b2Body* bod = createBody(&def);
+    //bod->SetAngularVelocity(2.0);
+    obj->addBody(bod);
+    b2PolygonShape dynamicBox;
+    dynamicBox.SetAsBox(obj->getWidth() * SCALE_DOWN_FACTOR/2.0, obj->getHeight() * SCALE_DOWN_FACTOR/2.0);
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &dynamicBox;
+    fixtureDef.density = 1.0f;
+    fixtureDef.friction = 0.3f;
+    obj->addFixture(&fixtureDef);
+    addObject(obj);
+    m_objTest = obj;
+
+    b2BodyDef grounddef;
+    grounddef.position.SetZero();
+    b2Body* groundBody = createBody(&grounddef);
+    b2ChainShape worldBox;
+    //worldBox.SetAsBox(50.0f,0.001f);
+    Rect rcScreen = getScreenRect();
+    //rcScreen.offset(4*SCALE_FAC,4*SCALE_FAC);
+    //rcScreen.left += 8*SCALE_FAC;
+    //rcScreen.top += 8*SCALE_FAC;
+    rcScreen.top += 8*SCALE_FAC;    //Size of HUD on bottom of screen
+    rcScreen.scale(SCALE_DOWN_FACTOR);
+    b2Vec2 vertices[5];
+    vertices[0].Set(rcScreen.left, rcScreen.top);
+    vertices[1].Set(rcScreen.right, rcScreen.top);
+    vertices[2].Set(rcScreen.right, rcScreen.bottom);
+    vertices[3].Set(rcScreen.left, rcScreen.bottom);
+    vertices[4].Set(rcScreen.left, rcScreen.top);
+    worldBox.CreateChain(vertices, 5);
+    groundBody->CreateFixture(&worldBox, 0.0);
 }
 
 void myEngine::loadImages(string sListFilename)
@@ -347,6 +389,11 @@ void myEngine::handleEvent(hgeInputEvent event)
                             m_iCurrentLevel = 0;
                         loadLevel_retro();
                     }
+                    else
+                    {
+                        b2Body* bod = m_objTest->getBody();
+                        bod->ApplyTorque(-1000.0);
+                    }
                     break;
 
                 case HGEK_LEFT:
@@ -356,6 +403,11 @@ void myEngine::handleEvent(hgeInputEvent event)
                             m_iCurrentLevel = m_vLevels.size();
                         m_iCurrentLevel--;
                         loadLevel_retro();
+                    }
+                    else
+                    {
+                        b2Body* bod = m_objTest->getBody();
+                        bod->ApplyTorque(1000.0);
                     }
                     break;
 

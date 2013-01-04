@@ -56,6 +56,8 @@ private:
     bool m_bSound, m_bMusic, m_bRad;    //Booleans for music settings and such
 
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
+    physicsObject* m_objTest;
+    Cursor* m_cur;
 
 protected:
     void frame();

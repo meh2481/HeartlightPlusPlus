@@ -11,10 +11,20 @@ bool Engine::_myFrameFunc()
     //Handle input events HGE is giving us
     hgeInputEvent event;
     while(m_hge->Input_GetEvent(&event))
+    {
         handleEvent(event);
+        //See if cursor has moved
+        if(event.type == INPUT_MOUSEMOVE)
+        {
+            m_ptCursorPos.x = event.x;
+            m_ptCursorPos.y = event.y;
+        }
+    }
 
     float32 dt = m_hge->Timer_GetDelta();
     m_fAccumulatedTime += dt;
+    m_physicsWorld->Step(1.0/60.0, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);
+    m_cursor->update(1.0/60.0);
     if(m_fAccumulatedTime >= m_fTargetTime)
     {
         m_fAccumulatedTime -= m_fTargetTime;
@@ -33,6 +43,8 @@ bool Engine::_myRenderFunc()
 
     // Game-specific drawing
     draw();
+    if(m_cursor != NULL)    //Draw cursor if it's there
+        m_cursor->draw(m_ptCursorPos);
 
     // End rendering and update the screen
 	m_hge->Gfx_EndScene();
@@ -41,6 +53,11 @@ bool Engine::_myRenderFunc()
 
 Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 {
+    b2Vec2 gravity(0.0, -9.8);  //Vector for our world's gravity
+    m_physicsWorld = new b2World(gravity);
+    m_cursor = NULL;
+    m_ptCursorPos.SetZero();
+    m_physicsWorld->SetAllowSleeping(true);
     m_hge = hgeCreate(HGE_VERSION);
 
 	// Set up log file, frame function, render function and window title
@@ -92,6 +109,7 @@ Engine::~Engine()
     // Clean up and shutdown
 	m_hge->System_Shutdown();
 	m_hge->Release();
+	delete m_physicsWorld;
 }
 
 void Engine::clearObjects()
@@ -199,7 +217,7 @@ void Engine::drawObjects(float32 fScale)
 {
     for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
-        (*i).second->draw(fScale);
+        (*i).second->draw(getHeight(), fScale);
     }
 }
 
@@ -256,7 +274,12 @@ void Engine::setFramerate(float32 fFramerate)
         m_fTargetTime = 1.0 / m_fFramerate;
 }
 
-
+void Engine::setCursor(Cursor* cur)
+{
+    //if(m_cursor != NULL)
+    //    delete m_cursor;
+    m_cursor = cur;
+}
 
 
 
