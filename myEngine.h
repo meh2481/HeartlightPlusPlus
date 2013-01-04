@@ -35,6 +35,8 @@
 #define FALLING_1           8
 #define FALLING_2           16
 
+#define RETRO   false   //If we're playing in retro mode or not TODO: Variable
+
 class myEngine : public Engine
 {
 private:
@@ -70,6 +72,7 @@ public:
     ~myEngine();
 
     void loadLevel_retro();   //Loads the current level m_iCurrLevel is pointing to into m_levelGrid[][]
+    void loadLevel_new();       //Loads the current level as a physics-based fun play area thing
     bool loadLevels(string sFilename);  //Loads in all the levels from the specified text file into m_vLevels
     void loadLevelDirectory(string sFilePath);  //Loads all the level files in the specified folder
     void updateGrid_retro();  //Updates the level grid, moving objects around

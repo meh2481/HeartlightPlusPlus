@@ -53,7 +53,7 @@ bool Engine::_myRenderFunc()
 
 Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 {
-    b2Vec2 gravity(0.0, -9.8);  //Vector for our world's gravity
+    b2Vec2 gravity(0.0, 9.8);  //Vector for our world's gravity
     m_physicsWorld = new b2World(gravity);
     m_cursor = NULL;
     m_ptCursorPos.SetZero();
@@ -116,7 +116,12 @@ void Engine::clearObjects()
 {
     //Clean up our object list
     for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    {
+        b2Body* bod = i->second->getBody();
+        if(bod != NULL)
+            m_physicsWorld->DestroyBody(bod);
         delete (*i).second;
+    }
     m_mObjects.clear();
 }
 
@@ -203,6 +208,9 @@ void Engine::updateObjects()
     {
         if(!(*i).second->update())  //Remove this object if it returns true
         {
+            b2Body* bod = i->second->getBody();
+            if(bod != NULL)
+                m_physicsWorld->DestroyBody(bod);
             delete (*i).second;
             m_mObjects.erase(i);
         }
@@ -217,7 +225,7 @@ void Engine::drawObjects(float32 fScale)
 {
     for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
-        (*i).second->draw(getHeight(), fScale);
+        (*i).second->draw(fScale);
     }
 }
 

@@ -251,7 +251,7 @@ void myEngine::loadLevel_retro()
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
-                    m_cur->setTrack(m_levelGrid[col][row]);
+                    //m_cur->setTrack(m_levelGrid[col][row]);
                     break;
 
                 case '!':   //exit door
@@ -287,7 +287,8 @@ void myEngine::loadLevel_retro()
                     break;
 
                 case '#':   //brick wall
-                    m_levelGrid[col][row] = new Brick(getImage("o_brick"));
+                    m_levelGrid[col][row] = new retroObject(getImage("o_brick"));
+                    m_levelGrid[col][row]->setAnimate(false);   //Don't animate
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setFrame(m_iCurrentLevel % 4);  //Color depends on level number, like original game
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);

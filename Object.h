@@ -16,6 +16,7 @@ private:
     Object(){};
 
 protected:
+    b2Body* m_physicsBody;
     Image* m_Img;
     uint16_t m_iNumFrames;
     bool m_bAnimateOnce;
@@ -24,6 +25,7 @@ protected:
     Point m_ptPos;
     Point m_ptVel;  //Velocity
     bool m_bDying;  //If sprite should be destroyed or no
+    bool m_bAnimate;    //If should animate frames or not
 
 public:
     Object(Image* img);
@@ -32,13 +34,15 @@ public:
     //Helper methods
     virtual bool update();  //Return false to destroy the object
     virtual void updateFrame();
-    virtual void draw(float32 fScreenHeight, float32 fScaleFactor = 1.0);
+    virtual void draw(float32 fScaleFactor = 1.0);
     virtual void offset(float32 x, float32 y)   {m_ptPos.x += x; m_ptPos.y += y;};
     virtual void offset(Point pt)               {m_ptPos += pt;};
     void kill() {m_bDying = true;};    //Destroy sprite
 
     //Accessor methods
     void setNumFrames(uint16_t iNumFrames, bool bAnimateOnce = false);
+    void setAnimate(bool b)         {m_bAnimate = b;};
+    bool getAnimate()               {return m_bAnimate;};
     int16_t  getFrame() {return m_iCurFrame;};
     void  setFrame(int16_t iFrame) {m_iCurFrame = iFrame;}; //WARNING: Potentially dangerous
     uint32_t getWidth() {return m_iWidth;};
@@ -52,6 +56,7 @@ public:
     void setVelocity(Point pt)  {m_ptVel = pt;};
     void setVelocity(float32 x, float32 y)  {m_ptVel.x = x; m_ptVel.y = y;};
     uint32_t _getID()    {return m_Img->_getID();};   //For engine use
+    b2Body* getBody() {return m_physicsBody;};
 
     Image* getImage()   {return m_Img;};
     void setImage(Image* img)   {m_Img = img;}; //Use with caution! No error-checking!
@@ -79,12 +84,12 @@ public:
 };
 
 //Objects specific to our game
-class Brick : public retroObject
+/*class Brick : public retroObject
 {
 public:
     Brick(Image* img);
     void updateFrame();
-};
+};*/
 
 class Door : public retroObject
 {
@@ -108,7 +113,7 @@ public:
 class physicsObject : public Object
 {
 protected:
-    b2Body* m_physicsBody;
+
 
 public:
     physicsObject(Image* img);
@@ -116,9 +121,9 @@ public:
     void addFixture(b2FixtureDef* def)   {m_physicsBody->CreateFixture(def);};  //Add a physics fixture to this object
     void addBody(b2Body* body)   {body->SetUserData(this); m_physicsBody = body;};
 
-    virtual void draw(float32 fScreenHeight, float32 fScaleFactor = 1.0);
+    virtual void draw(float32 fScaleFactor = 1.0);
+    virtual Point getCenter()    {Point pt = m_physicsBody->GetWorldCenter();pt*=SCALE_UP_FACTOR;return pt;};
 
-    b2Body* getBody() {return m_physicsBody;};
 };
 
 

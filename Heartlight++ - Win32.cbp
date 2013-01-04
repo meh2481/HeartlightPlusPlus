@@ -52,6 +52,8 @@
 			<Add option="-lBox2D" />
 			<Add directory=".\lib\Win32\" />
 		</Linker>
+		<Unit filename="Cursor.cpp" />
+		<Unit filename="Cursor.h" />
 		<Unit filename="Engine.cpp" />
 		<Unit filename="Engine.h" />
 		<Unit filename="Image.cpp" />
@@ -67,6 +69,7 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="myEngine.cpp" />
 		<Unit filename="myEngine.h" />
+		<Unit filename="myEngine_new.cpp" />
 		<Unit filename="myEngine_retro.cpp" />
 		<Extensions>
 			<code_completion />

@@ -78,7 +78,10 @@ void myEngine::frame()
             m_iCurrentLevel++;  //Go to next level
             if(m_iCurrentLevel >= m_vLevels.size())
                 m_iCurrentLevel = 0;
-            loadLevel_retro();
+            if(RETRO)
+                loadLevel_retro();
+            else
+                loadLevel_new();
         }
     }
     if(m_iDyingCount)
@@ -169,7 +172,10 @@ void myEngine::draw()
                 m_iFade = FADE_IN;
                 m_fEndFade = fCurTime + fTimeLeft + FADE_TIME;
                 fTimeLeft = m_fEndFade - fCurTime;
-                loadLevel_retro();      //Reload this level
+                if(RETRO)
+                    loadLevel_retro();
+                else
+                    loadLevel_new();      //Reload this level
             }
         }
         uint8_t iFinalAlpha = 0;
@@ -225,59 +231,65 @@ void myEngine::init()
 
     loadLevelDirectory("res/levels");
 
-    m_cur = new Cursor("res/gfx/new/cursor.png");
-    m_cur->setHotSpot(m_cur->getWidth()/2.0, m_cur->getHeight()/2.0);
+    m_cur = new Cursor("res/gfx/new/cursorpoint.png");
+    m_cur->setHotSpot(47,15);//m_cur->getWidth()/2.0, m_cur->getHeight()/2.0);
     m_cur->setType(CURSOR_BREATHE);
     setCursor(m_cur);
 
-    loadLevel_retro();
+    if(RETRO)
+        loadLevel_retro();
+    else
+        loadLevel_new();
 
     m_hud = new HUD("levelhud");
     //errlog << "Creating HUD" << endl;
     m_hud->create("res/hud/hud.xml");
     //errlog << "Done creating HUD" << endl;
-    m_hud->setScale(2);
+    m_hud->setScale(SCALE_FAC);
     m_hud->setSignalHandler(signalHandler);
 
     //if(m_bMusic)
     //    playMusic("o_mus_menu"); //Start playing menu music
 
-    physicsObject* obj = new physicsObject(getImage("o_metalwall"));
-    b2BodyDef def;
-    def.type = b2_dynamicBody;
-    def.position.Set(10.0f, 20.0f);
-    b2Body* bod = createBody(&def);
-    //bod->SetAngularVelocity(2.0);
-    obj->addBody(bod);
-    b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(obj->getWidth() * SCALE_DOWN_FACTOR/2.0, obj->getHeight() * SCALE_DOWN_FACTOR/2.0);
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &dynamicBox;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
-    obj->addFixture(&fixtureDef);
-    addObject(obj);
-    m_objTest = obj;
+    //for(int i = 0; i < 20; i++)
+    //{
+    //    physicsObject* obj = new physicsObject(getImage("o_metalwall"));
+    //    b2BodyDef def;
+    //    def.type = b2_dynamicBody;
+    //    def.position.Set(8 * SCALE_DOWN_FACTOR * SCALE_FAC + i * obj->getWidth()/2.0 * SCALE_DOWN_FACTOR * SCALE_FAC, 8 * SCALE_DOWN_FACTOR * SCALE_FAC);
+    //    b2Body* bod = createBody(&def);
+    //    //bod->SetAngularVelocity(2.0);
+    //    obj->addBody(bod);
+    //    b2PolygonShape dynamicBox;
+    //    dynamicBox.SetAsBox(obj->getWidth() * SCALE_DOWN_FACTOR/2.0, obj->getHeight() * SCALE_DOWN_FACTOR/2.0);
+    //    b2FixtureDef fixtureDef;
+    //    fixtureDef.shape = &dynamicBox;
+    //    fixtureDef.density = 1.0f;
+    //    fixtureDef.friction = 0.3f;
+    //    obj->addFixture(&fixtureDef);
+    //    addObject(obj);
+    //    m_objTest = obj;
+    //}
 
-    b2BodyDef grounddef;
-    grounddef.position.SetZero();
-    b2Body* groundBody = createBody(&grounddef);
-    b2ChainShape worldBox;
-    //worldBox.SetAsBox(50.0f,0.001f);
-    Rect rcScreen = getScreenRect();
-    //rcScreen.offset(4*SCALE_FAC,4*SCALE_FAC);
-    //rcScreen.left += 8*SCALE_FAC;
-    //rcScreen.top += 8*SCALE_FAC;
-    rcScreen.top += 8*SCALE_FAC;    //Size of HUD on bottom of screen
-    rcScreen.scale(SCALE_DOWN_FACTOR);
-    b2Vec2 vertices[5];
-    vertices[0].Set(rcScreen.left, rcScreen.top);
-    vertices[1].Set(rcScreen.right, rcScreen.top);
-    vertices[2].Set(rcScreen.right, rcScreen.bottom);
-    vertices[3].Set(rcScreen.left, rcScreen.bottom);
-    vertices[4].Set(rcScreen.left, rcScreen.top);
-    worldBox.CreateChain(vertices, 5);
-    groundBody->CreateFixture(&worldBox, 0.0);
+    //Create physics boundary if not in retro mode
+    if(!RETRO)
+    {
+        b2BodyDef grounddef;
+        grounddef.position.SetZero();
+        b2Body* groundBody = createBody(&grounddef);
+        b2ChainShape worldBox;
+        Rect rcScreen = getScreenRect();
+        rcScreen.bottom = LEVEL_HEIGHT*GRID_HEIGHT*SCALE_FAC;    //Account for size of HUD on bottom of screen
+        rcScreen.scale(SCALE_DOWN_FACTOR);
+        b2Vec2 vertices[5];
+        vertices[0].Set(rcScreen.left, rcScreen.top);
+        vertices[1].Set(rcScreen.right, rcScreen.top);
+        vertices[2].Set(rcScreen.right, rcScreen.bottom);
+        vertices[3].Set(rcScreen.left, rcScreen.bottom);
+        vertices[4].Set(rcScreen.left, rcScreen.top);
+        worldBox.CreateChain(vertices, 5);
+        groundBody->CreateFixture(&worldBox, 0.0);
+    }
 }
 
 void myEngine::loadImages(string sListFilename)
@@ -387,12 +399,17 @@ void myEngine::handleEvent(hgeInputEvent event)
                         m_iCurrentLevel++;
                         if(m_iCurrentLevel >= m_vLevels.size())
                             m_iCurrentLevel = 0;
-                        loadLevel_retro();
+                        if(RETRO)
+                            loadLevel_retro();
+                        else
+                            loadLevel_new();
                     }
-                    else
+                    else if(!RETRO)
                     {
                         b2Body* bod = m_objTest->getBody();
-                        bod->ApplyTorque(-1000.0);
+                        b2Vec2 force;
+                        force.Set(1000,0);
+                        bod->ApplyForceToCenter(force);
                     }
                     break;
 
@@ -402,12 +419,17 @@ void myEngine::handleEvent(hgeInputEvent event)
                         if(m_iCurrentLevel == 0)
                             m_iCurrentLevel = m_vLevels.size();
                         m_iCurrentLevel--;
-                        loadLevel_retro();
+                        if(RETRO)
+                            loadLevel_retro();
+                        else
+                            loadLevel_new();
                     }
-                    else
+                    else if(!RETRO)
                     {
                         b2Body* bod = m_objTest->getBody();
-                        bod->ApplyTorque(1000.0);
+                        b2Vec2 force;
+                        force.Set(-1000,0);
+                        bod->ApplyForceToCenter(force);
                     }
                     break;
 

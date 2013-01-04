@@ -161,10 +161,10 @@ void HUDTextbox::setScale(uint16_t iScale)
     m_txtFont->setScale(iScale);
 }
 
-void HUDTextbox::setText(uint64_t iNum)
+void HUDTextbox::setText(uint32_t iNum)
 {
     char c[256];
-    sprintf(c, "%lu", iNum);
+    sprintf(c, "%lu", (long unsigned int)iNum);
     setText(c);
 }
 

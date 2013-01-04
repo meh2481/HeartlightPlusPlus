@@ -23,6 +23,8 @@ Object::Object(Image* img)
     m_ptVel.SetZero();
     m_bDying = false;
     m_bAnimateOnce = false;
+    m_physicsBody = NULL;
+    m_bAnimate = true;
 }
 
 Object::~Object()
@@ -32,6 +34,8 @@ Object::~Object()
 
 void Object::updateFrame()
 {
+    if(!m_bAnimate)
+        return;
     m_iCurFrame++;
     if(m_iCurFrame >= m_iNumFrames)
     {
@@ -46,7 +50,7 @@ bool Object::update()
     return !m_bDying;
 }
 
-void Object::draw(float32 fScreenHeight, float32 fScaleFactor)
+void Object::draw(float32 fScaleFactor)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
     Point ptDrawPos = m_ptPos;
@@ -68,9 +72,9 @@ retroObject::retroObject(Image* img) : Object(img)
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-Brick::Brick(Image* img) : retroObject(img)
-{
-}
+//Brick::Brick(Image* img) : retroObject(img)
+//{
+//}
 
 Door::Door(Image* img) : retroObject(img)
 {
@@ -80,10 +84,10 @@ Dwarf::Dwarf(Image* img) : retroObject(img)
 {
 }
 
-void Brick::updateFrame()
-{
+//void Brick::updateFrame()
+//{
     //Don't update frame on bricks
-}
+//}
 
 void Door::updateFrame()
 {
@@ -101,16 +105,19 @@ void Dwarf::updateFrame()
 //-----------------------------------------------------------------------------------------------------------------------
 physicsObject::physicsObject(Image* img) : Object(img)
 {
-    m_physicsBody = NULL;
 }
 
-void physicsObject::draw(float32 fScreenHeight, float32 fScaleFactor)
+//physicsObject::~physicsObject()
+//{
+//}
+
+void physicsObject::draw(float32 fScaleFactor)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
     b2Vec2 pos = m_physicsBody->GetPosition();
     pos *= SCALE_UP_FACTOR;
-    pos.y = fScreenHeight-pos.y;
-    m_Img->drawCentered(pos, rcImgPos, 2.0*pi - m_physicsBody->GetAngle(), fScaleFactor);
+    pos.y = pos.y;//fScreenHeight-pos.y;
+    m_Img->drawCentered(pos, rcImgPos, m_physicsBody->GetAngle(), fScaleFactor);
 }
 
 

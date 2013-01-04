@@ -49,7 +49,9 @@ public:
     void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);  //Set the image to this color
     void setColor(DWORD dwCol);
     void scale(uint16_t iScaleFac); //Scales this image up by a given factor from the original, without interpolation. (scale(1) to reset to original size)
-
+    void setHotSpot(float32 x, float32 y)   {m_hSprite->SetHotSpot(x,y);};
+    Point getHotSpot()                      {Point pt; m_hSprite->GetHotSpot(&pt.x, &pt.y); return pt;};
+    void setHotSpot(Point pt)               {setHotSpot(pt.x, pt.y);};
 };
 
 

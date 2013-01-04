@@ -20,7 +20,7 @@ private:
 
 protected:
     Image*      m_img;
-    Point       m_ptHotSpot;
+    //Point       m_ptHotSpot;
     uint16_t    m_iCursorType;
     uint8_t     m_ir, m_ig, m_ib, m_ia;
     float32     m_fScale;
@@ -33,14 +33,14 @@ public:
     ~Cursor();
 
     //Accessor methods
-    void setHotSpot(Point pt)               {m_ptHotSpot = pt;};
-    void setHotSpot(float32 x, float32 y)   {m_ptHotSpot.x = x; m_ptHotSpot.y = y;};
-    Point getHotSpot()                      {return m_ptHotSpot;};
+    void setHotSpot(Point pt)               {m_img->setHotSpot(pt);};
+    void setHotSpot(float32 x, float32 y)   {m_img->setHotSpot(x,y);};
+    Point getHotSpot()                      {return m_img->getHotSpot();};
     uint32_t getWidth()                     {return m_img->getWidth();};
     uint32_t getHeight()                    {return m_img->getHeight();};
     uint16_t getType()                      {return m_iCursorType;};
     void setType(uint16_t type)             {m_iCursorType = type;};
-    void setTrack(Object* obj)              {m_objTrack = obj; m_iCursorType = CURSOR_TRACK;};
+    void setTrack(Object* obj)              {m_objTrack = obj; m_iCursorType |= CURSOR_TRACK;};
 
     //General methods
     void draw(float32 x, float32 y);
