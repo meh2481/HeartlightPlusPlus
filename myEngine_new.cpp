@@ -41,6 +41,7 @@ void myEngine::loadLevel_new()
                 {
                     physicsObject* obj = new physicsObject(getImage("o_heart"));
                     obj->setNumFrames(6);
+                    obj->setFrame(randInt(0,5));
                     b2BodyDef def;
                     def.type = b2_dynamicBody;
                     def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR * SCALE_FAC,
@@ -123,7 +124,9 @@ void myEngine::loadLevel_new()
                     bod->SetFixedRotation(true);
                     m_objTest->addBody(bod);
                     b2PolygonShape dynamicBox;
-                    dynamicBox.SetAsBox((m_objTest->getWidth()-1) * SCALE_DOWN_FACTOR/2.0, (m_objTest->getHeight()-1) * SCALE_DOWN_FACTOR/2.0);
+                    dynamicBox.SetAsBox((m_objTest->getWidth()-SCALE_FAC*3) * SCALE_DOWN_FACTOR/2.0,
+                                        (m_objTest->getHeight()-SCALE_FAC*2) * SCALE_DOWN_FACTOR/2.0,
+                                        b2Vec2(0,SCALE_DOWN_FACTOR*SCALE_FAC), 0.0);
                     b2FixtureDef fixtureDef;
                     fixtureDef.shape = &dynamicBox;
                     fixtureDef.density = 1.0f;
@@ -295,3 +298,108 @@ void myEngine::loadLevel_new()
         }
     }
 }
+
+#define MAX_SPEED       19
+#define SLOW_DOWN_GROUND_AMT    2.2
+#define SLOW_DOWN_AIR_AMT       0.95
+#define SPEED_UP_AMT    2.5
+#define JUMP_AMT        1900//2500
+
+void myEngine::updateGrid_new()
+{
+    b2Body* bPlayer = m_objTest->getBody();
+    Point ptVelocity = bPlayer->GetLinearVelocity();
+    //Move player around
+    if(keyDown(HGEK_LEFT))//Move left
+        ptVelocity.x -= SPEED_UP_AMT;//bPlayer->ApplyForceToCenter(Point(-1000,0));
+    else if(ptVelocity.x < 0)
+    {
+        if(isOnGround())
+        {
+            ptVelocity.x += SLOW_DOWN_GROUND_AMT;//bPlayer->ApplyForceToCenter(Point(SLOW_DOWN_GROUND_AMT,0));
+            if(ptVelocity.x > 0)
+                ptVelocity.x = 0;
+        }
+        else
+        {
+            ptVelocity.x += SLOW_DOWN_AIR_AMT;
+            if(ptVelocity.x > 0)
+                ptVelocity.x = 0;
+        }
+    }
+
+    if(keyDown(HGEK_RIGHT))//Move right
+        ptVelocity.x += SPEED_UP_AMT; //bPlayer->ApplyForceToCenter(Point(1000,0));
+    else if(ptVelocity.x > 0)
+    {
+        if(isOnGround())
+        {
+            ptVelocity.x -= SLOW_DOWN_GROUND_AMT; //bPlayer->ApplyForceToCenter(Point(-SLOW_DOWN_GROUND_AMT,0));
+            if(ptVelocity.x < 0)
+                ptVelocity.x = 0;
+        }
+        else
+        {
+            ptVelocity.x -= SLOW_DOWN_AIR_AMT;
+            if(ptVelocity.x < 0)
+                ptVelocity.x = 0;
+        }
+    }
+
+    if(keyDown(HGEK_UP))//Jump
+    {
+        if(isOnGround())
+            bPlayer->ApplyForceToCenter(Point(0,-JUMP_AMT));
+    }
+
+    if(ptVelocity.x > MAX_SPEED)
+    {
+        ptVelocity.x = MAX_SPEED;
+    }
+    if(ptVelocity.x < -MAX_SPEED)
+    {
+        ptVelocity.x = -MAX_SPEED;
+    }
+    bPlayer->SetLinearVelocity(ptVelocity);
+}
+
+//Test to see if player is on the ground
+bool myEngine::isOnGround()
+{
+    if(RETRO)
+        return false;
+
+    b2Body* bPlayer = m_objTest->getBody();
+
+    for(b2ContactEdge* bContactEdge = bPlayer->GetContactList(); bContactEdge != NULL; bContactEdge = bContactEdge->next)
+    {
+        b2Contact* bContacts = bContactEdge->contact;
+
+        if(!bContacts->IsTouching())
+            continue;
+
+        b2Manifold* bMan = bContacts->GetManifold();
+        b2Vec2 bNor = bMan->localNormal;
+        if(bContacts->GetFixtureB()->GetBody() == bPlayer)
+            bNor.y = -bNor.y;
+
+        if(bNor.y > 0)  //If we've got a contact with a normal that points up, we're on the ground.
+            return true;    //TODO: Test for the angle of the normal, so only jump if < 45 degree slope or so
+    }
+    return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -85,18 +85,18 @@ void Image::draw(Point pt, Rect rcImgPos)
     draw(pt.x, pt.y, rcImgPos);
 }
 
-void Image::drawCentered(float32 x, float32 y, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(float32 x, float32 y, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
     Rect rcImg = {0,0,m_iWidth,m_iHeight};
-    drawCentered(x, y, rcImg, rotation, stretchFactor);
+    drawCentered(x, y, rcImg, rotation, stretchFactorx, stretchFactory);
 }
 
-void Image::drawCentered(Point pt, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(Point pt, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
-    drawCentered(pt.x, pt.y, rotation, stretchFactor);
+    drawCentered(pt.x, pt.y, rotation, stretchFactorx, stretchFactory);
 }
 
-void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
     if(m_hSprite == NULL)
     {
@@ -108,12 +108,12 @@ void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, 
     m_hSprite->GetHotSpot(&xh, &yh);
     if(xh == 0 && yh == 0)
         m_hSprite->SetHotSpot(rcImgPos.width()/2.0, rcImgPos.height()/2.0);
-    m_hSprite->RenderEx(x, y, rotation, stretchFactor);
+    m_hSprite->RenderEx(x, y, rotation, stretchFactorx, stretchFactory);
 }
 
-void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
-    drawCentered(pt.x, pt.y, rcImgPos, rotation, stretchFactor);
+    drawCentered(pt.x, pt.y, rcImgPos, rotation, stretchFactorx, stretchFactory);
 }
 
 //Set the color of this image

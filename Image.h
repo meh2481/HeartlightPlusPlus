@@ -41,10 +41,10 @@ public:
     void draw(Point pt);                //draw the entire image with upper left corner at pt
     void draw(float32 x, float32 y, Rect rcImgPos); //draw part of the image at x, y
     void draw(Point pt, Rect rcImgPos); //draw part of the image at pt
-    void drawCentered(float32 x, float32 y, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center the entire image centered at x,y
-    void drawCentered(Point pt, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center the entire image centered at pt
-    void drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at x,y
-    void drawCentered(Point pt, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactor = 1.0);    //Center part of the image at pt
+    void drawCentered(float32 x, float32 y, float32 rotation = 0.0, float32 stretchFactorx = 1.0, float32 stretchFactory = 0.0);    //Center the entire image centered at x,y
+    void drawCentered(Point pt, float32 rotation = 0.0, float32 stretchFactorx = 1.0, float32 stretchFactory = 0.0);    //Center the entire image centered at pt
+    void drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactorx = 1.0, float32 stretchFactory = 0.0);    //Center part of the image at x,y
+    void drawCentered(Point pt, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactorx = 1.0, float32 stretchFactory = 0.0);    //Center part of the image at pt
 
     void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);  //Set the image to this color
     void setColor(DWORD dwCol);

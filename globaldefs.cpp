@@ -54,7 +54,27 @@ DWORD colorFromString(string s)
     return ARGB(a,r,g,b);
 }
 
+int32_t randInt(int32_t min, int32_t max)
+{
+    if(min == max)
+        return min;
+    int32_t ret;
+    HGE* h = hgeCreate(HGE_VERSION);
+    ret = h->Random_Int(min, max);
+    h->Release();
+    return ret;
+}
 
+float32 randFloat(float32 min, float32 max)
+{
+    if(min == max)
+        return min;
+    float32 ret;
+    HGE* h = hgeCreate(HGE_VERSION);
+    ret = h->Random_Float(min, max);
+    h->Release();
+    return ret;
+}
 
 
 

@@ -52,7 +52,10 @@ void myEngine::frame()
     if(m_iFade == FADE_IN)
         return; //Don't do anything if fading in
 
-    updateGrid_retro();
+    if(RETRO)
+        updateGrid_retro();
+    else
+        updateGrid_new();
 
     if(m_iWinningCount) //If winning a level, make dwarf jump up and down
     {
@@ -231,9 +234,9 @@ void myEngine::init()
 
     loadLevelDirectory("res/levels");
 
-    m_cur = new Cursor("res/gfx/new/cursorpoint.png");
-    m_cur->setHotSpot(47,15);//m_cur->getWidth()/2.0, m_cur->getHeight()/2.0);
-    m_cur->setType(CURSOR_BREATHE);
+    m_cur = new Cursor("res/cursor/cursor1.xml");
+    m_cur->setHotSpot(/*47,15);*/m_cur->getWidth()/2.0, m_cur->getHeight()/2.0);
+    //m_cur->setType(CURSOR_COLOR);
     setCursor(m_cur);
 
     if(RETRO)
@@ -289,6 +292,8 @@ void myEngine::init()
         vertices[4].Set(rcScreen.left, rcScreen.top);
         worldBox.CreateChain(vertices, 5);
         groundBody->CreateFixture(&worldBox, 0.0);
+
+        setFramerate(60); //YAY 60 fps!
     }
 }
 
@@ -404,13 +409,13 @@ void myEngine::handleEvent(hgeInputEvent event)
                         else
                             loadLevel_new();
                     }
-                    else if(!RETRO)
-                    {
-                        b2Body* bod = m_objTest->getBody();
-                        b2Vec2 force;
-                        force.Set(1000,0);
-                        bod->ApplyForceToCenter(force);
-                    }
+                    //else if(!RETRO)
+                    //{
+                    //    b2Body* bod = m_objTest->getBody();
+                    //    b2Vec2 force;
+                    //    force.Set(1000,0);
+                    //    bod->ApplyForceToCenter(force);
+                    //}
                     break;
 
                 case HGEK_LEFT:
@@ -424,13 +429,13 @@ void myEngine::handleEvent(hgeInputEvent event)
                         else
                             loadLevel_new();
                     }
-                    else if(!RETRO)
-                    {
-                        b2Body* bod = m_objTest->getBody();
-                        b2Vec2 force;
-                        force.Set(-1000,0);
-                        bod->ApplyForceToCenter(force);
-                    }
+                    //else if(!RETRO)
+                    //{
+                    //    b2Body* bod = m_objTest->getBody();
+                    //    b2Vec2 force;
+                    //    force.Set(-1000,0);
+                    //    bod->ApplyForceToCenter(force);
+                    //}
                     break;
 
                 case HGEK_ESCAPE:
@@ -450,6 +455,11 @@ void myEngine::handleEvent(hgeInputEvent event)
                 case HGEK_V:
                     m_bDebug = !m_bDebug;
                     break;
+
+                case HGEK_F5:   //Refresh cursor XML
+                    m_cur->loadFromXML("res/cursor/cursor1.xml");
+                    loadLevelDirectory("res/levels");
+                    break;
             }
             break;
 
@@ -466,6 +476,7 @@ void myEngine::handleEvent(hgeInputEvent event)
 
 void myEngine::loadLevelDirectory(string sFilePath)
 {
+    m_vLevels.clear();
     //Get directory listing
     ttvfs::VFSHelper vfs;
     vfs.Prepare();

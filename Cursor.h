@@ -13,6 +13,38 @@
 #define CURSOR_SWAY     16
 #define CURSOR_TRACK    32
 
+typedef struct
+{
+    float32 fNumPerSec;
+} cursorColorValues;
+
+typedef struct
+{
+    float32 fSpinSpeed;
+} cursorSpinValues;
+
+typedef struct
+{
+    uint8_t iBaseAlpha;
+    float32 fFrequency;
+    float32 fAmplitude;
+} cursorFadeValues;
+
+typedef struct
+{
+    Point ptBaseScale;  //Points here for separate x and y scaling
+    Point ptFrequency;
+    Point ptAmplitude;
+    Point ptTimeOffset; //Offset for sin curves
+} cursorBreatheValues;
+
+typedef struct
+{
+    float32 fBaseRot;
+    float32 fFrequency;
+    float32 fAmplitude;
+} cursorSwayValues;
+
 class Cursor
 {
 private:
@@ -23,13 +55,18 @@ protected:
     //Point       m_ptHotSpot;
     uint16_t    m_iCursorType;
     uint8_t     m_ir, m_ig, m_ib, m_ia;
-    float32     m_fScale;
+    Point       m_ptScale;
     float32     m_fAngle;
     float32     m_fCurTime;
     Object*     m_objTrack;
+    cursorColorValues   m_color;
+    cursorSpinValues    m_spin;
+    cursorFadeValues    m_fade;
+    cursorBreatheValues m_breathe;
+    cursorSwayValues    m_sway;
 
 public:
-    Cursor(string sFilename);
+    Cursor(string sXMLFilename);
     ~Cursor();
 
     //Accessor methods
@@ -46,6 +83,7 @@ public:
     void draw(float32 x, float32 y);
     void draw(Point pt)                     {draw(pt.x, pt.y);};
     void update(float32 fTimestep);
+    bool loadFromXML(string sXMLFilename);
 
 };
 

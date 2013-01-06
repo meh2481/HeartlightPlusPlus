@@ -76,12 +76,14 @@ public:
     bool loadLevels(string sFilename);  //Loads in all the levels from the specified text file into m_vLevels
     void loadLevelDirectory(string sFilePath);  //Loads all the level files in the specified folder
     void updateGrid_retro();  //Updates the level grid, moving objects around
+    void updateGrid_new();  //Update objects and such
     void loadImages(string sListFilename);  //Loads all images listed in this file into memory, so we can batch load easily
     void loadSounds(string sListFilename);  //Loads all sounds listed in this file into memory
     void playSound(string sName);   //Plays a sound, with pitch shifting depending on framerate
     void explode_retro(uint16_t row, uint16_t col, bool bStartFrame1 = false);    //For handling bomb explosions tile by tile
     bool floatable_retro(retroObject* obj);   //If this object can be pushed upwards by a balloon
     void hudSignalHandler(string sSignal);  //For handling signals that come from the HUD
+    bool isOnGround();  //See if the player is on the ground
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

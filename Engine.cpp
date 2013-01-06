@@ -23,11 +23,12 @@ bool Engine::_myFrameFunc()
 
     float32 dt = m_hge->Timer_GetDelta();
     m_fAccumulatedTime += dt;
-    m_physicsWorld->Step(1.0/60.0, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);
-    m_cursor->update(1.0/60.0);
     if(m_fAccumulatedTime >= m_fTargetTime)
     {
         m_fAccumulatedTime -= m_fTargetTime;
+        //Box2D wants fixed timestep, so we use target framerate here instead of actual elapsed time
+        m_physicsWorld->Step(m_fTargetTime, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);
+        m_cursor->update(m_fTargetTime);
         frame();
     }
     return m_bQuitting;
@@ -53,7 +54,7 @@ bool Engine::_myRenderFunc()
 
 Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 {
-    b2Vec2 gravity(0.0, 9.8);  //Vector for our world's gravity
+    b2Vec2 gravity(0.0, 50.0);  //Vector for our world's gravity
     m_physicsWorld = new b2World(gravity);
     m_cursor = NULL;
     m_ptCursorPos.SetZero();
