@@ -26,7 +26,7 @@ Image::Image(string sFilename)
     {
         m_iWidth = hge->Texture_GetWidth(m_hTex, true);
         m_iHeight = hge->Texture_GetHeight(m_hTex, true);
-        errlog << "Loading image \"" << sFilename << endl;
+        errlog << "Loading image \"" << sFilename << "\"" << endl;
     }
 
     m_hSprite = new hgeSprite(m_hTex, 0, 0, m_iWidth, m_iHeight);
@@ -147,6 +147,7 @@ void Image::scale(uint16_t iScaleFac)
         {
             m_hSprite->SetTexture(m_hTex);
             m_hSprite->SetTextureRect(0,0,m_iWidth,m_iHeight);
+            hge->Release();
             return; //Done
         }
     }
@@ -158,10 +159,17 @@ void Image::scale(uint16_t iScaleFac)
     }
     uint32_t m_iTexWidth = hge->Texture_GetWidth(m_hTex, false);    //Since the original texture width may not be a power of two, hang
                                                                     // on to this.
+
     m_hscaledTex = hge->Texture_Create(m_iWidth * iScaleFac, m_iHeight * iScaleFac);  //Create a new texture of the right size
+    if(!m_hscaledTex)
+    {
+        errlog << "could not create scaled texture in Image::scale" << endl;
+        hge->Release();
+        return;
+    }
+    uint32_t m_iScaledWidth = hge->Texture_GetWidth(m_hscaledTex, false);   //Also hang onto scaled texture width
     DWORD* src = hge->Texture_Lock(m_hTex); //Grab our original texture data
     DWORD* dest = hge->Texture_Lock(m_hscaledTex, false);   //And our new data
-
     //Now loop through and copy over, scaling up
     for(uint32_t x = 0; x < m_iWidth; x++)
     {
@@ -172,11 +180,10 @@ void Image::scale(uint16_t iScaleFac)
             for(uint16_t i = 0; i < iScaleFac; i++)
             {
                 for(uint16_t j = 0; j < iScaleFac; j++)
-                    dest[(iScaleFac*y+j)*m_iTexWidth*iScaleFac+(x*iScaleFac)+i] = srcPixel;
+                    dest[(iScaleFac*y+j)*m_iScaledWidth+(x*iScaleFac)+i] = srcPixel;
             }
         }
     }
-
     hge->Texture_Unlock(m_hTex);    //Unlock both textures
     hge->Texture_Unlock(m_hscaledTex);
     m_hSprite->SetTexture(m_hscaledTex);   //Set to the new texture
