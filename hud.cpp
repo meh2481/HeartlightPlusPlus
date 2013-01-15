@@ -73,7 +73,9 @@ void HUDItem::setScale(uint16_t iScale)
 {
     m_iSCALE_FAC = iScale;
     for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
+    {
         (*i)->setScale(iScale);
+    }
 }
 
 //-------------------------------------------------------------------------------------

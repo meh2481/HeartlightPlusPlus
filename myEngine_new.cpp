@@ -299,24 +299,27 @@ void myEngine::loadLevel_new()
     }
 }
 
-#define MAX_SPEED       19
-#define SLOW_DOWN_GROUND_AMT    2.2
-#define SLOW_DOWN_AIR_AMT       0.95
-#define SPEED_UP_AMT    2.5
-#define JUMP_AMT        1900//2500
+#define MAX_SPEED               9.5 * SCALE_FAC
+#define SLOW_DOWN_GROUND_AMT    1.1 * SCALE_FAC
+#define SLOW_DOWN_AIR_AMT       0.525 * SCALE_FAC
+#define SPEED_UP_AMT            1.4 * SCALE_FAC
+#define JUMP_VEL                10.5 * SCALE_FAC
+#define JUMP_DAMPING_AMT        2.0
+#define JUMP_DAMP_FRACTION      1.7
 
 void myEngine::updateGrid_new()
 {
+    bool bIsOnGround = isOnGround();
     b2Body* bPlayer = m_objTest->getBody();
     Point ptVelocity = bPlayer->GetLinearVelocity();
     //Move player around
     if(keyDown(HGEK_LEFT))//Move left
-        ptVelocity.x -= SPEED_UP_AMT;//bPlayer->ApplyForceToCenter(Point(-1000,0));
+        ptVelocity.x -= SPEED_UP_AMT;
     else if(ptVelocity.x < 0)
     {
-        if(isOnGround())
+        if(bIsOnGround)
         {
-            ptVelocity.x += SLOW_DOWN_GROUND_AMT;//bPlayer->ApplyForceToCenter(Point(SLOW_DOWN_GROUND_AMT,0));
+            ptVelocity.x += SLOW_DOWN_GROUND_AMT;
             if(ptVelocity.x > 0)
                 ptVelocity.x = 0;
         }
@@ -329,12 +332,12 @@ void myEngine::updateGrid_new()
     }
 
     if(keyDown(HGEK_RIGHT))//Move right
-        ptVelocity.x += SPEED_UP_AMT; //bPlayer->ApplyForceToCenter(Point(1000,0));
+        ptVelocity.x += SPEED_UP_AMT;
     else if(ptVelocity.x > 0)
     {
-        if(isOnGround())
+        if(bIsOnGround)
         {
-            ptVelocity.x -= SLOW_DOWN_GROUND_AMT; //bPlayer->ApplyForceToCenter(Point(-SLOW_DOWN_GROUND_AMT,0));
+            ptVelocity.x -= SLOW_DOWN_GROUND_AMT;
             if(ptVelocity.x < 0)
                 ptVelocity.x = 0;
         }
@@ -348,8 +351,24 @@ void myEngine::updateGrid_new()
 
     if(keyDown(HGEK_UP))//Jump
     {
-        if(isOnGround())
-            bPlayer->ApplyForceToCenter(Point(0,-JUMP_AMT));
+        if(bIsOnGround)
+        {
+            ptVelocity.y = -JUMP_VEL;
+            m_bJumped = true;
+        }
+    }
+    else if(!bIsOnGround && m_bJumped)   //If we're jumping but not pressing up, slow down
+    {
+        if(ptVelocity.y <= -JUMP_VEL/JUMP_DAMP_FRACTION)
+        {
+            float fDampingFac = 1.0-ptVelocity.y/(-JUMP_VEL/JUMP_DAMP_FRACTION);
+            if(fDampingFac != 0.0)
+                ptVelocity.y /= ptVelocity.y/(fDampingFac*JUMP_DAMPING_AMT);    //logarithmic damping for realism (fairly close to exponential damping)
+        }
+    }
+    else if(bIsOnGround)
+    {
+        m_bJumped = false;
     }
 
     if(ptVelocity.x > MAX_SPEED)

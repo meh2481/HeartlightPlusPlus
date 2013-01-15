@@ -54,7 +54,7 @@ bool Engine::_myRenderFunc()
 
 Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 {
-    b2Vec2 gravity(0.0, 50.0);  //Vector for our world's gravity
+    b2Vec2 gravity(0.0, 9.8);  //Vector for our world's gravity
     m_physicsWorld = new b2World(gravity);
     m_cursor = NULL;
     m_ptCursorPos.SetZero();

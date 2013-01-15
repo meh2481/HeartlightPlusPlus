@@ -56,6 +56,7 @@ private:
     bool m_bDebug;  //Whether to draw debug data and stuff or not
     HUD* m_hud;
     bool m_bSound, m_bMusic, m_bRad;    //Booleans for music settings and such
+    bool m_bJumped; //For supercomplex movement stuff
 
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
     physicsObject* m_objTest;

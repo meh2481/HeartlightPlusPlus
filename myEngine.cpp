@@ -39,6 +39,7 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_bSound = true;
     m_bMusic = true;
     m_bRad  = false;
+    m_bJumped = false;
 }
 
 myEngine::~myEngine()
@@ -225,10 +226,8 @@ void myEngine::init()
 {
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
-
     //Now scale all the images up
     scaleImages(SCALE_FAC);
-
     //Load all sounds as well
     loadSounds("res/sfx/orig.xml");
 
@@ -245,11 +244,11 @@ void myEngine::init()
         loadLevel_new();
 
     m_hud = new HUD("levelhud");
-    //errlog << "Creating HUD" << endl;
     m_hud->create("res/hud/hud.xml");
-    //errlog << "Done creating HUD" << endl;
     m_hud->setScale(SCALE_FAC);
     m_hud->setSignalHandler(signalHandler);
+
+    setGravity(0.0, 25.0 * SCALE_FAC);
 
     //if(m_bMusic)
     //    playMusic("o_mus_menu"); //Start playing menu music
