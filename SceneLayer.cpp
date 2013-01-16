@@ -47,15 +47,17 @@ void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos, float fScaleFacX, float f
     ptDrawPos.Set(rcScreen.width()/2.0, rcScreen.height()/2.0);
     //ptDrawPos = rcScreen.center();
     ptDrawPos -= ptDifference;
+    ptDrawPos.x *= fScaleFacX;
+    ptDrawPos.y *= fScaleFacY;
     //if(depth != 1.0)
     //    ptDrawPos.x -= rcScreen.width()*(1.0-depth);//*(1.0-depth);//*fScaleFacX*depth;
     //ptDrawPos.y -= rcScreen.height()*(1.0-depth);
 
     //Scale up according to depth //TODO: Make this come out right for parallax layers
     Point ptScale = scale;
-    ptScale *= depth;
-    //ptScale.x *= depth;// * fScaleFacX;
-    //ptScale.y *= depth;// * fScaleFacY;
+    //ptScale *= depth;
+    ptScale.x *= depth * fScaleFacX;
+    ptScale.y *= depth * fScaleFacY;
 
 
     //ptDrawPos.x -= rcScreen.width();

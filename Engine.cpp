@@ -224,12 +224,12 @@ void Engine::updateObjects()
 
 void Engine::drawObjects(Rect rcScreen)
 {
-    m_hge->Gfx_SetTransform(0,0,0,0,0,(float32)getWidth()/rcScreen.width(), (float32)getHeight()/rcScreen.height());
+    //m_hge->Gfx_SetTransform(0,0,0,0,0,(float32)getWidth()/rcScreen.width(), (float32)getHeight()/rcScreen.height());
     for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
         (*i).second->draw(rcScreen, (float32)getWidth()/rcScreen.width(), (float32)getHeight()/rcScreen.height());
     }
-    m_hge->Gfx_SetTransform();
+    //m_hge->Gfx_SetTransform();
 }
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
