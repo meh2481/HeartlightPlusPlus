@@ -116,7 +116,7 @@ Engine::~Engine()
 void Engine::clearObjects()
 {
     //Clean up our object list
-    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
         b2Body* bod = i->second->getBody();
         if(bod != NULL)
@@ -197,15 +197,15 @@ HEFFECT Engine::_getEffect(string sName)
 
 void Engine::addObject(Object* obj)
 {
-    pair<uint32_t, Object*> objPair;
-    objPair.first = obj->_getID();
+    pair<float32, Object*> objPair;
+    objPair.first = obj->_getDepthID();
     objPair.second = obj;
     m_mObjects.insert(objPair);
 }
 
 void Engine::updateObjects()
 {
-    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
         if(!(*i).second->update())  //Remove this object if it returns true
         {
@@ -218,16 +218,18 @@ void Engine::updateObjects()
     }
 
     //Update all object frames also (outside loop so frames aren't put out of sync)
-    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
         (*i).second->updateFrame();
 }
 
-void Engine::drawObjects(float32 fScale)
+void Engine::drawObjects(Rect rcScreen)
 {
-    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    m_hge->Gfx_SetTransform(0,0,0,0,0,(float)getWidth()/rcScreen.width(), (float)getHeight()/rcScreen.height());
+    for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
-        (*i).second->draw(fScale);
+        (*i).second->draw(rcScreen, (float)getWidth()/rcScreen.width(), (float)getHeight()/rcScreen.height());
     }
+    m_hge->Gfx_SetTransform();
 }
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)

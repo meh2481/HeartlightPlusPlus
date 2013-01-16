@@ -26,11 +26,13 @@ public:
     float32 left,top,right,bottom;
     float32 width() {return right-left;};
     float32 height() {return bottom-top;};
+    float32 area()  {return width()*height();};
     void    offset(float32 x, float32 y)    {left+=x;right+=x;top+=y;bottom+=y;};
     void    offset(Point pt)                {offset(pt.x,pt.y);};
     Point   center() {Point pt; pt.x = (right-left)/2.0 + right; pt.y = (bottom-top)/2.0 + top; return pt;};
     void    center(float32* x, float32* y)    {Point pt = center(); *x = pt.x; *y = pt.y;};
     void    scale(float32 fScale) {left*=fScale;right*=fScale;top*=fScale;bottom*=fScale;};
+    void    set(float32 fleft,float32 ftop,float32 fright,float32 fbottom)  {left=fleft;top=ftop;right=fright;bottom=fbottom;};
 };
 
 extern ofstream errlog;

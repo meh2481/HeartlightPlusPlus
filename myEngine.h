@@ -17,7 +17,7 @@
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
 
-#define SCALE_FAC       2   //By what factor the retro gfx are scaled
+#define SCALE_FAC       2   //By what factor the retro gfx are scaled TODO: Variable
 
 #define WIN_COUNT       14  //How many frames the dwarf jumps up and down until you go to the next level
 #define DIE_COUNT       20  //How many frames the dwarf holds his head before he explodes
@@ -57,6 +57,10 @@ private:
     HUD* m_hud;
     bool m_bSound, m_bMusic, m_bRad;    //Booleans for music settings and such
     bool m_bJumped; //For supercomplex movement stuff
+    Rect m_rcViewScreen;    //Screen we can currently see
+    bool m_bDragScreen;
+    bool m_bScaleScreen;
+    Point m_ptLastMousePos;
 
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
     physicsObject* m_objTest;

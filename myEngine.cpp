@@ -40,6 +40,9 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_bMusic = true;
     m_bRad  = false;
     m_bJumped = false;
+    m_rcViewScreen.set(0,0,getWidth(),getHeight());
+    m_bDragScreen = false;
+    m_bScaleScreen = false;
 }
 
 myEngine::~myEngine()
@@ -143,8 +146,7 @@ void myEngine::frame()
 
 void myEngine::draw()
 {
-    //Just draw all objects
-    drawObjects();
+    drawObjects(m_rcViewScreen);
 
     //Draw debug stuff if we should
     if(m_bDebug)
@@ -162,7 +164,7 @@ void myEngine::draw()
         }
     }
 
-    //If fading, draw black overlay
+    //If fading, draw black overlay TODO: Generic fading HUD item or such
     if(m_iFade != FADE_NONE)
     {
         float32 fCurTime = getTime();
@@ -220,6 +222,8 @@ void myEngine::draw()
 
     //Draw our HUD
     m_hud->draw(getTime());
+
+    //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
 }
 
 void myEngine::init()
@@ -252,26 +256,6 @@ void myEngine::init()
 
     //if(m_bMusic)
     //    playMusic("o_mus_menu"); //Start playing menu music
-
-    //for(int i = 0; i < 20; i++)
-    //{
-    //    physicsObject* obj = new physicsObject(getImage("o_metalwall"));
-    //    b2BodyDef def;
-    //    def.type = b2_dynamicBody;
-    //    def.position.Set(8 * SCALE_DOWN_FACTOR * SCALE_FAC + i * obj->getWidth()/2.0 * SCALE_DOWN_FACTOR * SCALE_FAC, 8 * SCALE_DOWN_FACTOR * SCALE_FAC);
-    //    b2Body* bod = createBody(&def);
-    //    //bod->SetAngularVelocity(2.0);
-    //    obj->addBody(bod);
-    //    b2PolygonShape dynamicBox;
-    //    dynamicBox.SetAsBox(obj->getWidth() * SCALE_DOWN_FACTOR/2.0, obj->getHeight() * SCALE_DOWN_FACTOR/2.0);
-    //    b2FixtureDef fixtureDef;
-    //    fixtureDef.shape = &dynamicBox;
-    //    fixtureDef.density = 1.0f;
-    //    fixtureDef.friction = 0.3f;
-    //    obj->addFixture(&fixtureDef);
-    //    addObject(obj);
-    //    m_objTest = obj;
-    //}
 
     //Create physics boundary if not in retro mode
     if(!RETRO)
@@ -459,6 +443,10 @@ void myEngine::handleEvent(hgeInputEvent event)
                     m_cur->loadFromXML("res/cursor/cursor1.xml");
                     loadLevelDirectory("res/levels");
                     break;
+
+                case HGEK_0:
+                    m_rcViewScreen.set(0,0,getWidth(),getHeight());
+                    break;
             }
             break;
 
@@ -468,6 +456,55 @@ void myEngine::handleEvent(hgeInputEvent event)
             {
 
             }
+            break;
+
+        case INPUT_MBUTTONDOWN:
+            if(event.key == HGEK_LBUTTON)
+            {
+                m_bDragScreen = true;
+                m_ptLastMousePos.Set(event.x, event.y);
+            }
+            else if(event.key == HGEK_RBUTTON)
+            {
+                m_bScaleScreen = true;
+                m_ptLastMousePos.Set(event.x, event.y);
+            }
+            break;
+
+        case INPUT_MBUTTONUP:
+            if(event.key == HGEK_LBUTTON)
+                m_bDragScreen = false;
+            else if(event.key == HGEK_RBUTTON)
+                m_bScaleScreen = false;
+            break;
+
+        case INPUT_MOUSEMOVE:
+            if(m_bDragScreen)
+            {
+                m_rcViewScreen.offset(m_ptLastMousePos.x - (float)event.x, m_ptLastMousePos.y - (float)event.y);
+                //cout << "Offset screen " << m_ptLastMousePos.x - event.x << ", " << m_ptLastMousePos.y - event.y << endl;
+                m_ptLastMousePos.Set(event.x, event.y);
+                //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
+                //cout << "Screen scale: " << (float)getWidth()/m_rcViewScreen.width() << ", " << (float)getHeight()/m_rcViewScreen.height() << endl;
+            }
+            else if(m_bScaleScreen)
+            {
+                m_rcViewScreen.right += m_ptLastMousePos.x - (float)event.x;
+                m_rcViewScreen.bottom += m_ptLastMousePos.y - (float)event.y;
+                //cout << "Offset screen corner " << m_ptLastMousePos.x - event.x << ", " << m_ptLastMousePos.y - event.y << endl;
+                m_ptLastMousePos.Set(event.x, event.y);
+                //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
+                //cout << "Screen scale: " << (float)getWidth()/m_rcViewScreen.width() << ", " << (float)getHeight()/m_rcViewScreen.height() << endl;
+            }
+            break;
+
+        case INPUT_MOUSEWHEEL:
+            m_rcViewScreen.right -= (float)event.wheel * getWidth()/getHeight();
+            m_rcViewScreen.bottom -= (float)event.wheel;
+            m_rcViewScreen.left += (float)event.wheel * getWidth()/getHeight();
+            m_rcViewScreen.top += (float)event.wheel;
+            //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
+            //cout << "Screen scale: " << (float)getWidth()/m_rcViewScreen.width() << ", " << (float)getHeight()/m_rcViewScreen.height() << endl;
             break;
     }
 }

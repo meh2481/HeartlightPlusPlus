@@ -133,16 +133,17 @@ void myEngine::loadLevel_new()
                     fixtureDef.friction = 0.3f;
                     m_objTest->addFixture(&fixtureDef);
                     addObject(m_objTest);
-                    m_cur->setTrack(m_objTest);
+                    //m_cur->setTrack(m_objTest);
                     break;
                 }
 
                 case '!':   //exit door
-                    m_levelGrid[col][row] = new Door(getImage("o_door"));
+                    //TODO
+                    /*m_levelGrid[col][row] = new Door(getImage("o_door"));
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
                     m_levelGrid[col][row]->setName(cObj);
-                    addObject(m_levelGrid[col][row]);
+                    addObject(m_levelGrid[col][row]);*/
                     break;
 
                 case '&':   //bomb
@@ -241,6 +242,8 @@ void myEngine::loadLevel_new()
                     //fixtureDef.density = 1.0f;
                     fixtureDef.friction = 0.3f;
                     obj->addFixture(&fixtureDef);
+                    parallaxLayer* lay = obj->getLayer();
+                    lay->depth = 0.5;
                     addObject(obj);
                     break;
                 }
@@ -309,6 +312,12 @@ void myEngine::loadLevel_new()
 
 void myEngine::updateGrid_new()
 {
+    float32 fTemp = m_rcViewScreen.width();
+    m_rcViewScreen.left = m_objTest->getCenter().x - (m_rcViewScreen.width()/2.0);
+    m_rcViewScreen.right = m_rcViewScreen.left + fTemp;
+    fTemp = m_rcViewScreen.height();
+    m_rcViewScreen.top = m_objTest->getCenter().y - (m_rcViewScreen.height()/2.0);
+    m_rcViewScreen.bottom = m_rcViewScreen.top + fTemp;
     bool bIsOnGround = isOnGround();
     b2Body* bPlayer = m_objTest->getBody();
     Point ptVelocity = bPlayer->GetLinearVelocity();

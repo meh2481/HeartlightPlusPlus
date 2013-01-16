@@ -13,9 +13,10 @@ Object::Object(Image* img)
         errlog << "Error: NULL image encountered in Object::Object()" << endl;
         exit(1);
     }
+    m_Layer = new parallaxLayer(img);
     m_ptPos.SetZero();
     m_ptVel.SetZero();
-    m_Img = img;
+    //m_Img = img;
     m_iNumFrames = 1;
     m_iCurFrame = 0;
     m_iWidth = img->getWidth();
@@ -23,13 +24,12 @@ Object::Object(Image* img)
     m_ptVel.SetZero();
     m_bDying = false;
     m_bAnimateOnce = false;
-    m_physicsBody = NULL;
     m_bAnimate = true;
 }
 
 Object::~Object()
 {
-
+    delete m_Layer;
 }
 
 void Object::updateFrame()
@@ -50,17 +50,17 @@ bool Object::update()
     return !m_bDying;
 }
 
-void Object::draw(float32 fScaleFactor)
+void Object::draw(Rect rcScreen, float fScaleFacX, float fScaleFacY)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
-    Point ptDrawPos = m_ptPos;
-    m_Img->drawCentered(ptDrawPos, rcImgPos, 0.0, fScaleFactor);
+    m_Layer->pos = m_ptPos;//.Set(m_ptPos.x + getWidth()/2.0, m_ptPos.y + getHeight()/2.0);
+    m_Layer->draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
 }
 
 void Object::setNumFrames(uint16_t iNumFrames, bool bAnimateOnce)
 {
     m_iNumFrames = iNumFrames;
-    m_iHeight = m_Img->getHeight()/m_iNumFrames;
+    m_iHeight = m_Layer->image->getHeight()/m_iNumFrames;
     m_bAnimateOnce = bAnimateOnce;
 }
 
@@ -105,19 +105,20 @@ void Dwarf::updateFrame()
 //-----------------------------------------------------------------------------------------------------------------------
 physicsObject::physicsObject(Image* img) : Object(img)
 {
+    m_physicsBody = NULL;
 }
 
-//physicsObject::~physicsObject()
-//{
-//}
+physicsObject::~physicsObject()
+{
+}
 
-void physicsObject::draw(float32 fScaleFactor)
+void physicsObject::draw(Rect rcScreen, float fScaleFacX, float fScaleFacY)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
-    b2Vec2 pos = m_physicsBody->GetPosition();
-    pos *= SCALE_UP_FACTOR;
-    pos.y = pos.y;//fScreenHeight-pos.y;
-    m_Img->drawCentered(pos, rcImgPos, m_physicsBody->GetAngle(), fScaleFactor);
+    m_Layer->pos = m_physicsBody->GetPosition();
+    m_Layer->pos *= SCALE_UP_FACTOR;
+    m_Layer->rot = m_physicsBody->GetAngle();
+    m_Layer->draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
 }
 
 
