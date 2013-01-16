@@ -223,7 +223,7 @@ void myEngine::draw()
     //Draw our HUD
     m_hud->draw(getTime());
 
-    //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
+    fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
 }
 
 void myEngine::init()

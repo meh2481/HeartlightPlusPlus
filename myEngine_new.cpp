@@ -312,12 +312,12 @@ void myEngine::loadLevel_new()
 
 void myEngine::updateGrid_new()
 {
-    float32 fTemp = m_rcViewScreen.width();
+    /*float32 fTemp = m_rcViewScreen.width();
     m_rcViewScreen.left = m_objTest->getCenter().x - (m_rcViewScreen.width()/2.0);
     m_rcViewScreen.right = m_rcViewScreen.left + fTemp;
     fTemp = m_rcViewScreen.height();
     m_rcViewScreen.top = m_objTest->getCenter().y - (m_rcViewScreen.height()/2.0);
-    m_rcViewScreen.bottom = m_rcViewScreen.top + fTemp;
+    m_rcViewScreen.bottom = m_rcViewScreen.top + fTemp;*/
     bool bIsOnGround = isOnGround();
     b2Body* bPlayer = m_objTest->getBody();
     Point ptVelocity = bPlayer->GetLinearVelocity();

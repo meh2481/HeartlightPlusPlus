@@ -36,20 +36,26 @@ void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos, float fScaleFacX, float f
     ptDrawPos.y -= rcScreen.top;
 
     //Account for parallax and viewport scaling
-    Point ptDifference = rcScreen.center();
+    Point ptDifference;// = rcScreen.center();
     ptDifference.Set(rcScreen.width()/2.0, rcScreen.height()/2.0);
     ptDifference -= ptDrawPos;
-    ptDifference.x = ptDifference.x * depth;// * fScaleFacX;
-    ptDifference.y = ptDifference.y * depth;// * fScaleFacY;
+    //ptDifference /= depth;
+    ptDifference.x = ptDifference.x * depth;// - (depth)*rcScreen.width();// + rcScreen.width()*(1.0-depth);// + (1.0/depth - depth) * rcScreen.width();// * 1.0-fScaleFacX;
+    ptDifference.y = ptDifference.y * depth;// + (1.0 - depth) * rcScreen.height() * 1.0-fScaleFacY;// * depth;// * depth;// * fScaleFacY;
 
     //Normalize
     ptDrawPos.Set(rcScreen.width()/2.0, rcScreen.height()/2.0);
+    //ptDrawPos = rcScreen.center();
     ptDrawPos -= ptDifference;
+    //if(depth != 1.0)
+    //    ptDrawPos.x -= rcScreen.width()*(1.0-depth);//*(1.0-depth);//*fScaleFacX*depth;
+    //ptDrawPos.y -= rcScreen.height()*(1.0-depth);
 
     //Scale up according to depth //TODO: Make this come out right for parallax layers
     Point ptScale = scale;
-    ptScale.x *= depth;// * fScaleFacX;
-    ptScale.y *= depth;// * fScaleFacY;
+    ptScale *= depth;
+    //ptScale.x *= depth;// * fScaleFacX;
+    //ptScale.y *= depth;// * fScaleFacY;
 
 
     //ptDrawPos.x -= rcScreen.width();
