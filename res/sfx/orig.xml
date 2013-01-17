@@ -15,4 +15,9 @@
   <sound name="o_toggle" path="res/sfx/orig/toggle.ogg" />
   <sound name="o_mus_menu" path="res/sfx/orig/menu_music.ogg" />
   <sound name="o_mus_theme" path="res/sfx/orig/theme_music.ogg" />
+  
+  <sound name="n_pew" path="res/sfx/new/pew.wav" />
+  <sound name="n_pewpew" path="res/sfx/new/pewpew.wav" />
+  <sound name="n_pewpewpew" path="res/sfx/new/pewpewpew.wav" />
+  <sound name="n_pewpewpewpew" path="res/sfx/new/pewpewpewpew.wav" />
 </sounds>

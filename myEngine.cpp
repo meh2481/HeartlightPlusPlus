@@ -41,8 +41,8 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_bRad  = false;
     m_bJumped = false;
     m_rcViewScreen.set(0,0,getWidth(),getHeight());
-    m_bDragScreen = false;
-    m_bScaleScreen = false;
+//    m_bDragScreen = false;
+//    m_bScaleScreen = false;
 }
 
 myEngine::~myEngine()
@@ -147,6 +147,8 @@ void myEngine::frame()
 void myEngine::draw()
 {
     drawObjects(m_rcViewScreen);
+    if(m_iCurGun != m_lGuns.end())
+        (*m_iCurGun)->draw(m_rcViewScreen);
 
     //Draw debug stuff if we should
     if(m_bDebug)
@@ -243,9 +245,51 @@ void myEngine::init()
     setCursor(m_cur);
 
     if(RETRO)
+    {
         loadLevel_retro();
+        m_iCurGun = m_lGuns.end();
+    }
     else
+    {
+        //Create guns and such
+        ballGun* gun = new ballGun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_gun";
+        //gun.obj
+        m_lGuns.push_back(gun);
+
+        gun = new placeGun();
+        gun->bullet = "o_rock";
+        m_lGuns.push_back(gun);
+
+        gun = new blastGun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_blastgun";
+        m_lGuns.push_back(gun);
+
+        gun = new shotgun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_shotgun";
+        m_lGuns.push_back(gun);
+
+        gun = new machineGun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_gun";
+        m_lGuns.push_back(gun);
+
+        gun = new teleGun();
+        //gun->bullet = "o_rock";
+        m_lGuns.push_back(gun);
+
+        gun = new superGun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_blastgun";
+        m_lGuns.push_back(gun);
+
+        m_iCurGun = m_lGuns.begin();
+
         loadLevel_new();
+    }
 
     m_hud = new HUD("levelhud");
     m_hud->create("res/hud/hud.xml");
@@ -447,6 +491,28 @@ void myEngine::handleEvent(hgeInputEvent event)
                 case HGEK_0:
                     m_rcViewScreen.set(0,0,getWidth(),getHeight());
                     break;
+
+                case HGEK_EQUALS:
+                    if(m_iCurGun != m_lGuns.end())
+                        (*m_iCurGun)->clear();
+                    if(m_iCurGun != m_lGuns.end())
+                        m_iCurGun++;
+                    if(m_iCurGun == m_lGuns.end())
+                        m_iCurGun = m_lGuns.begin();
+                    if(m_iCurGun != m_lGuns.end())
+                        (*m_iCurGun)->mouseMove(getCursorPos().x, getCursorPos().y);
+                    break;
+
+                case HGEK_MINUS:
+                    if(m_iCurGun != m_lGuns.end())
+                        (*m_iCurGun)->clear();
+                    if(m_iCurGun == m_lGuns.begin())
+                        m_iCurGun = m_lGuns.end();
+                    if(m_iCurGun != m_lGuns.begin())
+                        m_iCurGun--;
+                    if(m_iCurGun != m_lGuns.end())
+                        (*m_iCurGun)->mouseMove(getCursorPos().x, getCursorPos().y);
+                    break;
             }
             break;
 
@@ -461,29 +527,39 @@ void myEngine::handleEvent(hgeInputEvent event)
         case INPUT_MBUTTONDOWN:
             if(event.key == HGEK_LBUTTON)
             {
-                if(!RETRO)
-                    shoot_new(event.x, event.y);
-                //m_bDragScreen = true;
-                //m_ptLastMousePos.Set(event.x, event.y);
+                if(m_iCurGun != m_lGuns.end())
+                {
+                    (*m_iCurGun)->mouseDown(event.x, event.y);
+                }
             }
-            else if(event.key == HGEK_RBUTTON)
+            /*else if(event.key == HGEK_RBUTTON)
             {
                 if(!RETRO)
                     place_new(event.x, event.y);
                 //m_bScaleScreen = true;
                 //m_ptLastMousePos.Set(event.x, event.y);
-            }
+            }*/
             break;
 
         case INPUT_MBUTTONUP:
             if(event.key == HGEK_LBUTTON)
-                m_bDragScreen = false;
-            else if(event.key == HGEK_RBUTTON)
-                m_bScaleScreen = false;
+            {
+                if(m_iCurGun != m_lGuns.end())
+                {
+                    (*m_iCurGun)->mouseUp(event.x, event.y);
+                }
+            }
+//                m_bDragScreen = false;
+//            else if(event.key == HGEK_RBUTTON)
+//                m_bScaleScreen = false;
             break;
 
         case INPUT_MOUSEMOVE:
-            if(m_bDragScreen)
+            if(m_iCurGun != m_lGuns.end())
+            {
+                (*m_iCurGun)->mouseMove(event.x,event.y);
+            }
+/*            if(m_bDragScreen)
             {
                 m_rcViewScreen.offset(m_ptLastMousePos.x - (float32)event.x, m_ptLastMousePos.y - (float32)event.y);
                 //cout << "Offset screen " << m_ptLastMousePos.x - event.x << ", " << m_ptLastMousePos.y - event.y << endl;
@@ -499,7 +575,7 @@ void myEngine::handleEvent(hgeInputEvent event)
                 m_ptLastMousePos.Set(event.x, event.y);
                 //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
                 //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;
-            }
+            }*/
             break;
 
         case INPUT_MOUSEWHEEL:
@@ -607,11 +683,25 @@ void myEngine::playSound(string sName)
         Engine::playSound(sName, 100, 0, (float32)(getFramerate()/(float32)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
 }
 
+void playSound(string sName, int volume, int pan, float32 pitch)
+{
+    g_pGlobalEngine->Engine::playSound(sName, volume, pan, pitch);
+}
 
+b2Body* createBody(b2BodyDef* def)
+{
+    return g_pGlobalEngine->createBody(def);
+}
 
+Image* getImage(string sName)
+{
+    return g_pGlobalEngine->getImage(sName);
+}
 
-
-
+void addObject(Object* obj)
+{
+    g_pGlobalEngine->addObject(obj);
+}
 
 
 

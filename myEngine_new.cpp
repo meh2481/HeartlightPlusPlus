@@ -6,7 +6,8 @@ void myEngine::loadLevel_new()
 {
     //Clear image cache
     clearImages();
-    m_lSpheres_new.clear(); //Clear created spheres
+    for(list<ballGun*>::iterator i = m_lGuns.begin(); i != m_lGuns.end(); i++)
+        (*i)->clear(); //Clear created spheres
     if(m_iCurrentLevel >= m_vLevels.size()) //At the end, when we shouldn't be
     {
         errlog << "No levels loaded! Abort. " << endl;
@@ -138,6 +139,8 @@ void myEngine::loadLevel_new()
                     m_objTest->addFixture(&fixtureDef);
                     addObject(m_objTest);
                     //m_cur->setTrack(m_objTest);
+                    for(list<ballGun*>::iterator i = m_lGuns.begin(); i != m_lGuns.end(); i++)
+                        (*i)->obj = m_objTest;
                     break;
                 }
 
@@ -246,8 +249,7 @@ void myEngine::loadLevel_new()
                     //fixtureDef.density = 1.0f;
                     fixtureDef.friction = 0.3f;
                     obj->addFixture(&fixtureDef);
-                    //parallaxLayer* lay = obj->getLayer();
-                    //lay->depth = 0.5;
+                    //obj->layer->depth = 0.5;
                     addObject(obj);
                     break;
                 }
@@ -316,6 +318,10 @@ void myEngine::loadLevel_new()
 
 void myEngine::updateGrid_new()
 {
+    if(m_iCurGun != m_lGuns.end())
+    {
+        (*m_iCurGun)->update(getTime());
+    }
 //    checkSpheresHitting_new();
     /*float32 fTemp = m_rcViewScreen.width();
     m_rcViewScreen.left = m_objTest->getCenter().x - (m_rcViewScreen.width()/2.0);
@@ -422,80 +428,26 @@ bool myEngine::isOnGround()
     return false;
 }
 
-#define MAX_CREATED_SPHERES 10
-#define SHOOT_VEL           1000.0
-#define MASS_FAC            1000.0
-#define GUN_LENGTH          1.0
+
+
+//#define MAX_CREATED_SPHERES 10
+//#define SHOOT_VEL           1000.0
+//#define MASS_FAC            1000.0
+//#define GUN_LENGTH          1.0
 //#define CANNOT_HIT_PLAYER   0x0002
 //#define CAN_HIT_PLAYER      0x0004
 
 //Fire a new rock towards where the player is aiming
-void myEngine::shoot_new(float32 x, float32 y)
-{
-    Point pos = m_objTest->getCenter();
-    pos.x = x - pos.x;
-    pos.y = y - pos.y;
-    pos.Normalize();
-    Point vel = pos;
-    vel *= SHOOT_VEL;
-    pos *= GUN_LENGTH;//m_objTest->getHeight() * 0.705;//sqrt((m_objTest->getHeight() * m_objTest->getHeight()/4.0)*(m_objTest->getWidth()*m_objTest->getWidth()/4.0));
-    pos += m_objTest->getCenter();
-    physicsObject* obj = new physicsObject(getImage("o_rock"));
-    b2BodyDef def;
-    def.type = b2_dynamicBody;
-    def.position.Set(pos.x*SCALE_DOWN_FACTOR,pos.y*SCALE_DOWN_FACTOR);
-    def.linearVelocity.Set(vel.x*SCALE_DOWN_FACTOR, vel.y*SCALE_DOWN_FACTOR);
-    b2Body* sphere = createBody(&def);
-    obj->addBody(sphere);
-    b2CircleShape circ;
-    circ.m_radius = (GRID_WIDTH - 0.5*SCALE_FAC) / 2.0 * SCALE_FAC * SCALE_DOWN_FACTOR;
-    b2FixtureDef fixtureDef;
-    //fixtureDef.filter.categoryBits = CANNOT_HIT_PLAYER;
-    fixtureDef.shape = &circ;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
-    obj->addFixture(&fixtureDef);
-    addObject(obj);
-    if(m_lSpheres_new.size() >= MAX_CREATED_SPHERES)
-    {
-        physicsObject* old = m_lSpheres_new.front();
-        old->kill();
-        m_lSpheres_new.pop_front();
-    }
-    m_lSpheres_new.push_back(obj);
+//void myEngine::shoot_new(float32 x, float32 y)
+//{
+//    pew();  //IMMA FIREN MAH LAZOR BLAAAARGH
 
-    //Make player be pushed back by firing the object
-    b2Body* bod = m_objTest->getBody();
-    vel.Normalize();
-    vel = -vel;
-    vel *= sphere->GetMass() * MASS_FAC;
-    bod->ApplyForceToCenter(vel);
-}
+//}
 
-void myEngine::place_new(float32 x, float32 y)
-{
-    Point pos(x,y);
-    physicsObject* obj = new physicsObject(getImage("o_rock"));
-    b2BodyDef def;
-    def.type = b2_dynamicBody;
-    def.position.Set(pos.x*SCALE_DOWN_FACTOR,pos.y*SCALE_DOWN_FACTOR);
-    obj->addBody(createBody(&def));
-    b2CircleShape circ;
-    circ.m_radius = (GRID_WIDTH - 0.5*SCALE_FAC) / 2.0 * SCALE_FAC * SCALE_DOWN_FACTOR;
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &circ;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
-    obj->addFixture(&fixtureDef);
-    addObject(obj);
-    if(m_lSpheres_new.size() >= MAX_CREATED_SPHERES)
-    {
-        physicsObject* old = m_lSpheres_new.front();
-        old->kill();
-        m_lSpheres_new.pop_front();
-    }
-    m_lSpheres_new.push_back(obj);
-}
+//void myEngine::place_new(float32 x, float32 y)
+//{
+
+//}
 
 /*
 void myEngine::checkSpheresHitting_new()

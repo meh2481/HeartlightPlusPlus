@@ -13,7 +13,7 @@ Object::Object(Image* img)
         errlog << "Error: NULL image encountered in Object::Object()" << endl;
         exit(1);
     }
-    m_Layer = new parallaxLayer(img);
+    layer = new parallaxLayer(img);
     m_ptPos.SetZero();
     m_ptVel.SetZero();
     //m_Img = img;
@@ -29,7 +29,7 @@ Object::Object(Image* img)
 
 Object::~Object()
 {
-    delete m_Layer;
+    delete layer;
 }
 
 void Object::updateFrame()
@@ -53,14 +53,14 @@ bool Object::update()
 void Object::draw(Rect rcScreen, float32 fScaleFacX, float32 fScaleFacY)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
-    m_Layer->pos = m_ptPos;//.Set(m_ptPos.x + getWidth()/2.0, m_ptPos.y + getHeight()/2.0);
-    m_Layer->draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
+    layer->pos = m_ptPos;//.Set(m_ptPos.x + getWidth()/2.0, m_ptPos.y + getHeight()/2.0);
+    layer->draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
 }
 
 void Object::setNumFrames(uint16_t iNumFrames, bool bAnimateOnce)
 {
     m_iNumFrames = iNumFrames;
-    m_iHeight = m_Layer->image->getHeight()/m_iNumFrames;
+    m_iHeight = layer->image->getHeight()/m_iNumFrames;
     m_bAnimateOnce = bAnimateOnce;
 }
 
@@ -115,10 +115,10 @@ physicsObject::~physicsObject()
 void physicsObject::draw(Rect rcScreen, float32 fScaleFacX, float32 fScaleFacY)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
-    m_Layer->pos = m_physicsBody->GetPosition();
-    m_Layer->pos *= SCALE_UP_FACTOR;
-    m_Layer->rot = m_physicsBody->GetAngle();
-    m_Layer->draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
+    layer->pos = m_physicsBody->GetPosition();
+    layer->pos *= SCALE_UP_FACTOR;
+    layer->rot = m_physicsBody->GetAngle();
+    layer->draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
 }
 
 

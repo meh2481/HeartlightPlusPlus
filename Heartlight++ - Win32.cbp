@@ -64,6 +64,8 @@
 		<Unit filename="SceneLayer.h" />
 		<Unit filename="Text.cpp" />
 		<Unit filename="Text.h" />
+		<Unit filename="ballGun.cpp" />
+		<Unit filename="ballGun.h" />
 		<Unit filename="globaldefs.cpp" />
 		<Unit filename="globaldefs.h" />
 		<Unit filename="hud.cpp" />

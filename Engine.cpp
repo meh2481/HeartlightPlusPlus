@@ -197,6 +197,7 @@ HEFFECT Engine::_getEffect(string sName)
 
 void Engine::addObject(Object* obj)
 {
+    if(obj == NULL) return;
     pair<float32, Object*> objPair;
     objPair.first = obj->_getDepthID();
     objPair.second = obj;

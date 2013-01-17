@@ -18,7 +18,6 @@ private:
 
 protected:
     //Image* m_Img;
-    parallaxLayer* m_Layer;
     uint16_t m_iNumFrames;
     bool m_bAnimateOnce;
     uint16_t m_iCurFrame;
@@ -29,6 +28,8 @@ protected:
     bool m_bAnimate;    //If should animate frames or not
 
 public:
+    parallaxLayer* layer;
+
     Object(Image* img);
     ~Object();
 
@@ -56,12 +57,12 @@ public:
     Point getVelocity() {return m_ptVel;};
     void setVelocity(Point pt)  {m_ptVel = pt;};
     void setVelocity(float32 x, float32 y)  {m_ptVel.x = x; m_ptVel.y = y;};
-    virtual float32 _getDepthID() {return m_Layer->depth;};  //For engine use - what is drawn in what order
+    virtual float32 _getDepthID() {return layer->depth;};  //For engine use - what is drawn in what order
     virtual b2Body* getBody() {return NULL;};
 
-    Image* getImage()   {return m_Layer->image;};
-    void setImage(Image* img)   {m_Layer->image = img;}; //Use with caution! No error-checking!
-    parallaxLayer* getLayer()   {return m_Layer;};
+    Image* getImage()   {return layer->image;};
+    void setImage(Image* img)   {layer->image = img;}; //Use with caution! No error-checking!
+//    parallaxLayer* getLayer()   {return layer;};
 
 };
 
@@ -83,7 +84,7 @@ public:
     void    addData(uint64_t iAdd)  {m_iData |= iAdd;};
     void    removeData(uint64_t iRem)   {m_iData &= ~iRem;};
     bool    isData(uint64_t iTest) {return(m_iData & iTest);};
-    virtual float32 _getDepthID() {return m_Layer->image->_getID();};   //Draw these together to for speed
+    virtual float32 _getDepthID() {return layer->image->_getID();};   //Draw these together to for speed
 };
 
 //Objects specific to our game

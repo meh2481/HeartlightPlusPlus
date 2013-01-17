@@ -6,6 +6,7 @@
 #define MYENGINE_H
 
 #include "Engine.h"
+#include "ballGun.h"
 #include <vector>
 
 #define GRID_WIDTH      16
@@ -58,11 +59,13 @@ private:
     bool m_bSound, m_bMusic, m_bRad;    //Booleans for music settings and such
     bool m_bJumped; //For supercomplex movement stuff
     Rect m_rcViewScreen;    //Screen we can currently see
-    bool m_bDragScreen;
-    bool m_bScaleScreen;
-    Point m_ptLastMousePos;
+    list<ballGun*> m_lGuns; //Bombs for throwing at you
+    list<ballGun*>::iterator m_iCurGun; //Our current weapon
+    //bool m_bDragScreen;
+    //bool m_bScaleScreen;
+    //Point m_ptLastMousePos;
 
-    list<physicsObject*> m_lSpheres_new;
+    //list<physicsObject*> m_lSpheres_new;
 
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
     physicsObject* m_objTest;
@@ -84,9 +87,10 @@ public:
     void loadLevelDirectory(string sFilePath);  //Loads all the level files in the specified folder
     void updateGrid_retro();  //Updates the level grid, moving objects around
     void updateGrid_new();  //Update objects and such
-    void shoot_new(float32 x, float32 y);       //FIREN TEH LAZOR
-    void place_new(float32 x, float32 y);
+//    void shoot_new(float32 x, float32 y);
+//    void place_new(float32 x, float32 y);
 //    void checkSpheresHitting_new();
+//    void pew();                             //FIREN TEH LAZOR
     void loadImages(string sListFilename);  //Loads all images listed in this file into memory, so we can batch load easily
     void loadSounds(string sListFilename);  //Loads all sounds listed in this file into memory
     void playSound(string sName);   //Plays a sound, with pitch shifting depending on framerate
