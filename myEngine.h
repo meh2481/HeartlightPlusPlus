@@ -62,6 +62,8 @@ private:
     bool m_bScaleScreen;
     Point m_ptLastMousePos;
 
+    list<physicsObject*> m_lSpheres_new;
+
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
     physicsObject* m_objTest;
     Cursor* m_cur;
@@ -82,6 +84,9 @@ public:
     void loadLevelDirectory(string sFilePath);  //Loads all the level files in the specified folder
     void updateGrid_retro();  //Updates the level grid, moving objects around
     void updateGrid_new();  //Update objects and such
+    void shoot_new(float32 x, float32 y);       //FIREN TEH LAZOR
+    void place_new(float32 x, float32 y);
+//    void checkSpheresHitting_new();
     void loadImages(string sListFilename);  //Loads all images listed in this file into memory, so we can batch load easily
     void loadSounds(string sListFilename);  //Loads all sounds listed in this file into memory
     void playSound(string sName);   //Plays a sound, with pitch shifting depending on framerate

@@ -104,7 +104,7 @@ void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, 
         return;
     }
     m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
-    float xh,yh;
+    float32 xh,yh;
     m_hSprite->GetHotSpot(&xh, &yh);
     if(xh == 0 && yh == 0)
         m_hSprite->SetHotSpot(rcImgPos.width()/2.0, rcImgPos.height()/2.0);

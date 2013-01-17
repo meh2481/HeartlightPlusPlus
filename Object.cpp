@@ -50,7 +50,7 @@ bool Object::update()
     return !m_bDying;
 }
 
-void Object::draw(Rect rcScreen, float fScaleFacX, float fScaleFacY)
+void Object::draw(Rect rcScreen, float32 fScaleFacX, float32 fScaleFacY)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
     m_Layer->pos = m_ptPos;//.Set(m_ptPos.x + getWidth()/2.0, m_ptPos.y + getHeight()/2.0);
@@ -112,7 +112,7 @@ physicsObject::~physicsObject()
 {
 }
 
-void physicsObject::draw(Rect rcScreen, float fScaleFacX, float fScaleFacY)
+void physicsObject::draw(Rect rcScreen, float32 fScaleFacX, float32 fScaleFacY)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
     m_Layer->pos = m_physicsBody->GetPosition();

@@ -15,14 +15,14 @@ parallaxLayer::~parallaxLayer()
 {
 }
 
-void parallaxLayer::draw(Rect rcScreen, float fScaleFacX, float fScaleFacY)
+void parallaxLayer::draw(Rect rcScreen, float32 fScaleFacX, float32 fScaleFacY)
 {
     Rect rcImgPos;
     rcImgPos.set(0,0,image->getWidth(),image->getHeight());
     draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
 }
 
-void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos, float fScaleFacX, float fScaleFacY)
+void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos, float32 fScaleFacX, float32 fScaleFacY)
 {
     if(image == NULL)
         return;
@@ -36,32 +36,22 @@ void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos, float fScaleFacX, float f
     ptDrawPos.y -= rcScreen.top;
 
     //Account for parallax and viewport scaling
-    Point ptDifference;// = rcScreen.center();
+    Point ptDifference;
     ptDifference.Set(rcScreen.width()/2.0, rcScreen.height()/2.0);
     ptDifference -= ptDrawPos;
-    //ptDifference /= depth;
-    ptDifference.x = ptDifference.x * depth;// - (depth)*rcScreen.width();// + rcScreen.width()*(1.0-depth);// + (1.0/depth - depth) * rcScreen.width();// * 1.0-fScaleFacX;
-    ptDifference.y = ptDifference.y * depth;// + (1.0 - depth) * rcScreen.height() * 1.0-fScaleFacY;// * depth;// * depth;// * fScaleFacY;
+    ptDifference.x = ptDifference.x * depth;
+    ptDifference.y = ptDifference.y * depth;
 
     //Normalize
     ptDrawPos.Set(rcScreen.width()/2.0, rcScreen.height()/2.0);
-    //ptDrawPos = rcScreen.center();
     ptDrawPos -= ptDifference;
     ptDrawPos.x *= fScaleFacX;
     ptDrawPos.y *= fScaleFacY;
-    //if(depth != 1.0)
-    //    ptDrawPos.x -= rcScreen.width()*(1.0-depth);//*(1.0-depth);//*fScaleFacX*depth;
-    //ptDrawPos.y -= rcScreen.height()*(1.0-depth);
 
     //Scale up according to depth //TODO: Make this come out right for parallax layers
     Point ptScale = scale;
-    //ptScale *= depth;
     ptScale.x *= depth * fScaleFacX;
     ptScale.y *= depth * fScaleFacY;
-
-
-    //ptDrawPos.x -= rcScreen.width();
-    //ptDrawPos.y -= rcScreen.height();
 
     image->drawCentered(ptDrawPos, rcImgPos, rot, ptScale.x, ptScale.y);
 }

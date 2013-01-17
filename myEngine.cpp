@@ -461,13 +461,17 @@ void myEngine::handleEvent(hgeInputEvent event)
         case INPUT_MBUTTONDOWN:
             if(event.key == HGEK_LBUTTON)
             {
-                m_bDragScreen = true;
-                m_ptLastMousePos.Set(event.x, event.y);
+                if(!RETRO)
+                    shoot_new(event.x, event.y);
+                //m_bDragScreen = true;
+                //m_ptLastMousePos.Set(event.x, event.y);
             }
             else if(event.key == HGEK_RBUTTON)
             {
-                m_bScaleScreen = true;
-                m_ptLastMousePos.Set(event.x, event.y);
+                if(!RETRO)
+                    place_new(event.x, event.y);
+                //m_bScaleScreen = true;
+                //m_ptLastMousePos.Set(event.x, event.y);
             }
             break;
 
@@ -481,30 +485,30 @@ void myEngine::handleEvent(hgeInputEvent event)
         case INPUT_MOUSEMOVE:
             if(m_bDragScreen)
             {
-                m_rcViewScreen.offset(m_ptLastMousePos.x - (float)event.x, m_ptLastMousePos.y - (float)event.y);
+                m_rcViewScreen.offset(m_ptLastMousePos.x - (float32)event.x, m_ptLastMousePos.y - (float32)event.y);
                 //cout << "Offset screen " << m_ptLastMousePos.x - event.x << ", " << m_ptLastMousePos.y - event.y << endl;
                 m_ptLastMousePos.Set(event.x, event.y);
                 //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
-                //cout << "Screen scale: " << (float)getWidth()/m_rcViewScreen.width() << ", " << (float)getHeight()/m_rcViewScreen.height() << endl;
+                //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;
             }
             else if(m_bScaleScreen)
             {
-                m_rcViewScreen.right += m_ptLastMousePos.x - (float)event.x;
-                m_rcViewScreen.bottom += m_ptLastMousePos.y - (float)event.y;
+                m_rcViewScreen.right += m_ptLastMousePos.x - (float32)event.x;
+                m_rcViewScreen.bottom += m_ptLastMousePos.y - (float32)event.y;
                 //cout << "Offset screen corner " << m_ptLastMousePos.x - event.x << ", " << m_ptLastMousePos.y - event.y << endl;
                 m_ptLastMousePos.Set(event.x, event.y);
                 //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
-                //cout << "Screen scale: " << (float)getWidth()/m_rcViewScreen.width() << ", " << (float)getHeight()/m_rcViewScreen.height() << endl;
+                //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;
             }
             break;
 
         case INPUT_MOUSEWHEEL:
-            m_rcViewScreen.right -= (float)event.wheel * getWidth()/getHeight();
-            m_rcViewScreen.bottom -= (float)event.wheel;
-            m_rcViewScreen.left += (float)event.wheel * getWidth()/getHeight();
-            m_rcViewScreen.top += (float)event.wheel;
+            m_rcViewScreen.right -= (float32)event.wheel * getWidth()/getHeight();
+            m_rcViewScreen.bottom -= (float32)event.wheel;
+            m_rcViewScreen.left += (float32)event.wheel * getWidth()/getHeight();
+            m_rcViewScreen.top += (float32)event.wheel;
             //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
-            //cout << "Screen scale: " << (float)getWidth()/m_rcViewScreen.width() << ", " << (float)getHeight()/m_rcViewScreen.height() << endl;
+            //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;
             break;
     }
 }

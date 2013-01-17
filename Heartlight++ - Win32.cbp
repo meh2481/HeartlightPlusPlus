@@ -60,6 +60,8 @@
 		<Unit filename="Image.h" />
 		<Unit filename="Object.cpp" />
 		<Unit filename="Object.h" />
+		<Unit filename="SceneLayer.cpp" />
+		<Unit filename="SceneLayer.h" />
 		<Unit filename="Text.cpp" />
 		<Unit filename="Text.h" />
 		<Unit filename="globaldefs.cpp" />

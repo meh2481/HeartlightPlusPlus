@@ -83,7 +83,7 @@ public:
     b2Body* createBody(b2BodyDef* bdef) {return m_physicsWorld->CreateBody(bdef);};
     void setCursor(Cursor* cur);
     void setGravity(Point ptGravity)    {m_physicsWorld->SetGravity(ptGravity);};
-    void setGravity(float x, float y)   {setGravity(Point(x,y));};
+    void setGravity(float32 x, float32 y)   {setGravity(Point(x,y));};
 
     //Accessor methods
     void setFramerate(float32 fFramerate);

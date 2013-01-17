@@ -14,7 +14,7 @@ Cursor::~Cursor()
 void Cursor::draw(float32 x, float32 y)
 {
     Point ptScale(1.0,1.0);
-    float fAngle = 0.0;
+    float32 fAngle = 0.0;
     uint8_t r,g,b,a;
     r = g = b = a = 255;
 
@@ -48,7 +48,7 @@ void Cursor::draw(float32 x, float32 y)
             cur.Set(x,y);
             b2Vec2 vAngle = m_objTrack->getCenter();
             vAngle -= cur;
-            float fAngle2;
+            float32 fAngle2;
             if(vAngle.x == 0)
             {
                 fAngle2 = pi/2.0;
@@ -185,7 +185,7 @@ bool Cursor::loadFromXML(string sXMLFilename)
         if(s == "color")
         {
             m_iCursorType |= CURSOR_COLOR;
-            float fVariance = 0.0;
+            float32 fVariance = 0.0;
             elem->QueryFloatAttribute("colorpersec", &m_color.fNumPerSec);
             elem->QueryFloatAttribute("colorvariance", &fVariance);
             m_color.fNumPerSec += m_color.fNumPerSec * randFloat(-fVariance, fVariance);
@@ -193,7 +193,7 @@ bool Cursor::loadFromXML(string sXMLFilename)
         else if(s == "spin")
         {
             m_iCursorType |= CURSOR_SPIN;
-            float fVariance = 0.0;
+            float32 fVariance = 0.0;
             elem->QueryFloatAttribute("speed", &m_spin.fSpinSpeed);
             elem->QueryFloatAttribute("speedvariance", &fVariance);
             m_spin.fSpinSpeed += m_spin.fSpinSpeed * randFloat(-fVariance, fVariance);
@@ -202,7 +202,7 @@ bool Cursor::loadFromXML(string sXMLFilename)
         {
             m_iCursorType |= CURSOR_FADE;
             //Query alpha value
-            float fVariance = 0.0;
+            float32 fVariance = 0.0;
             int iBaseAlpha = m_fade.iBaseAlpha;
             elem->QueryIntAttribute("basealpha", &iBaseAlpha);
             m_fade.iBaseAlpha = iBaseAlpha;
