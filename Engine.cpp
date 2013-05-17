@@ -11,13 +11,24 @@ bool Engine::_myFrameFunc()
     //Handle input events HGE is giving us
     hgeInputEvent event;
     while(m_hge->Input_GetEvent(&event))
+    {
         handleEvent(event);
+        //See if cursor has moved
+        if(event.type == INPUT_MOUSEMOVE)
+        {
+            m_ptCursorPos.x = event.x;
+            m_ptCursorPos.y = event.y;
+        }
+    }
 
     float32 dt = m_hge->Timer_GetDelta();
     m_fAccumulatedTime += dt;
     if(m_fAccumulatedTime >= m_fTargetTime)
     {
         m_fAccumulatedTime -= m_fTargetTime;
+        //Box2D wants fixed timestep, so we use target framerate here instead of actual elapsed time
+        m_physicsWorld->Step(m_fTargetTime, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);
+        m_cursor->update(m_fTargetTime);
         frame();
     }
 
@@ -37,6 +48,8 @@ bool Engine::_myRenderFunc()
 
     // Game-specific drawing
     draw();
+    if(m_cursor != NULL)    //Draw cursor if it's there
+        m_cursor->draw(m_ptCursorPos);
 
     // End rendering and update the screen
 	m_hge->Gfx_EndScene();
@@ -45,6 +58,11 @@ bool Engine::_myRenderFunc()
 
 Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 {
+    b2Vec2 gravity(0.0, 9.8);  //Vector for our world's gravity
+    m_physicsWorld = new b2World(gravity);
+    m_cursor = NULL;
+    m_ptCursorPos.SetZero();
+    m_physicsWorld->SetAllowSleeping(true);
     m_hge = hgeCreate(HGE_VERSION);
 
 	// Set up log file, frame function, render function and window title
@@ -96,13 +114,19 @@ Engine::~Engine()
     // Clean up and shutdown
 	m_hge->System_Shutdown();
 	m_hge->Release();
+	delete m_physicsWorld;
 }
 
 void Engine::clearObjects()
 {
     //Clean up our object list
-    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    {
+        b2Body* bod = i->second->getBody();
+        if(bod != NULL)
+            m_physicsWorld->DestroyBody(bod);
         delete (*i).second;
+    }
     m_mObjects.clear();
 }
 
@@ -177,21 +201,25 @@ HEFFECT Engine::_getEffect(string sName)
 
 void Engine::addObject(Object* obj)
 {
-    pair<uint32_t, Object*> objPair;
-    objPair.first = obj->_getID();
+    if(obj == NULL) return;
+    pair<float32, Object*> objPair;
+    objPair.first = obj->_getDepthID();
     objPair.second = obj;
     m_mObjects.insert(objPair);
 }
 
 void Engine::updateObjects()
 {
-    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
         if(!(*i).second->update())  //Remove this object if it returns true
         {
-            multimap<uint32_t, Object*>::iterator j = i;
+            multimap<float32, Object*>::iterator j = i;
             j--;                    //Hang onto map item before this before deleting, since the erase() method seems to do undefined things with
                                     // the original iterator. At least Valgrind thinks so.
+            b2Body* bod = i->second->getBody();
+            if(bod != NULL)
+                m_physicsWorld->DestroyBody(bod);
             delete (*i).second;
             m_mObjects.erase(i);
             i = j;
@@ -199,16 +227,18 @@ void Engine::updateObjects()
     }
 
     //Update all object frames also (outside loop so frames aren't put out of sync)
-    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
         (*i).second->updateFrame();
 }
 
-void Engine::drawObjects(float32 fScale)
+void Engine::drawObjects(Rect rcScreen)
 {
-    for(multimap<uint32_t, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
+    //m_hge->Gfx_SetTransform(0,0,0,0,0,(float32)getWidth()/rcScreen.width(), (float32)getHeight()/rcScreen.height());
+    for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
     {
-        (*i).second->draw(fScale);
+        (*i).second->draw(rcScreen, (float32)getWidth()/rcScreen.width(), (float32)getHeight()/rcScreen.height());
     }
+    //m_hge->Gfx_SetTransform();
 }
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
@@ -264,7 +294,12 @@ void Engine::setFramerate(float32 fFramerate)
         m_fTargetTime = 1.0 / m_fFramerate;
 }
 
-
+void Engine::setCursor(Cursor* cur)
+{
+    //if(m_cursor != NULL)
+    //    delete m_cursor;
+    m_cursor = cur;
+}
 
 
 

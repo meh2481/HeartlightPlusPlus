@@ -26,7 +26,7 @@ Image::Image(string sFilename)
     {
         m_iWidth = hge->Texture_GetWidth(m_hTex, true);
         m_iHeight = hge->Texture_GetHeight(m_hTex, true);
-        errlog << "Loading image \"" << sFilename << endl;
+        errlog << "Loading image \"" << sFilename << "\"" << endl;
     }
 
     m_hSprite = new hgeSprite(m_hTex, 0, 0, m_iWidth, m_iHeight);
@@ -59,6 +59,7 @@ void Image::draw(Rect rcScreenPos, Rect rcImgPos)
         return;
     }
     m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
+    //m_hSprite->SetHotSpot(0,0); //In case we've set this hot spot before
     m_hSprite->RenderStretch(rcScreenPos.left, rcScreenPos.top, rcScreenPos.right, rcScreenPos.bottom);
 }
 
@@ -84,18 +85,18 @@ void Image::draw(Point pt, Rect rcImgPos)
     draw(pt.x, pt.y, rcImgPos);
 }
 
-void Image::drawCentered(float32 x, float32 y, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(float32 x, float32 y, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
     Rect rcImg = {0,0,m_iWidth,m_iHeight};
-    drawCentered(x, y, rcImg, rotation, stretchFactor);
+    drawCentered(x, y, rcImg, rotation, stretchFactorx, stretchFactory);
 }
 
-void Image::drawCentered(Point pt, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(Point pt, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
-    drawCentered(pt.x, pt.y, rotation, stretchFactor);
+    drawCentered(pt.x, pt.y, rotation, stretchFactorx, stretchFactory);
 }
 
-void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
     if(m_hSprite == NULL)
     {
@@ -103,12 +104,16 @@ void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, 
         return;
     }
     m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
-    m_hSprite->RenderEx(x - rcImgPos.width()/2.0, y - rcImgPos.height()/2.0, rotation, stretchFactor);
+    float32 xh,yh;
+    m_hSprite->GetHotSpot(&xh, &yh);
+    if(xh == 0 && yh == 0)
+        m_hSprite->SetHotSpot(rcImgPos.width()/2.0, rcImgPos.height()/2.0); //Only center hot spot if it hasn't been altered already
+    m_hSprite->RenderEx(x, y, rotation, stretchFactorx, stretchFactory);
 }
 
-void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactor)
+void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
-    drawCentered(pt.x, pt.y, rcImgPos, rotation, stretchFactor);
+    drawCentered(pt.x, pt.y, rcImgPos, rotation, stretchFactorx, stretchFactory);
 }
 
 //Set the color of this image
@@ -142,6 +147,7 @@ void Image::scale(uint16_t iScaleFac)
         {
             m_hSprite->SetTexture(m_hTex);
             m_hSprite->SetTextureRect(0,0,m_iWidth,m_iHeight);
+            hge->Release();
             return; //Done
         }
     }
@@ -153,10 +159,17 @@ void Image::scale(uint16_t iScaleFac)
     }
     uint32_t m_iTexWidth = hge->Texture_GetWidth(m_hTex, false);    //Since the original texture width may not be a power of two, hang
                                                                     // on to this.
+
     m_hscaledTex = hge->Texture_Create(m_iWidth * iScaleFac, m_iHeight * iScaleFac);  //Create a new texture of the right size
+    if(!m_hscaledTex)
+    {
+        errlog << "could not create scaled texture in Image::scale" << endl;
+        hge->Release();
+        return;
+    }
+    uint32_t m_iScaledWidth = hge->Texture_GetWidth(m_hscaledTex, false);   //Also hang onto scaled texture width
     DWORD* src = hge->Texture_Lock(m_hTex); //Grab our original texture data
     DWORD* dest = hge->Texture_Lock(m_hscaledTex, false);   //And our new data
-
     //Now loop through and copy over, scaling up
     for(uint32_t x = 0; x < m_iWidth; x++)
     {
@@ -167,11 +180,10 @@ void Image::scale(uint16_t iScaleFac)
             for(uint16_t i = 0; i < iScaleFac; i++)
             {
                 for(uint16_t j = 0; j < iScaleFac; j++)
-                    dest[(iScaleFac*y+j)*m_iTexWidth*iScaleFac+(x*iScaleFac)+i] = srcPixel;
+                    dest[(iScaleFac*y+j)*m_iScaledWidth+(x*iScaleFac)+i] = srcPixel;
             }
         }
     }
-
     hge->Texture_Unlock(m_hTex);    //Unlock both textures
     hge->Texture_Unlock(m_hscaledTex);
     m_hSprite->SetTexture(m_hscaledTex);   //Set to the new texture

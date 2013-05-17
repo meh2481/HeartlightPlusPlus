@@ -9,6 +9,7 @@
 
 #include "globaldefs.h"
 #include "Image.h"
+#include "SceneLayer.h"
 
 class Object
 {
@@ -16,7 +17,7 @@ private:
     Object(){};
 
 protected:
-    Image* m_Img;
+    //Image* m_Img;
     uint16_t m_iNumFrames;
     bool m_bAnimateOnce;
     uint16_t m_iCurFrame;
@@ -24,21 +25,26 @@ protected:
     Point m_ptPos;
     Point m_ptVel;  //Velocity
     bool m_bDying;  //If sprite should be destroyed or no
+    bool m_bAnimate;    //If should animate frames or not
 
 public:
+    parallaxLayer* layer;
+
     Object(Image* img);
     ~Object();
 
     //Helper methods
     virtual bool update();  //Return false to destroy the object
     virtual void updateFrame();
-    void draw(float32 fScaleFactor = 1.0);
-    void offset(float32 x, float32 y)   {m_ptPos.x += x; m_ptPos.y += y;};
-    void offset(Point pt)               {m_ptPos += pt;};
+    virtual void draw(Rect rcScreen, float32 fScaleFacX = 1.0, float32 fScaleFacY = 1.0);
+    virtual void offset(float32 x, float32 y)   {m_ptPos.x += x; m_ptPos.y += y;};
+    virtual void offset(Point pt)               {m_ptPos += pt;};
     void kill() {m_bDying = true;};    //Destroy sprite
 
     //Accessor methods
     void setNumFrames(uint16_t iNumFrames, bool bAnimateOnce = false);
+    void setAnimate(bool b)         {m_bAnimate = b;};
+    bool getAnimate()               {return m_bAnimate;};
     int16_t  getFrame() {return m_iCurFrame;};
     void  setFrame(int16_t iFrame) {m_iCurFrame = iFrame;}; //WARNING: Potentially dangerous
     uint32_t getWidth() {return m_iWidth;};
@@ -47,14 +53,16 @@ public:
     void setCenter(float32 x, float32 y)    {m_ptPos.x = x; m_ptPos.y = y;};
     void setPos(float32 x, float32 y)   {m_ptPos.x = x + m_iWidth/2.0; m_ptPos.y = y + m_iHeight/2.0;};
     void setPos(Point ptULCorner)   {setPos(ptULCorner.x, ptULCorner.y);};
-    Point getCenter()  {return m_ptPos;};
+    virtual Point getCenter()  {return m_ptPos;};
     Point getVelocity() {return m_ptVel;};
     void setVelocity(Point pt)  {m_ptVel = pt;};
     void setVelocity(float32 x, float32 y)  {m_ptVel.x = x; m_ptVel.y = y;};
-    uint32_t _getID()    {return m_Img->_getID();};   //For engine use
+    virtual float32 _getDepthID() {return layer->depth;};  //For engine use - what is drawn in what order
+    virtual b2Body* getBody() {return NULL;};
 
-    Image* getImage()   {return m_Img;};
-    void setImage(Image* img)   {m_Img = img;}; //Use with caution! No error-checking!
+    Image* getImage()   {return layer->image;};
+    void setImage(Image* img)   {layer->image = img;}; //Use with caution! No error-checking!
+//    parallaxLayer* getLayer()   {return layer;};
 
 };
 
@@ -76,15 +84,16 @@ public:
     void    addData(uint64_t iAdd)  {m_iData |= iAdd;};
     void    removeData(uint64_t iRem)   {m_iData &= ~iRem;};
     bool    isData(uint64_t iTest) {return(m_iData & iTest);};
+    virtual float32 _getDepthID() {return layer->image->_getID();};   //Draw these together to for speed
 };
 
 //Objects specific to our game
-class Brick : public retroObject
+/*class Brick : public retroObject
 {
 public:
     Brick(Image* img);
     void updateFrame();
-};
+};*/
 
 class Door : public retroObject
 {
@@ -100,7 +109,28 @@ public:
     void updateFrame();
 };
 
+#define VELOCITY_ITERATIONS 8
+#define PHYSICS_ITERATIONS 3
+#define SCALE_UP_FACTOR 16.0
+#define SCALE_DOWN_FACTOR 0.0625
 
+class physicsObject : public Object
+{
+protected:
+    b2Body* m_physicsBody;
+
+public:
+    physicsObject(Image* img);
+    ~physicsObject();
+
+    void addFixture(b2FixtureDef* def)   {m_physicsBody->CreateFixture(def);};  //Add a physics fixture to this object
+    void addBody(b2Body* body)   {body->SetUserData(this); m_physicsBody = body;};  //TODO Better way of doing this
+
+    virtual void draw(Rect rcScreen, float32 fScaleFacX = 1.0, float32 fScaleFacY = 1.0);
+    virtual Point getCenter()    {Point pt = m_physicsBody->GetWorldCenter();pt*=SCALE_UP_FACTOR;return pt;};
+    virtual b2Body* getBody() {return m_physicsBody;};
+
+};
 
 
 

@@ -73,7 +73,9 @@ void HUDItem::setScale(uint16_t iScale)
 {
     m_iSCALE_FAC = iScale;
     for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
+    {
         (*i)->setScale(iScale);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -161,10 +163,10 @@ void HUDTextbox::setScale(uint16_t iScale)
     m_txtFont->setScale(iScale);
 }
 
-void HUDTextbox::setText(uint64_t iNum)
+void HUDTextbox::setText(uint32_t iNum)
 {
     char c[256];
-    sprintf(c, "%lu", iNum);
+    sprintf(c, "%lu", (long unsigned int)iNum);
     setText(c);
 }
 

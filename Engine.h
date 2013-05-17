@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "Text.h"
 #include "hud.h"
+#include "Cursor.h"
 #include <map>
 
 class Engine
@@ -18,6 +19,9 @@ class Engine
 private:
     //Variables for use by the engine
     HGE* m_hge;
+    b2World* m_physicsWorld;
+    Cursor* m_cursor;
+    Point m_ptCursorPos;
     float32 m_fFramerate;
     float32 m_fAccumulatedTime;
     float32 m_fTargetTime;
@@ -26,7 +30,7 @@ private:
     map<string, string> m_mImageNames;  //And names of images
     map<string, HEFFECT> m_mSounds; //Sound handler
     map<string, string> m_mSoundNames; //And names of sounds
-    multimap<uint32_t, Object*> m_mObjects;       //Object handler
+    multimap<float32, Object*> m_mObjects;       //Object handler
     HCHANNEL m_MusicChannel;        //Sound channel we play our music on
     bool m_bFirstMusic; //Don't stop a previous song playing if there is none
     string m_sLastMusic;    //Last song we played, so we can pause/resume songs instead of restarting them
@@ -65,18 +69,22 @@ public:
     void createSound(string sPath, string sName);   //Creates a sound from this name and file path
     void addObject(Object* obj);    //Add an object to the object handler
     void updateObjects();           //update all objects in the game
-    void drawObjects(float32 fScale = 1.0);   //draw all objects in the game
+    void drawObjects(Rect rcScreen);   //draw all objects in the game
     void clearObjects();    //Destroy all objects, freeing memory
     void clearImages();     //Free memory associated with the images in our image map
     virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play a sound
     void playMusic(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play looping music, or resume paused music
     void pauseMusic();                                                                     //Pause music that's currently playing
-    int32_t randInt(int32_t min, int32_t max) {return m_hge->Random_Int(min, max);};  //Get a random integer
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
     void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
     void scaleImages(uint16_t scaleFac);    //scale all images by scaleFac
     float32 getTime()      {return m_hge->Timer_GetTime();}; //Get the time the engine's been running
     Rect getScreenRect()    {Rect rc = {0,0,getWidth(),getHeight()}; return rc;};
+    b2Body* createBody(b2BodyDef* bdef) {return m_physicsWorld->CreateBody(bdef);};
+    void setCursor(Cursor* cur);
+    Point getCursorPos()    {return m_ptCursorPos;};
+    void setGravity(Point ptGravity)    {m_physicsWorld->SetGravity(ptGravity);};
+    void setGravity(float32 x, float32 y)   {setGravity(Point(x,y));};
 
     //Accessor methods
     void setFramerate(float32 fFramerate);

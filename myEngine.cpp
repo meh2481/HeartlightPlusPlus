@@ -39,10 +39,15 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_bSound = true;
     m_bMusic = true;
     m_bRad  = false;
+    m_bJumped = false;
+    m_rcViewScreen.set(0,0,getWidth(),getHeight());
+//    m_bDragScreen = false;
+//    m_bScaleScreen = false;
 }
 
 myEngine::~myEngine()
 {
+    delete m_cur;
     delete m_hud;
 }
 
@@ -58,7 +63,10 @@ void myEngine::frame()
     if(m_iFade == FADE_IN)
         return; //Don't do anything if fading in
 
-    updateGrid_retro();
+    if(RETRO)
+        updateGrid_retro();
+    else
+        updateGrid_new();
 
     if(m_iWinningCount) //If winning a level, make dwarf jump up and down
     {
@@ -84,7 +92,10 @@ void myEngine::frame()
             m_iCurrentLevel++;  //Go to next level
             if(m_iCurrentLevel >= m_vLevels.size())
                 m_iCurrentLevel = 0;
-            loadLevel_retro();
+            if(RETRO)
+                loadLevel_retro();
+            else
+                loadLevel_new();
         }
     }
     if(m_iDyingCount)
@@ -142,8 +153,9 @@ void myEngine::frame()
 
 void myEngine::draw()
 {
-    //Just draw all objects
-    drawObjects();
+    drawObjects(m_rcViewScreen);
+    if(m_iCurGun != m_lGuns.end())
+        (*m_iCurGun)->draw(m_rcViewScreen);
 
     //Draw debug stuff if we should
     if(m_bDebug)
@@ -161,7 +173,7 @@ void myEngine::draw()
         }
     }
 
-    //If fading, draw black overlay
+    //If fading, draw black overlay TODO: Generic fading HUD item or such
     if(m_iFade != FADE_NONE)
     {
         float32 fCurTime = getTime();
@@ -216,31 +228,104 @@ void myEngine::draw()
 
     //Draw our HUD
     m_hud->draw(getTime());
+
+    //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
 }
 
 void myEngine::init()
 {
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
-
     //Now scale all the images up
     scaleImages(SCALE_FAC);
-
     //Load all sounds as well
     loadSounds("res/sfx/orig.xml");
 
     loadLevelDirectory("res/levels");
 
-    loadLevel_retro();
+    m_cur = new Cursor("res/cursor/cursor1.xml");
+    m_cur->setHotSpot(/*47,15);*/m_cur->getWidth()/2.0, m_cur->getHeight()/2.0);
+    //m_cur->setType(CURSOR_COLOR);
+    setCursor(m_cur);
+
+    if(RETRO)
+    {
+        loadLevel_retro();
+        m_iCurGun = m_lGuns.end();
+    }
+    else
+    {
+        //Create guns and such
+        ballGun* gun = new ballGun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_gun";
+        //gun.obj
+        m_lGuns.push_back(gun);
+
+        gun = new placeGun();
+        gun->bullet = "o_rock";
+        m_lGuns.push_back(gun);
+
+        gun = new blastGun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_blastgun";
+        m_lGuns.push_back(gun);
+
+        gun = new shotgun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_shotgun";
+        m_lGuns.push_back(gun);
+
+        gun = new machineGun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_gun";
+        m_lGuns.push_back(gun);
+
+        gun = new teleGun();
+        //gun->bullet = "o_rock";
+        m_lGuns.push_back(gun);
+
+        gun = new superGun();
+        gun->bullet = "o_rock";
+        gun->gun = "n_blastgun";
+        m_lGuns.push_back(gun);
+
+        m_iCurGun = m_lGuns.begin();
+
+        loadLevel_new();
+    }
 
     m_hud = new HUD("levelhud");
     m_hud->create("res/hud/hud.xml");
-    m_hud->setScale(2);
+    m_hud->setScale(SCALE_FAC);
     m_hud->setSignalHandler(signalHandler);
 
-    if(m_bMusic)
-        playMusic("o_mus_menu"); //Start playing menu music
+    setGravity(0.0, 25.0 * SCALE_FAC);
 
+    //if(m_bMusic)
+    //    playMusic("o_mus_menu"); //Start playing menu music
+
+    //Create physics boundary if not in retro mode
+    if(!RETRO)
+    {
+        b2BodyDef grounddef;
+        grounddef.position.SetZero();
+        b2Body* groundBody = createBody(&grounddef);
+        b2ChainShape worldBox;
+        Rect rcScreen = getScreenRect();
+        rcScreen.bottom = LEVEL_HEIGHT*GRID_HEIGHT*SCALE_FAC;    //Account for size of HUD on bottom of screen
+        rcScreen.scale(SCALE_DOWN_FACTOR);
+        b2Vec2 vertices[5];
+        vertices[0].Set(rcScreen.left, rcScreen.top);
+        vertices[1].Set(rcScreen.right, rcScreen.top);
+        vertices[2].Set(rcScreen.right, rcScreen.bottom);
+        vertices[3].Set(rcScreen.left, rcScreen.bottom);
+        vertices[4].Set(rcScreen.left, rcScreen.top);
+        worldBox.CreateChain(vertices, 5);
+        groundBody->CreateFixture(&worldBox, 0.0);
+
+        setFramerate(60); //YAY 60 fps!
+    }
 }
 
 void myEngine::loadImages(string sListFilename)
@@ -350,8 +435,18 @@ void myEngine::handleEvent(hgeInputEvent event)
                         m_iCurrentLevel++;
                         if(m_iCurrentLevel >= m_vLevels.size())
                             m_iCurrentLevel = 0;
-                        loadLevel_retro();
+                        if(RETRO)
+                            loadLevel_retro();
+                        else
+                            loadLevel_new();
                     }
+                    //else if(!RETRO)
+                    //{
+                    //    b2Body* bod = m_objTest->getBody();
+                    //    b2Vec2 force;
+                    //    force.Set(1000,0);
+                    //    bod->ApplyForceToCenter(force);
+                    //}
                     break;
 
                 case HGEK_LEFT:
@@ -360,8 +455,18 @@ void myEngine::handleEvent(hgeInputEvent event)
                         if(m_iCurrentLevel == 0)
                             m_iCurrentLevel = m_vLevels.size();
                         m_iCurrentLevel--;
-                        loadLevel_retro();
+                        if(RETRO)
+                            loadLevel_retro();
+                        else
+                            loadLevel_new();
                     }
+                    //else if(!RETRO)
+                    //{
+                    //    b2Body* bod = m_objTest->getBody();
+                    //    b2Vec2 force;
+                    //    force.Set(-1000,0);
+                    //    bod->ApplyForceToCenter(force);
+                    //}
                     break;
 
                 case HGEK_ESCAPE:
@@ -381,6 +486,37 @@ void myEngine::handleEvent(hgeInputEvent event)
                 case HGEK_V:
                     m_bDebug = !m_bDebug;
                     break;
+
+                case HGEK_F5:   //Refresh cursor XML
+                    m_cur->loadFromXML("res/cursor/cursor1.xml");
+                    loadLevelDirectory("res/levels");
+                    break;
+
+                case HGEK_0:
+                    m_rcViewScreen.set(0,0,getWidth(),getHeight());
+                    break;
+
+                case HGEK_EQUALS:
+                    if(m_iCurGun != m_lGuns.end())
+                        (*m_iCurGun)->clear();
+                    if(m_iCurGun != m_lGuns.end())
+                        m_iCurGun++;
+                    if(m_iCurGun == m_lGuns.end())
+                        m_iCurGun = m_lGuns.begin();
+                    if(m_iCurGun != m_lGuns.end())
+                        (*m_iCurGun)->mouseMove(getCursorPos().x, getCursorPos().y);
+                    break;
+
+                case HGEK_MINUS:
+                    if(m_iCurGun != m_lGuns.end())
+                        (*m_iCurGun)->clear();
+                    if(m_iCurGun == m_lGuns.begin())
+                        m_iCurGun = m_lGuns.end();
+                    if(m_iCurGun != m_lGuns.begin())
+                        m_iCurGun--;
+                    if(m_iCurGun != m_lGuns.end())
+                        (*m_iCurGun)->mouseMove(getCursorPos().x, getCursorPos().y);
+                    break;
             }
             break;
 
@@ -391,12 +527,76 @@ void myEngine::handleEvent(hgeInputEvent event)
 
             }
             break;
+
+        case INPUT_MBUTTONDOWN:
+            if(event.key == HGEK_LBUTTON)
+            {
+                if(m_iCurGun != m_lGuns.end())
+                {
+                    (*m_iCurGun)->mouseDown(event.x, event.y);
+                }
+            }
+            /*else if(event.key == HGEK_RBUTTON)
+            {
+                if(!RETRO)
+                    place_new(event.x, event.y);
+                //m_bScaleScreen = true;
+                //m_ptLastMousePos.Set(event.x, event.y);
+            }*/
+            break;
+
+        case INPUT_MBUTTONUP:
+            if(event.key == HGEK_LBUTTON)
+            {
+                if(m_iCurGun != m_lGuns.end())
+                {
+                    (*m_iCurGun)->mouseUp(event.x, event.y);
+                }
+            }
+//                m_bDragScreen = false;
+//            else if(event.key == HGEK_RBUTTON)
+//                m_bScaleScreen = false;
+            break;
+
+        case INPUT_MOUSEMOVE:
+            if(m_iCurGun != m_lGuns.end())
+            {
+                (*m_iCurGun)->mouseMove(event.x,event.y);
+            }
+/*            if(m_bDragScreen)
+            {
+                m_rcViewScreen.offset(m_ptLastMousePos.x - (float32)event.x, m_ptLastMousePos.y - (float32)event.y);
+                //cout << "Offset screen " << m_ptLastMousePos.x - event.x << ", " << m_ptLastMousePos.y - event.y << endl;
+                m_ptLastMousePos.Set(event.x, event.y);
+                //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
+                //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;
+            }
+            else if(m_bScaleScreen)
+            {
+                m_rcViewScreen.right += m_ptLastMousePos.x - (float32)event.x;
+                m_rcViewScreen.bottom += m_ptLastMousePos.y - (float32)event.y;
+                //cout << "Offset screen corner " << m_ptLastMousePos.x - event.x << ", " << m_ptLastMousePos.y - event.y << endl;
+                m_ptLastMousePos.Set(event.x, event.y);
+                //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
+                //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;
+            }*/
+            break;
+
+        case INPUT_MOUSEWHEEL:
+            m_rcViewScreen.right -= (float32)event.wheel * getWidth()/getHeight();
+            m_rcViewScreen.bottom -= (float32)event.wheel;
+            m_rcViewScreen.left += (float32)event.wheel * getWidth()/getHeight();
+            m_rcViewScreen.top += (float32)event.wheel;
+            //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
+            //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;
+            break;
     }
 }
 
 
 void myEngine::loadLevelDirectory(string sFilePath)
 {
+    m_vLevels.clear();
     //Get directory listing
     ttvfs::VFSHelper vfs;
     vfs.Prepare();
@@ -487,11 +687,25 @@ void myEngine::playSound(string sName)
         Engine::playSound(sName, 100, 0, (float32)(getFramerate()/(float32)(GAME_FRAMERATE)));    //Pitchshift depending on framerate. For fun.
 }
 
+void playSound(string sName, int volume, int pan, float32 pitch)
+{
+    g_pGlobalEngine->Engine::playSound(sName, volume, pan, pitch);
+}
 
+b2Body* createBody(b2BodyDef* def)
+{
+    return g_pGlobalEngine->createBody(def);
+}
 
+Image* getImage(string sName)
+{
+    return g_pGlobalEngine->getImage(sName);
+}
 
-
-
+void addObject(Object* obj)
+{
+    g_pGlobalEngine->addObject(obj);
+}
 
 
 

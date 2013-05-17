@@ -86,7 +86,7 @@ public:
     void    setFont(Text* txt)          {m_txtFont = txt;};     //Set the font used by this textbox
     Text*   getFont()                   {return m_txtFont;};
     void    setText(string s)           {m_sValue = s;};        //Set the text to display
-    void    setText(uint64_t iNum);                             //Set the text from an integer
+    void    setText(uint32_t iNum);                             //Set the text from an integer
     string  getText()                   {return m_sValue;};
     void    setAlign(uint8_t iAlign)    {m_iAlign = iAlign;};   //Set the font alignment for this textbox
     uint8_t getAlign()                  {return m_iAlign;};

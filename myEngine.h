@@ -6,6 +6,7 @@
 #define MYENGINE_H
 
 #include "Engine.h"
+#include "ballGun.h"
 #include <vector>
 
 #define GRID_WIDTH      16
@@ -17,7 +18,7 @@
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
 
-#define SCALE_FAC       2   //By what factor the retro gfx are scaled
+#define SCALE_FAC       2   //By what factor the retro gfx are scaled TODO: Variable
 
 #define WIN_COUNT       14  //How many frames the dwarf jumps up and down until you go to the next level
 #define DIE_COUNT       20  //How many frames the dwarf holds his head before he explodes
@@ -35,6 +36,8 @@
 #define BALLOON_FLOATDELAY  4
 #define FALLING_1           8
 #define FALLING_2           16
+
+#define RETRO   false   //If we're playing in retro mode or not TODO: Variable
 
 class myEngine : public Engine
 {
@@ -55,8 +58,19 @@ private:
     bool m_bDebug;  //Whether to draw debug data and stuff or not
     HUD* m_hud;
     bool m_bSound, m_bMusic, m_bRad;    //Booleans for music settings and such
+    bool m_bJumped; //For supercomplex movement stuff
+    Rect m_rcViewScreen;    //Screen we can currently see
+    list<ballGun*> m_lGuns; //Bombs for throwing at you
+    list<ballGun*>::iterator m_iCurGun; //Our current weapon
+    //bool m_bDragScreen;
+    //bool m_bScaleScreen;
+    //Point m_ptLastMousePos;
+
+    //list<physicsObject*> m_lSpheres_new;
 
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)
+    physicsObject* m_objTest;
+    Cursor* m_cur;
 
 protected:
     void frame();
@@ -69,15 +83,22 @@ public:
     ~myEngine();
 
     void loadLevel_retro();   //Loads the current level m_iCurrLevel is pointing to into m_levelGrid[][]
+    void loadLevel_new();       //Loads the current level as a physics-based fun play area thing
     bool loadLevels(string sFilename);  //Loads in all the levels from the specified text file into m_vLevels
     void loadLevelDirectory(string sFilePath);  //Loads all the level files in the specified folder
     void updateGrid_retro();  //Updates the level grid, moving objects around
+    void updateGrid_new();  //Update objects and such
+//    void shoot_new(float32 x, float32 y);
+//    void place_new(float32 x, float32 y);
+//    void checkSpheresHitting_new();
+//    void pew();                             //FIREN TEH LAZOR
     void loadImages(string sListFilename);  //Loads all images listed in this file into memory, so we can batch load easily
     void loadSounds(string sListFilename);  //Loads all sounds listed in this file into memory
     void playSound(string sName);   //Plays a sound, with pitch shifting depending on framerate
     void explode_retro(uint16_t row, uint16_t col, bool bStartFrame1 = false);    //For handling bomb explosions tile by tile
     bool floatable_retro(retroObject* obj);   //If this object can be pushed upwards by a balloon
     void hudSignalHandler(string sSignal);  //For handling signals that come from the HUD
+    bool isOnGround();  //See if the player is on the ground
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

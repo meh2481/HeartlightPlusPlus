@@ -1,0 +1,4 @@
+<cursor filename="res/cursor/cursor.png">
+	<scale timeoffsetx="3.14159" basescalex="1" basescalexvariance="0.2" basescaley="1" basescaleyvariance="0.2" frequencyx="8" frequencyy="8" frequencyvariance="0.8" amplitudex="0.2" amplitudexvariance="0.2" amplitudey="0.2" amplitudeyvariance="0.2" />
+	<!--fade basealpha="191" frequency="3.1" amplitude="64" /-->
+</cursor>

@@ -19,16 +19,20 @@ using namespace tinyxml2;
 #include "VFSTools.h"
 
 #define Point b2Vec2    //Our point structure
+#define pi 3.1415926535 //Close enough for my calculations
 
 class Rect {
 public:
     float32 left,top,right,bottom;
     float32 width() {return right-left;};
     float32 height() {return bottom-top;};
+    float32 area()  {return width()*height();};
     void    offset(float32 x, float32 y)    {left+=x;right+=x;top+=y;bottom+=y;};
     void    offset(Point pt)                {offset(pt.x,pt.y);};
     Point   center() {Point pt; pt.x = (right-left)/2.0 + right; pt.y = (bottom-top)/2.0 + top; return pt;};
     void    center(float32* x, float32* y)    {Point pt = center(); *x = pt.x; *y = pt.y;};
+    void    scale(float32 fScale) {left*=fScale;right*=fScale;top*=fScale;bottom*=fScale;};
+    void    set(float32 fleft,float32 ftop,float32 fright,float32 fbottom)  {left=fleft;top=ftop;right=fright;bottom=fbottom;};
 };
 
 extern ofstream errlog;
@@ -38,6 +42,7 @@ string stripCommas(string s);       //Strip all the commas from s, leaving space
 Rect rectFromString(string s);      //Get a rectangle from comma-separated values in a string
 Point pointFromString(string s);    //Get a point from comma-separated values in a string
 DWORD colorFromString(string s);    //Get a color from comma-separated values in a string
-
+int32_t randInt(int32_t min, int32_t max);  //Get a random integer
+float32 randFloat(float32 min, float32 max);        //Get a random float32
 
 #endif

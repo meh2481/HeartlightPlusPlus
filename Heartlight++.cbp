@@ -52,14 +52,20 @@
 			<Add option="-logg -ltinyxml2 -lttvfs -lBox2D" />
 			<Add directory="./lib/Linux_x64/" />
 		</Linker>
+		<Unit filename="Cursor.cpp" />
+		<Unit filename="Cursor.h" />
 		<Unit filename="Engine.cpp" />
 		<Unit filename="Engine.h" />
 		<Unit filename="Image.cpp" />
 		<Unit filename="Image.h" />
 		<Unit filename="Object.cpp" />
 		<Unit filename="Object.h" />
+		<Unit filename="SceneLayer.cpp" />
+		<Unit filename="SceneLayer.h" />
 		<Unit filename="Text.cpp" />
 		<Unit filename="Text.h" />
+		<Unit filename="ballGun.cpp" />
+		<Unit filename="ballGun.h" />
 		<Unit filename="globaldefs.cpp" />
 		<Unit filename="globaldefs.h" />
 		<Unit filename="hud.cpp" />
@@ -67,6 +73,7 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="myEngine.cpp" />
 		<Unit filename="myEngine.h" />
+		<Unit filename="myEngine_new.cpp" />
 		<Unit filename="myEngine_retro.cpp" />
 		<Extensions>
 			<code_completion />

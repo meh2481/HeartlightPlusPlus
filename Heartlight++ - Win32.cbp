@@ -13,11 +13,13 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-Wredundant-decls" />
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
 					<Add option="`sdl-config --libs`" />
 					<Add option="-lSDLmain -lSDL -lhge -lhgehelp -lttvfs -ltinyxml2" />
+					<Add option="-lBox2D" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -32,11 +34,13 @@
 					<Add option="-s" />
 					<Add option="`sdl-config --libs`" />
 					<Add option="-lSDLmain -lSDL -lhge -lhgehelp -lttvfs -ltinyxml2" />
+					<Add option="-lBox2D" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-O2" />
+			<Add option="-Wredundant-decls" />
 			<Add option="-Wall" />
 			<Add option="`sdl-config --cflags` -lSDL -lSDLmain" />
 			<Add directory=".\include\Win32\" />
@@ -45,16 +49,23 @@
 		<Linker>
 			<Add option="`sdl-config --libs`" />
 			<Add option="-lSDLmain -lSDL -lhge -lhgehelp -lttvfs -ltinyxml2" />
+			<Add option="-lBox2D" />
 			<Add directory=".\lib\Win32\" />
 		</Linker>
+		<Unit filename="Cursor.cpp" />
+		<Unit filename="Cursor.h" />
 		<Unit filename="Engine.cpp" />
 		<Unit filename="Engine.h" />
 		<Unit filename="Image.cpp" />
 		<Unit filename="Image.h" />
 		<Unit filename="Object.cpp" />
 		<Unit filename="Object.h" />
+		<Unit filename="SceneLayer.cpp" />
+		<Unit filename="SceneLayer.h" />
 		<Unit filename="Text.cpp" />
 		<Unit filename="Text.h" />
+		<Unit filename="ballGun.cpp" />
+		<Unit filename="ballGun.h" />
 		<Unit filename="globaldefs.cpp" />
 		<Unit filename="globaldefs.h" />
 		<Unit filename="hud.cpp" />
@@ -62,6 +73,7 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="myEngine.cpp" />
 		<Unit filename="myEngine.h" />
+		<Unit filename="myEngine_new.cpp" />
 		<Unit filename="myEngine_retro.cpp" />
 		<Extensions>
 			<code_completion />
