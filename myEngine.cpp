@@ -48,6 +48,13 @@ myEngine::~myEngine()
 
 void myEngine::frame()
 {
+    if(m_iFade == FADE_LOAD)                //Waiting to load next level
+    {
+        m_iFade = FADE_IN;                  //Start fading in
+        m_fEndFade = getTime() + FADE_TIME;
+        loadLevel_retro();                  //Reload this level
+    }
+
     if(m_iFade == FADE_IN)
         return; //Don't do anything if fading in
 
@@ -165,17 +172,17 @@ void myEngine::draw()
                 m_iFade = FADE_NONE;
             else if(m_iFade == FADE_OUT)
             {
-                m_iFade = FADE_IN;
-                m_fEndFade = fCurTime + fTimeLeft + FADE_TIME;
-                fTimeLeft = m_fEndFade - fCurTime;
-                loadLevel_retro();      //Reload this level
+                m_iFade = FADE_LOAD;    //Can't reload a level within the draw cycle, since that involves cleaning up image memory. Wait until
+                                        // our next frame, then clean up
             }
         }
-        uint8_t iFinalAlpha = 0;
+        uint8_t iFinalAlpha = 255;  //Avoid full visibility when done fading out
         if(m_iFade == FADE_IN)
             iFinalAlpha = (fTimeLeft / FADE_TIME) * (float32)(255);
         else if(m_iFade == FADE_OUT)
             iFinalAlpha = ((FADE_TIME - fTimeLeft) / FADE_TIME) * (float32)(255);
+        else if(m_iFade == FADE_NONE)
+            iFinalAlpha = 0;    //Avoid black frame at end of fading
         fillRect(getScreenRect(), 0,0,0, iFinalAlpha);
 
     }
@@ -227,9 +234,7 @@ void myEngine::init()
     loadLevel_retro();
 
     m_hud = new HUD("levelhud");
-    //errlog << "Creating HUD" << endl;
     m_hud->create("res/hud/hud.xml");
-    //errlog << "Done creating HUD" << endl;
     m_hud->setScale(2);
     m_hud->setSignalHandler(signalHandler);
 

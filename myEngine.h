@@ -26,6 +26,7 @@
 #define FADE_NONE       0
 #define FADE_IN         1
 #define FADE_OUT        2
+#define FADE_LOAD       3
 #define FADE_TIME       0.5
 
 //Bitfields for object data

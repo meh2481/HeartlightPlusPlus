@@ -20,6 +20,10 @@ bool Engine::_myFrameFunc()
         m_fAccumulatedTime -= m_fTargetTime;
         frame();
     }
+
+    if(m_fAccumulatedTime > m_fTargetTime * 3.0)    //We've gotten far too behind; we could have a huge FPS jump if the load lessens
+        m_fAccumulatedTime = m_fTargetTime * 3.0;   //Drop any frames past this
+
     return m_bQuitting;
 }
 
@@ -185,8 +189,12 @@ void Engine::updateObjects()
     {
         if(!(*i).second->update())  //Remove this object if it returns true
         {
+            multimap<uint32_t, Object*>::iterator j = i;
+            j--;                    //Hang onto map item before this before deleting, since the erase() method seems to do undefined things with
+                                    // the original iterator. At least Valgrind thinks so.
             delete (*i).second;
             m_mObjects.erase(i);
+            i = j;
         }
     }
 
