@@ -9,14 +9,14 @@
 #include <string>
 #include <fstream>
 using namespace std;
-#include "hge.h"
-#include "hgesprite.h"
-#include "hgeparticle.h"
-#include "Box2D.h"
-#include "tinyxml2.h"
+#include "include/hge.h"
+#include "include/hgesprite.h"
+#include "include/hgeparticle.h"
+#include "include/Box2D.h"
+#include "include/tinyxml2.h"
 using namespace tinyxml2;
-#include "VFS.h"
-#include "VFSTools.h"
+#include "include/VFS.h"
+#include "include/VFSTools.h"
 
 #define Point b2Vec2    //Our point structure
 #define pi 3.1415926535 //Close enough for my calculations
