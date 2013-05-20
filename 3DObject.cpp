@@ -22,6 +22,9 @@ void Object3D::fromOBJFile(string sFilename)
 {
     vector<Vertex> vVerts;
     vector<UV> vUVs;
+    UV tmp;
+    tmp.u = tmp.v = 0.0;
+    vUVs.push_back(tmp);    //Push a 0,0 UV coordinate in case there's no UVs in this .obj file
     list<Face> lFaces;
 
     ifstream infile(sFilename.c_str());
@@ -126,11 +129,11 @@ void Object3D::fromOBJFile(string sFilename)
                << vUVs[i->uv1-1].u << " " << vUVs[i->uv1-1].v << endl
                << vUVs[i->uv2-1].u << " " << vUVs[i->uv2-1].v << endl
                << vUVs[i->uv3-1].u << " " << vUVs[i->uv3-1].v << endl;*/
-        glTexCoord2f(vUVs[i->uv1-1].u, vUVs[i->uv1-1].v);
+        glTexCoord2f(vUVs[i->uv1].u, vUVs[i->uv1].v);
         glVertex3f(vVerts[i->v1-1].x, vVerts[i->v1-1].y, vVerts[i->v1-1].z);
-        glTexCoord2f(vUVs[i->uv2-1].u, vUVs[i->uv2-1].v);
+        glTexCoord2f(vUVs[i->uv2].u, vUVs[i->uv2].v);
         glVertex3f(vVerts[i->v2-1].x, vVerts[i->v2-1].y, vVerts[i->v2-1].z);
-        glTexCoord2f(vUVs[i->uv3-1].u, vUVs[i->uv3-1].v);
+        glTexCoord2f(vUVs[i->uv3].u, vUVs[i->uv3].v);
         glVertex3f(vVerts[i->v3-1].x, vVerts[i->v3-1].y, vVerts[i->v3-1].z);
     }
 
