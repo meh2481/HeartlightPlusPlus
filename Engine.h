@@ -12,6 +12,7 @@
 #include "Text.h"
 #include "hud.h"
 #include "Cursor.h"
+#include "3DObject.h"
 #include <map>
 
 class Engine

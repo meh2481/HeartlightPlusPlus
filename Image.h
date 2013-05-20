@@ -9,8 +9,8 @@
 #include "globaldefs.h"
 
 //TODO: Should be variable or such
-#define SCREEN_WIDTH  320
-#define SCREEN_HEIGHT 200
+#define SCREEN_WIDTH  800
+#define SCREEN_HEIGHT 600
 
 //TODO: Figure out what causes this and calculate mathematically
 #define MAGIC_ZOOM_NUMBER -2.415f

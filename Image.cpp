@@ -107,7 +107,7 @@ void Image::draw(Rect rcScreenPos, Rect rcImgPos)
 
     // tell opengl to use the generated texture
     glBindTexture(GL_TEXTURE_2D, m_hTex);
-    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_TEXTURE_2D);
 
     // make a rectangle
     glBegin(GL_QUADS);
@@ -126,7 +126,7 @@ void Image::draw(Rect rcScreenPos, Rect rcImgPos)
     glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(rcScreenPos.right)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
 
     glEnd();
-    glDisable(GL_TEXTURE_2D);
+//    glDisable(GL_TEXTURE_2D);
 }
 
 void Image::draw(float32 x, float32 y)
@@ -167,8 +167,6 @@ void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, 
     Rect rcDrawPos;
     rcDrawPos.set(0, 0, rcImgPos.width(), rcImgPos.height());
     rcDrawPos.scale(stretchFactorx,stretchFactory);
-    if(m_ptHotSpot.x != 0.0 || m_ptHotSpot.y != 0.0)
-        errlog << "Hot spot: " << m_ptHotSpot.x << "," << m_ptHotSpot.y << endl;
     rcDrawPos.offset(-rcDrawPos.width()/2.0 + (float32)SCREEN_WIDTH/2.0 - m_ptHotSpot.x, -rcDrawPos.height()/2.0 + (float32)SCREEN_HEIGHT/2.0 - m_ptHotSpot.y);
     glLoadIdentity( );
     glTranslatef( (2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(x)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(y)/(GLfloat)SCREEN_HEIGHT + 1.0, MAGIC_ZOOM_NUMBER);

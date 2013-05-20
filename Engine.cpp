@@ -125,6 +125,8 @@ Engine::~Engine()
 	//m_hge->System_Shutdown();
 	//m_hge->Release();
 	delete m_physicsWorld;
+
+	SDL_Quit();
 }
 
 void Engine::clearObjects()
@@ -375,8 +377,18 @@ void Engine::setup_opengl()
 
   // set the clear color to grey
   glClearColor(0.0, 0.0, 0.0, 0.0);
+  glClearDepth( 1.0f );
+  glEnable( GL_DEPTH_TEST );
+  glDepthFunc( GL_LEQUAL );
 
   glEnable(GL_TEXTURE_2D);
+
+  //Enable lighting
+  glShadeModel( GL_SMOOTH );
+  //glEnable( GL_LIGHT0 );
+  //glEnable( GL_LIGHTING );
+  //glEnable( GL_COLOR_MATERIAL );
+
   glLoadIdentity();
 
   //Enable image transparency

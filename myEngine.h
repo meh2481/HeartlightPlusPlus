@@ -66,6 +66,8 @@ private:
     //bool m_bScaleScreen;
     //Point m_ptLastMousePos;
 
+    Object3D* testObj;
+
     //list<physicsObject*> m_lSpheres_new;
 
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)

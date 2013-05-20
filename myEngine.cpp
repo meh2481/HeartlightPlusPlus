@@ -52,6 +52,7 @@ myEngine::~myEngine()
 {
     delete m_cur;
     delete m_hud;
+    delete testObj;
 }
 
 void myEngine::frame()
@@ -156,7 +157,14 @@ void myEngine::frame()
 
 void myEngine::draw()
 {
+    static float rotVal = 0;
+    rotVal += 0.2;
+    glLoadIdentity();
+    glTranslatef( 0.0, 0.0, -2.0 );
+    glRotatef(rotVal, 1.0,1.0,1.0);
+    testObj->render();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
     drawObjects(m_rcViewScreen);
     if(m_iCurGun != m_lGuns.end())
         (*m_iCurGun)->draw(m_rcViewScreen);
@@ -240,6 +248,8 @@ void myEngine::init()
 {
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
+
+    testObj = new Object3D("res/3D/test1.obj", "res/3D/testobj1.png");
 
     //Now scale all the images up
 //    scaleImages(SCALE_FAC);
@@ -476,8 +486,11 @@ void myEngine::handleEvent(SDL_Event event)
 
                 case SDLK_ESCAPE:
                     //Make gnome die
-                    if(!m_iDyingCount)
-                        m_iDyingCount = DIE_COUNT;
+                    if(RETRO)
+                    {
+                        if(!m_iDyingCount)
+                            m_iDyingCount = DIE_COUNT;
+                    }
                     break;
 
                 case SDLK_F11:      //F11: Decrease fps

@@ -65,7 +65,6 @@ void ballGun::fire()//mouseDown(float32 x, float32 y)
     newObj->addBody(sphere);
     b2CircleShape circ;
     float fRad = randFloat(0.5f,0.7f);
-    errlog << "Rand float between 0.5 and 0.7: " << fRad << endl;
     circ.m_radius = (16*fRad) / 2.0 * SCALE_DOWN_FACTOR;
     newObj->layer->scale.Set(fRad,fRad);
     b2FixtureDef fixtureDef;
