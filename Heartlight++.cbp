@@ -40,6 +40,8 @@
 			<Add option="-logg -ltinyxml2 -lttvfs -lBox2D" />
 			<Add directory="./lib/Linux_x64/" />
 		</Linker>
+		<Unit filename="3DObject.cpp" />
+		<Unit filename="3DObject.h" />
 		<Unit filename="Cursor.cpp" />
 		<Unit filename="Cursor.h" />
 		<Unit filename="Engine.cpp" />

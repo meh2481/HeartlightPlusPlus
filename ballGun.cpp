@@ -65,6 +65,7 @@ void ballGun::fire()//mouseDown(float32 x, float32 y)
     newObj->addBody(sphere);
     b2CircleShape circ;
     float fRad = randFloat(0.5f,0.7f);
+    errlog << "Rand float between 0.5 and 0.7: " << fRad << endl;
     circ.m_radius = (16*fRad) / 2.0 * SCALE_DOWN_FACTOR;
     newObj->layer->scale.Set(fRad,fRad);
     b2FixtureDef fixtureDef;
@@ -100,7 +101,7 @@ void ballGun::draw(Rect rcScreen)
         float32 fScale = 1.0;
         if(angle > pi/2.0 || angle < -pi/2.0)
             fScale = -1.0;
-        gunImg->setHotSpot(0,gunImg->getHeight()/2.0);
+        gunImg->setHotSpot(-(gunImg->getWidth()/2.0),0);
         gunImg->drawCentered(pos, angle, 1.0, fScale);  //Flip on Y axis if we're pointing behind us
     }
 }

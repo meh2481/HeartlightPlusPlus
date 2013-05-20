@@ -28,7 +28,7 @@ protected:
     bool m_bAnimate;    //If should animate frames or not
 
 public:
-    parallaxLayer* layer;
+    parallaxLayer* layer;   //TODO List of these, for multiple images per object
 
     Object(Image* img);
     ~Object();
@@ -117,7 +117,7 @@ public:
 class physicsObject : public Object
 {
 protected:
-    b2Body* m_physicsBody;
+    b2Body* m_physicsBody;  //TODO: Multiple of these for destructible objects
 
 public:
     physicsObject(Image* img);

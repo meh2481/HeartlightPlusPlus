@@ -43,12 +43,12 @@ bool Engine::_myFrameFunc()
 
 bool Engine::_myRenderFunc()
 {
-    // Begin rendering
-	//m_hge->Gfx_BeginScene();
-
-	// Clear screen with black color
-	//m_hge->Gfx_Clear(0);
+    // Begin rendering by clearing the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    //Start out at default location/zoom
+    glLoadIdentity( );
+    glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
 
     // Game-specific drawing
     draw();
@@ -56,7 +56,6 @@ bool Engine::_myRenderFunc()
         m_cursor->draw(m_ptCursorPos);
 
     // End rendering and update the screen
-	//m_hge->Gfx_EndScene();
     SDL_GL_SwapBuffers();
     return false;   //Keep going
 }
@@ -100,7 +99,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 	//m_sprFill = new hgeSprite(0,0,0,64,64); //Initialize to blank sprite
 	m_bFirstMusic = true;
 	m_bQuitting = false;
-	//m_hge->Random_Seed();   //Seed the random number generator
+	srand(SDL_GetTicks());  //Not as random as it could be... narf
 	m_iImgScaleFac = 0;
 }
 

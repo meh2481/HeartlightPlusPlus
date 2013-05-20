@@ -22,7 +22,7 @@ void parallaxLayer::draw(Rect rcScreen, float32 fScaleFacX, float32 fScaleFacY)
     draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
 }
 
-void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos, float32 fScaleFacX, float32 fScaleFacY)
+void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos, float32 fScaleFacX, float32 fScaleFacY)  //TODO: Why do I even have scalefacx/y here?
 {
     if(image == NULL)
         return;
@@ -35,25 +35,9 @@ void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos, float32 fScaleFacX, float
     ptDrawPos.x -= rcScreen.left;
     ptDrawPos.y -= rcScreen.top;
 
-    //Account for parallax and viewport scaling
-    Point ptDifference;
-    ptDifference.Set(rcScreen.width()/2.0, rcScreen.height()/2.0);
-    ptDifference -= ptDrawPos;
-    ptDifference.x = ptDifference.x * depth;
-    ptDifference.y = ptDifference.y * depth;
+    //TODO: Account for parallax scrolling
 
-    //Normalize
-    ptDrawPos.Set(rcScreen.width()/2.0, rcScreen.height()/2.0);
-    ptDrawPos -= ptDifference;
-    ptDrawPos.x *= fScaleFacX;
-    ptDrawPos.y *= fScaleFacY;
-
-    //Scale up according to depth //TODO: Make this come out right for parallax layers
-    Point ptScale = scale;
-    ptScale.x *= depth * fScaleFacX;
-    ptScale.y *= depth * fScaleFacY;
-
-    image->drawCentered(ptDrawPos, rcImgPos, rot, ptScale.x, ptScale.y);
+    image->drawCentered(ptDrawPos, rcImgPos, rot, scale.x, scale.y);
 }
 
 

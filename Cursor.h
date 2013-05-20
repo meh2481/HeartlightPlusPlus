@@ -70,8 +70,8 @@ public:
     ~Cursor();
 
     //Accessor methods
-    void setHotSpot(Point pt)               {m_img->setHotSpot(pt);};
-    void setHotSpot(float32 x, float32 y)   {m_img->setHotSpot(x,y);};
+    void setHotSpot(Point pt)               {;};//m_img->setHotSpot(pt);};
+    void setHotSpot(float32 x, float32 y)   {;};//m_img->setHotSpot(x,y);};
     Point getHotSpot()                      {return m_img->getHotSpot();};
     uint32_t getWidth()                     {return m_img->getWidth();};
     uint32_t getHeight()                    {return m_img->getHeight();};

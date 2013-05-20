@@ -9,6 +9,7 @@
 Image::Image(string sFilename)
 {
 //    m_iScaleFac = 1;
+  m_ptHotSpot.SetZero();
   m_sFilename = sFilename;
   SDL_Surface *surface;
   int mode;
@@ -101,19 +102,9 @@ void Image::draw(Rect rcScreenPos)
 
 void Image::draw(Rect rcScreenPos, Rect rcImgPos)
 {
-    /*if(m_hSprite == NULL)
-    {
-        errlog << "NULL hgeSprite in Image::draw()" << endl;
-        return;
-    }
-    m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
-    //m_hSprite->SetHotSpot(0,0); //In case we've set this hot spot before
-    m_hSprite->RenderStretch(rcScreenPos.left, rcScreenPos.top, rcScreenPos.right, rcScreenPos.bottom);*/
     if(m_hTex == 0)
 		return;
 
-    glLoadIdentity( );
-    glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
     // tell opengl to use the generated texture
     glBindTexture(GL_TEXTURE_2D, m_hTex);
     glEnable(GL_TEXTURE_2D);
@@ -122,22 +113,20 @@ void Image::draw(Rect rcScreenPos, Rect rcImgPos)
     glBegin(GL_QUADS);
     glColor4f(m_col.r,m_col.g,m_col.b,m_col.a);	//Colorize according to how we've colorized this image
     // top left
-    glTexCoord2i((rcImgPos.left / (float32)m_iWidth), (rcImgPos.top / (float32)m_iHeight));
+    glTexCoord2f((rcImgPos.left / (float32)m_iWidth), (rcImgPos.top / (float32)m_iHeight));
     glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)rcScreenPos.left/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)SCREEN_HEIGHT + 1.0, 0.0);
     // bottom left
-    glTexCoord2i((rcImgPos.left / (float32)m_iWidth), (rcImgPos.bottom / (float32)m_iHeight));
+    glTexCoord2f((rcImgPos.left / (float32)m_iWidth), (rcImgPos.bottom / (float32)m_iHeight));
     glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)rcScreenPos.left/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
     // bottom right
-    glTexCoord2i((rcImgPos.right / (float32)m_iWidth), (rcImgPos.bottom / (float32)m_iHeight));
+    glTexCoord2f((rcImgPos.right / (float32)m_iWidth), (rcImgPos.bottom / (float32)m_iHeight));
     glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(rcScreenPos.right)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
     // top right
-    glTexCoord2i((rcImgPos.right / (float32)m_iWidth), (rcImgPos.top / (float32)m_iHeight));
+    glTexCoord2f((rcImgPos.right / (float32)m_iWidth), (rcImgPos.top / (float32)m_iHeight));
     glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(rcScreenPos.right)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
 
     glEnd();
     glDisable(GL_TEXTURE_2D);
-
-    glLoadIdentity();
 }
 
 void Image::draw(float32 x, float32 y)
@@ -175,18 +164,19 @@ void Image::drawCentered(Point pt, float32 rotation, float32 stretchFactorx, flo
 
 void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
-    /*if(m_hSprite == NULL)
-    {
-        errlog << "NULL hgeSprite in Image::drawCentered()" << endl;
-        return;
-    }
-    m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
-    float32 xh,yh;
-    m_hSprite->GetHotSpot(&xh, &yh);
-    if(xh == 0 && yh == 0)
-        m_hSprite->SetHotSpot(rcImgPos.width()/2.0, rcImgPos.height()/2.0); //Only center hot spot if it hasn't been altered already
-    m_hSprite->RenderEx(x, y, rotation, stretchFactorx, stretchFactory);*/
-    draw(x-(float32)m_iWidth/2.0,y-(float32)m_iHeight/2.0, rcImgPos);  //TODO
+    Rect rcDrawPos;
+    rcDrawPos.set(0, 0, rcImgPos.width(), rcImgPos.height());
+    rcDrawPos.scale(stretchFactorx,stretchFactory);
+    if(m_ptHotSpot.x != 0.0 || m_ptHotSpot.y != 0.0)
+        errlog << "Hot spot: " << m_ptHotSpot.x << "," << m_ptHotSpot.y << endl;
+    rcDrawPos.offset(-rcDrawPos.width()/2.0 + (float32)SCREEN_WIDTH/2.0 - m_ptHotSpot.x, -rcDrawPos.height()/2.0 + (float32)SCREEN_HEIGHT/2.0 - m_ptHotSpot.y);
+    glLoadIdentity( );
+    glTranslatef( (2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(x)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(y)/(GLfloat)SCREEN_HEIGHT + 1.0, MAGIC_ZOOM_NUMBER);
+    glRotatef(-rotation*180.0/pi,0.0f,0.0f,1.0f);
+    draw(rcDrawPos,rcImgPos);
+    //Reset rotation
+    glLoadIdentity( );
+    glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
 }
 
 void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)

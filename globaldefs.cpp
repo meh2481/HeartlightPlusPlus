@@ -71,8 +71,8 @@ float32 randFloat(float32 min, float32 max)
 {
     if(min == max)
         return min;
-    float32 scale = rand() % 101;
-    return(scale * (max-min) + min);
+    float32 scale = rand() % 1001;
+    return((float32)scale/1000.0*(max-min) + min);
 //    HGE* h = hgeCreate(HGE_VERSION);
 //    ret = h->Random_Float(min, max);
 //    h->Release();
