@@ -51,7 +51,7 @@ void HUDItem::addChild(HUDItem* hiChild)
     if(hiChild == NULL)
         return;
     //hiChild->setSignalHandler(m_signalHandler);
-    hiChild->setScale(m_iSCALE_FAC);
+//    hiChild->setScale(m_iSCALE_FAC);
     m_lChildren.push_back(hiChild);
 }
 
@@ -69,14 +69,14 @@ HUDItem* HUDItem::getChild(string sName)
     return NULL;    //Base case 2: No child of this with that name
 }
 
-void HUDItem::setScale(uint16_t iScale)
+/*void HUDItem::setScale(uint16_t iScale)
 {
     m_iSCALE_FAC = iScale;
     for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
     {
         (*i)->setScale(iScale);
     }
-}
+}*/
 
 //-------------------------------------------------------------------------------------
 // HUDImage class functions
@@ -101,16 +101,16 @@ void HUDImage::draw(float32 fCurTime, DWORD dwCol)
     }
 }
 
-void HUDImage::setScale(uint16_t iScale)
+/*void HUDImage::setScale(uint16_t iScale)
 {
-    HUDItem::setScale(iScale);
-    m_img->scale(iScale);
-}
+//    HUDItem::setScale(iScale);
+//    m_img->scale(iScale);
+}*/
 
 void HUDImage::setImage(Image* img)
 {
     m_img = img;
-    img->scale(m_iSCALE_FAC);
+//    img->scale(m_iSCALE_FAC);
 }
 
 //-------------------------------------------------------------------------------------
@@ -157,11 +157,11 @@ void HUDTextbox::draw(float32 fCurTime, DWORD dwCol)
     m_txtFont->render(m_sValue, m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
 }
 
-void HUDTextbox::setScale(uint16_t iScale)
+/*void HUDTextbox::setScale(uint16_t iScale)
 {
     HUDItem::setScale(iScale);
     m_txtFont->setScale(iScale);
-}
+}*/
 
 void HUDTextbox::setText(uint32_t iNum)
 {
@@ -218,27 +218,27 @@ void HUDToggle::draw(float32 fCurTime, DWORD dwCol)
     }
 }
 
-void HUDToggle::setScale(uint16_t iScale)
+/*void HUDToggle::setScale(uint16_t iScale)
 {
     HUDItem::setScale(iScale);
-    if(m_imgEnabled != NULL)
-        m_imgEnabled->scale(iScale);
-    if(m_imgDisabled != NULL)
-        m_imgDisabled->scale(iScale);
-}
+//    if(m_imgEnabled != NULL)
+//        m_imgEnabled->scale(iScale);
+//    if(m_imgDisabled != NULL)
+//        m_imgDisabled->scale(iScale);
+}*/
 
 void HUDToggle::setEnabledImage(Image* img)
 {
     m_imgEnabled = img;
-    if(m_imgEnabled != NULL)
-        m_imgEnabled->scale(m_iSCALE_FAC);
+//    if(m_imgEnabled != NULL)
+//        m_imgEnabled->scale(m_iSCALE_FAC);
 }
 
 void HUDToggle::setDisabledImage(Image* img)
 {
     m_imgDisabled = img;
-    if(m_imgDisabled != NULL)
-        m_imgDisabled->scale(m_iSCALE_FAC);
+//    if(m_imgDisabled != NULL)
+//        m_imgDisabled->scale(m_iSCALE_FAC);
 }
 
 //-------------------------------------------------------------------------------------
@@ -500,14 +500,14 @@ void HUD::create(string sXMLFilename)
     delete doc;
 }
 
-void HUD::setScale(uint16_t iScale)
+/*void HUD::setScale(uint16_t iScale)
 {
-    HUDItem::setScale(iScale);
-    for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
-        i->second->scale(iScale);
-    for(map<string, Text*>::iterator i = m_mFonts.begin(); i != m_mFonts.end(); i++)
-        i->second->setScale(iScale);
-}
+//    HUDItem::setScale(iScale);
+//    for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
+//        i->second->scale(iScale);
+//    for(map<string, Text*>::iterator i = m_mFonts.begin(); i != m_mFonts.end(); i++)
+//        i->second->setScale(iScale);
+}*/
 
 
 

@@ -170,7 +170,7 @@ Image* Engine::getImage(string sName)
         Image* img = new Image(m_mImageNames[sName]);   //Create this image
         m_mImages[sName] = img; //Add to the map
         img->_setID(m_mImages.size());   //For now, just numbering 0...n will work for an ID
-        img->scale(m_iImgScaleFac); //Scale this image on creation
+//        img->scale(m_iImgScaleFac); //Scale this image on creation
         return img;
     }
     return i->second; //Return this image
@@ -276,12 +276,12 @@ bool Engine::keyDown(int32_t keyCode)
     return(m_hge->Input_GetKeyState(keyCode));
 }
 
-void Engine::scaleImages(uint16_t scaleFac)
+/*void Engine::scaleImages(uint16_t scaleFac)
 {
     for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
         i->second->scale(scaleFac);
     m_iImgScaleFac = scaleFac;
-}
+}*/
 
 void Engine::setFramerate(float32 fFramerate)
 {

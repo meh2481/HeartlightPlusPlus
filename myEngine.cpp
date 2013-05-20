@@ -4,6 +4,8 @@
 */
 
 #include "myEngine.h"
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 //For HGE-based functions to be able to call our Engine class functions - Note that this means there can be no more than one Engine at a time
 static myEngine* g_pGlobalEngine;
@@ -123,7 +125,7 @@ void myEngine::frame()
                         m_oldGrid[col][row] = m_levelGrid[col][row];
                         m_levelGrid[col][row]->setName('X');
                         m_levelGrid[col][row]->setNumFrames(7);
-                        m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
+                        m_levelGrid[col][row]->setPos(col*GRID_WIDTH, row*GRID_HEIGHT);
                         addObject(m_levelGrid[col][row]);
                         playSound("o_explode");  //Make explosion sound too
                     }
@@ -153,6 +155,7 @@ void myEngine::frame()
 
 void myEngine::draw()
 {
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     drawObjects(m_rcViewScreen);
     if(m_iCurGun != m_lGuns.end())
         (*m_iCurGun)->draw(m_rcViewScreen);
@@ -166,7 +169,7 @@ void myEngine::draw()
             {
                 if(m_levelGrid[col][row] != NULL)   //Draw a green box in this grid square if it isn't vacant
                 {
-                    Rect rc = {col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC, (col+1)*GRID_WIDTH*SCALE_FAC, (row+1)*GRID_HEIGHT*SCALE_FAC};
+                    Rect rc = {col*GRID_WIDTH, row*GRID_HEIGHT, (col+1)*GRID_WIDTH, (row+1)*GRID_HEIGHT};
                     fillRect(rc, 0, 255, 0, 100);
                 }
             }
@@ -236,8 +239,9 @@ void myEngine::init()
 {
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
+
     //Now scale all the images up
-    scaleImages(SCALE_FAC);
+//    scaleImages(SCALE_FAC);
     //Load all sounds as well
     loadSounds("res/sfx/orig.xml");
 
@@ -297,10 +301,10 @@ void myEngine::init()
 
     m_hud = new HUD("levelhud");
     m_hud->create("res/hud/hud.xml");
-    m_hud->setScale(SCALE_FAC);
+//    m_hud->setScale(SCALE_FAC);
     m_hud->setSignalHandler(signalHandler);
 
-    setGravity(0.0, 25.0 * SCALE_FAC);
+    setGravity(0.0, 9.8);
 
     //if(m_bMusic)
     //    playMusic("o_mus_menu"); //Start playing menu music
@@ -313,7 +317,7 @@ void myEngine::init()
         b2Body* groundBody = createBody(&grounddef);
         b2ChainShape worldBox;
         Rect rcScreen = getScreenRect();
-        rcScreen.bottom = LEVEL_HEIGHT*GRID_HEIGHT*SCALE_FAC;    //Account for size of HUD on bottom of screen
+        rcScreen.bottom = LEVEL_HEIGHT*GRID_HEIGHT;    //Account for size of HUD on bottom of screen
         rcScreen.scale(SCALE_DOWN_FACTOR);
         b2Vec2 vertices[5];
         vertices[0].Set(rcScreen.left, rcScreen.top);

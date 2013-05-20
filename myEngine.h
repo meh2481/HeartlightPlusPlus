@@ -18,7 +18,7 @@
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
 
-#define SCALE_FAC       2   //By what factor the retro gfx are scaled TODO: Variable
+//#define SCALE_FAC       1   //By what factor the retro gfx are scaled TODO: Variable
 
 #define WIN_COUNT       14  //How many frames the dwarf jumps up and down until you go to the next level
 #define DIE_COUNT       20  //How many frames the dwarf holds his head before he explodes

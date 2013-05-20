@@ -48,29 +48,29 @@ void myEngine::loadLevel_new()
                     obj->setFrame(randInt(0,5));
                     b2BodyDef def;
                     def.type = b2_dynamicBody;
-                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR * SCALE_FAC,
-                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR * SCALE_FAC);
+                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
+                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR);
                     obj->addBody(createBody(&def));
                     b2FixtureDef fixtureDef;
                     b2PolygonShape poly;
                     b2Vec2 vertices[6];
-                    vertices[5].Set(0, 6*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[4].Set(7 *SCALE_FAC*SCALE_DOWN_FACTOR, -1*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[3].Set(7 *SCALE_FAC*SCALE_DOWN_FACTOR, -5*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[2].Set(4 *SCALE_FAC*SCALE_DOWN_FACTOR, -7*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[1].Set(3 *SCALE_FAC*SCALE_DOWN_FACTOR, -7*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[0].Set(0, -5*SCALE_FAC*SCALE_DOWN_FACTOR);
+                    vertices[5].Set(0, 6*SCALE_DOWN_FACTOR);
+                    vertices[4].Set(7 *SCALE_DOWN_FACTOR, -1*SCALE_DOWN_FACTOR);
+                    vertices[3].Set(7 *SCALE_DOWN_FACTOR, -5*SCALE_DOWN_FACTOR);
+                    vertices[2].Set(4 *SCALE_DOWN_FACTOR, -7*SCALE_DOWN_FACTOR);
+                    vertices[1].Set(3 *SCALE_DOWN_FACTOR, -7*SCALE_DOWN_FACTOR);
+                    vertices[0].Set(0, -5*SCALE_DOWN_FACTOR);
                     poly.Set(vertices,6);
                     fixtureDef.shape = &poly;
                     fixtureDef.density = 0.5f;
                     fixtureDef.friction = 0.3f;
                     obj->addFixture(&fixtureDef);
-                    vertices[5].Set(0, 6*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[4].Set(0, -5*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[3].Set(-3 *SCALE_FAC*SCALE_DOWN_FACTOR, -7*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[2].Set(-5 *SCALE_FAC*SCALE_DOWN_FACTOR, -7*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[1].Set(-7 *SCALE_FAC*SCALE_DOWN_FACTOR, -5*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[0].Set(-7 *SCALE_FAC*SCALE_DOWN_FACTOR, -1*SCALE_FAC*SCALE_DOWN_FACTOR);
+                    vertices[5].Set(0, 6*SCALE_DOWN_FACTOR);
+                    vertices[4].Set(0, -5*SCALE_DOWN_FACTOR);
+                    vertices[3].Set(-3 *SCALE_DOWN_FACTOR, -7*SCALE_DOWN_FACTOR);
+                    vertices[2].Set(-5 *SCALE_DOWN_FACTOR, -7*SCALE_DOWN_FACTOR);
+                    vertices[1].Set(-7 *SCALE_DOWN_FACTOR, -5*SCALE_DOWN_FACTOR);
+                    vertices[0].Set(-7 *SCALE_DOWN_FACTOR, -1*SCALE_DOWN_FACTOR);
                     poly.Set(vertices,6);
                     fixtureDef.shape = &poly;
                     fixtureDef.density = 0.5f;
@@ -84,11 +84,11 @@ void myEngine::loadLevel_new()
                     physicsObject* obj = new physicsObject(getImage("o_rock"));
                     b2BodyDef def;
                     def.type = b2_dynamicBody;
-                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR * SCALE_FAC,
-                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR * SCALE_FAC);
+                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
+                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR);
                     obj->addBody(createBody(&def));
                     b2CircleShape circ;
-                    circ.m_radius = (GRID_WIDTH - 0.5*SCALE_FAC) / 2.0 * SCALE_FAC * SCALE_DOWN_FACTOR;
+                    circ.m_radius = (GRID_WIDTH - 0.5) / 2.0 * SCALE_DOWN_FACTOR;
                     b2FixtureDef fixtureDef;
                     fixtureDef.shape = &circ;
                     fixtureDef.density = 1.0f;
@@ -102,8 +102,8 @@ void myEngine::loadLevel_new()
                     physicsObject* obj = new physicsObject(getImage("o_grass"));
                     b2BodyDef def;
                     def.type = b2_staticBody;
-                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR * SCALE_FAC,
-                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR * SCALE_FAC);
+                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
+                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR);
                     obj->addBody(createBody(&def));
                     b2PolygonShape dynamicBox;
                     dynamicBox.SetAsBox(obj->getWidth() * SCALE_DOWN_FACTOR/2.0, obj->getHeight() * SCALE_DOWN_FACTOR/2.0);
@@ -122,15 +122,15 @@ void myEngine::loadLevel_new()
                     m_objTest->setAnimate(false);
                     b2BodyDef def;
                     def.type = b2_dynamicBody;
-                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR * SCALE_FAC,
-                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR * SCALE_FAC);
+                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
+                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR);
                     b2Body* bod = createBody(&def);
                     bod->SetFixedRotation(true);
                     m_objTest->addBody(bod);
                     b2PolygonShape dynamicBox;
-                    dynamicBox.SetAsBox((m_objTest->getWidth()-SCALE_FAC*3) * SCALE_DOWN_FACTOR/2.0,
-                                        (m_objTest->getHeight()-SCALE_FAC*2) * SCALE_DOWN_FACTOR/2.0,
-                                        b2Vec2(0,SCALE_DOWN_FACTOR*SCALE_FAC), 0.0);
+                    dynamicBox.SetAsBox((m_objTest->getWidth()-3) * SCALE_DOWN_FACTOR/2.0,
+                                        (m_objTest->getHeight()-2) * SCALE_DOWN_FACTOR/2.0,
+                                        b2Vec2(0,SCALE_DOWN_FACTOR), 0.0);
                     b2FixtureDef fixtureDef;
                     fixtureDef.shape = &dynamicBox;
                     //fixtureDef.filter.maskBits = PLAYER_CAN_HIT_MASK;
@@ -148,7 +148,7 @@ void myEngine::loadLevel_new()
                     //TODO
                     /*m_levelGrid[col][row] = new Door(getImage("o_door"));
                     m_levelGrid[col][row]->setNumFrames(4);
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);*/
                     break;
@@ -158,13 +158,13 @@ void myEngine::loadLevel_new()
                     physicsObject* obj = new physicsObject(getImage("o_bomb"));
                     b2BodyDef def;
                     def.type = b2_dynamicBody;
-                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR * SCALE_FAC,
-                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR * SCALE_FAC);
+                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
+                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR);
                     obj->addBody(createBody(&def));
                     b2CircleShape circ;
-                    circ.m_p.Set(-1*SCALE_FAC*SCALE_DOWN_FACTOR,
+                    circ.m_p.Set(-1*SCALE_DOWN_FACTOR,
                                  0);
-                    circ.m_radius = 7 * SCALE_FAC * SCALE_DOWN_FACTOR;
+                    circ.m_radius = 7 * SCALE_DOWN_FACTOR;
                     b2FixtureDef fixtureDef;
                     fixtureDef.shape = &circ;
                     fixtureDef.density = 1.0f;
@@ -172,12 +172,12 @@ void myEngine::loadLevel_new()
                     obj->addFixture(&fixtureDef);
                     b2PolygonShape poly;
                     b2Vec2 vertices[6];
-                    vertices[0].Set(-4 *SCALE_FAC*SCALE_DOWN_FACTOR, -8*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[1].Set(3 *SCALE_FAC*SCALE_DOWN_FACTOR, -8*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[2].Set(5 *SCALE_FAC*SCALE_DOWN_FACTOR, -6*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[3].Set(3 *SCALE_FAC*SCALE_DOWN_FACTOR, -6*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[4].Set(2 *SCALE_FAC*SCALE_DOWN_FACTOR, -7*SCALE_FAC*SCALE_DOWN_FACTOR);
-                    vertices[5].Set(-4 *SCALE_FAC*SCALE_DOWN_FACTOR, -7*SCALE_FAC*SCALE_DOWN_FACTOR);
+                    vertices[0].Set(-4 *SCALE_DOWN_FACTOR, -8*SCALE_DOWN_FACTOR);
+                    vertices[1].Set(3 *SCALE_DOWN_FACTOR, -8*SCALE_DOWN_FACTOR);
+                    vertices[2].Set(5 *SCALE_DOWN_FACTOR, -6*SCALE_DOWN_FACTOR);
+                    vertices[3].Set(3 *SCALE_DOWN_FACTOR, -6*SCALE_DOWN_FACTOR);
+                    vertices[4].Set(2 *SCALE_DOWN_FACTOR, -7*SCALE_DOWN_FACTOR);
+                    vertices[5].Set(-4 *SCALE_DOWN_FACTOR, -7*SCALE_DOWN_FACTOR);
                     poly.Set(vertices,6);
                     fixtureDef.shape = &poly;
                     fixtureDef.density = 0.4f;
@@ -189,7 +189,7 @@ void myEngine::loadLevel_new()
                     m_levelGrid[col][row] = new retroObject(getImage("o_balloon"));
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setFrame(randInt(0,3));
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
@@ -200,8 +200,8 @@ void myEngine::loadLevel_new()
                     obj->setNumFrames(8);
                     b2BodyDef def;
                     def.type = b2_staticBody;
-                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR * SCALE_FAC,
-                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR * SCALE_FAC);
+                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
+                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR);
                     obj->addBody(createBody(&def));
                     b2PolygonShape dynamicBox;
                     dynamicBox.SetAsBox(obj->getWidth() * SCALE_DOWN_FACTOR/2.0, obj->getHeight() * SCALE_DOWN_FACTOR/2.0);
@@ -221,8 +221,8 @@ void myEngine::loadLevel_new()
                     obj->setAnimate(false);
                     b2BodyDef def;
                     def.type = b2_staticBody;
-                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR * SCALE_FAC,
-                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR * SCALE_FAC);
+                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
+                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR);
                     obj->addBody(createBody(&def));
                     b2PolygonShape dynamicBox;
                     dynamicBox.SetAsBox(obj->getWidth() * SCALE_DOWN_FACTOR/2.0, obj->getHeight() * SCALE_DOWN_FACTOR/2.0);
@@ -239,8 +239,8 @@ void myEngine::loadLevel_new()
                     physicsObject* obj = new physicsObject(getImage("o_metalwall"));
                     b2BodyDef def;
                     def.type = b2_staticBody;
-                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR * SCALE_FAC,
-                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR * SCALE_FAC);
+                    def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
+                                     (GRID_HEIGHT / 2.0 + row * GRID_HEIGHT) * SCALE_DOWN_FACTOR);
                     obj->addBody(createBody(&def));
                     b2PolygonShape dynamicBox;
                     dynamicBox.SetAsBox(obj->getWidth() * SCALE_DOWN_FACTOR/2.0, obj->getHeight() * SCALE_DOWN_FACTOR/2.0);
@@ -256,7 +256,7 @@ void myEngine::loadLevel_new()
                 case '<':   //left tunnel
                     m_levelGrid[col][row] = new retroObject(getImage("o_tunnell"));
                     m_levelGrid[col][row]->setNumFrames(4);
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
@@ -264,7 +264,7 @@ void myEngine::loadLevel_new()
                 case '>':   //right tunnel
                     m_levelGrid[col][row] = new retroObject(getImage("o_tunnelr"));
                     m_levelGrid[col][row]->setNumFrames(4);
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
@@ -308,11 +308,11 @@ void myEngine::loadLevel_new()
     }
 }
 
-#define MAX_SPEED               9.5 * SCALE_FAC
-#define SLOW_DOWN_GROUND_AMT    1.1 * SCALE_FAC
-#define SLOW_DOWN_AIR_AMT       0.525 * SCALE_FAC
-#define SPEED_UP_AMT            1.4 * SCALE_FAC
-#define JUMP_VEL                10.5 * SCALE_FAC
+#define MAX_SPEED               9.5
+#define SLOW_DOWN_GROUND_AMT    1.1
+#define SLOW_DOWN_AIR_AMT       0.525
+#define SPEED_UP_AMT            2.0
+#define JUMP_VEL                10.5
 #define JUMP_DAMPING_AMT        2.0
 #define JUMP_DAMP_FRACTION      1.7
 

@@ -140,12 +140,12 @@ void Text::setColor(DWORD dwCol)
         m_imgFont->setColor(dwCol);
 }
 
-void Text::setScale(uint16_t iScaleFac)
-{
-    m_iSCALE_FAC = iScaleFac;
-    if(m_imgFont != NULL)
-        m_imgFont->scale(iScaleFac);
-}
+//void Text::setScale(uint16_t iScaleFac)
+//{
+//    m_iSCALE_FAC = iScaleFac;
+//    if(m_imgFont != NULL)
+//        m_imgFont->scale(iScaleFac);
+//}
 
 void Text::setAlign(uint8_t iAlign)
 {

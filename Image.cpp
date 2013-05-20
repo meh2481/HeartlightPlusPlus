@@ -129,13 +129,12 @@ void Image::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 }
 
 //Stretch this image onto a larger one, without interpolation
-void Image::scale(uint16_t iScaleFac)
+/*void Image::scale(uint16_t iScaleFac)
 {
     if(iScaleFac < 1 || iScaleFac == m_iScaleFac)   //Don't scale up any if 0
         return;
 
     m_iScaleFac = iScaleFac;
-
     HGE* hge = hgeCreate(HGE_VERSION);
     if(m_hscaledTex)
     {
@@ -193,7 +192,7 @@ void Image::scale(uint16_t iScaleFac)
     hge->Release();
 }
 
-
+*/
 
 
 

@@ -77,7 +77,7 @@ public:
     void pauseMusic();                                                                     //Pause music that's currently playing
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
     void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
-    void scaleImages(uint16_t scaleFac);    //scale all images by scaleFac
+//    void scaleImages(uint16_t scaleFac);    //scale all images by scaleFac
     float32 getTime()      {return m_hge->Timer_GetTime();}; //Get the time the engine's been running
     Rect getScreenRect()    {Rect rc = {0,0,getWidth(),getHeight()}; return rc;};
     b2Body* createBody(b2BodyDef* bdef) {return m_physicsWorld->CreateBody(bdef);};

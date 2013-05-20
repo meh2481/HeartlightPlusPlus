@@ -65,7 +65,7 @@ void ballGun::fire()//mouseDown(float32 x, float32 y)
     newObj->addBody(sphere);
     b2CircleShape circ;
     float fRad = randFloat(0.5f,0.7f);
-    circ.m_radius = (16*fRad) / 2.0 * SCALE_FAC * SCALE_DOWN_FACTOR;
+    circ.m_radius = (16*fRad) / 2.0 * SCALE_DOWN_FACTOR;
     newObj->layer->scale.Set(fRad,fRad);
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &circ;
@@ -145,7 +145,7 @@ void placeGun::fire()//mouseDown(float32 x, float32 y)
     def.position.Set(pos.x*SCALE_DOWN_FACTOR,pos.y*SCALE_DOWN_FACTOR);
     newObj->addBody(createBody(&def));
     b2CircleShape circ;
-    circ.m_radius = (16 - 0.5*SCALE_FAC) / 2.0 * SCALE_FAC * SCALE_DOWN_FACTOR;
+    circ.m_radius = (16 - 0.5) / 2.0 * SCALE_DOWN_FACTOR;
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &circ;
     fixtureDef.density = 1.0f;
@@ -204,7 +204,7 @@ void blastGun::fire()//mouseDown(float32 x, float32 y)
     newObj->addBody(sphere);
     b2CircleShape circ;
     float fRad = randFloat(0.9f,1.1f);
-    circ.m_radius = (16*fRad) / 2.0 * SCALE_FAC * SCALE_DOWN_FACTOR;
+    circ.m_radius = (16*fRad) / 2.0 * SCALE_DOWN_FACTOR;
     newObj->layer->scale.Set(fRad,fRad);
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &circ;
@@ -273,7 +273,7 @@ void shotgun::fire()//mouseDown(float32 x, float32 y)
         newObj->addBody(sphere);
         b2CircleShape circ;
         float fRad = randFloat(0.15f,0.25f);
-        circ.m_radius = (16*fRad) / 2.0 * SCALE_FAC * SCALE_DOWN_FACTOR;
+        circ.m_radius = (16*fRad) / 2.0 * SCALE_DOWN_FACTOR;
         newObj->layer->scale.Set(fRad,fRad);
         b2FixtureDef fixtureDef;
         fixtureDef.shape = &circ;
@@ -341,7 +341,7 @@ void machineGun::fire()//mouseDown(float32 x, float32 y)
     newObj->addBody(sphere);
     b2CircleShape circ;
     float fRad = randFloat(0.15f,0.25f);
-    circ.m_radius = (16*fRad) / 2.0 * SCALE_FAC * SCALE_DOWN_FACTOR;
+    circ.m_radius = (16*fRad) / 2.0 * SCALE_DOWN_FACTOR;
     newObj->layer->scale.Set(fRad,fRad);
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &circ;
@@ -442,7 +442,7 @@ void superGun::fire()//mouseDown(float32 x, float32 y)
         newObj->addBody(sphere);
         b2CircleShape circ;
         float fRad = randFloat(0.15f,0.25f);
-        circ.m_radius = (16*fRad) / 2.0 * SCALE_FAC * SCALE_DOWN_FACTOR;
+        circ.m_radius = (16*fRad) / 2.0 * SCALE_DOWN_FACTOR;
         newObj->layer->scale.Set(fRad,fRad);
         b2FixtureDef fixtureDef;
         fixtureDef.shape = &circ;

@@ -102,9 +102,9 @@ public:
     void fire();
 };
 
-#ifndef SCALE_FAC
-#define SCALE_FAC 2
-#endif
+//#ifndef SCALE_FAC
+//#define SCALE_FAC 1
+//#endif
 #define MAX_CREATED_SPHERES     10
 #define SHOOT_VEL               1000.0
 #define MASS_FAC                1000.0

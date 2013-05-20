@@ -8,7 +8,7 @@
 int main(int argc, char *argv[])
 {
     errlog << "Starting program" << endl;
-    myEngine* eng = new myEngine(SCREEN_WIDTH*SCALE_FAC, SCREEN_HEIGHT*SCALE_FAC, "Heartlight++"); //Create our engine
+    myEngine* eng = new myEngine(SCREEN_WIDTH, SCREEN_HEIGHT, "Heartlight++"); //Create our engine
 
     eng->setFramerate(GAME_FRAMERATE);
     eng->start(); //Get the engine rolling

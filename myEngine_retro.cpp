@@ -156,7 +156,7 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
                 {
                     //Push it over
                     m_levelGrid[col+1][row] = m_levelGrid[col][row];
-                    m_levelGrid[col+1][row]->offset(GRID_WIDTH*SCALE_FAC,0);
+                    m_levelGrid[col+1][row]->offset(GRID_WIDTH,0);
                     m_levelGrid[col][row] = NULL;
                     m_oldGrid[col][row] = NULL;
                 }
@@ -170,7 +170,7 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
                 if(col > 0 && m_levelGrid[col-1][row] == NULL)
                 {
                     m_levelGrid[col-1][row] = m_levelGrid[col][row];
-                    m_levelGrid[col-1][row]->offset(-GRID_WIDTH*SCALE_FAC,0);
+                    m_levelGrid[col-1][row]->offset(-GRID_WIDTH,0);
                     m_levelGrid[col][row] = NULL;
                     m_oldGrid[col][row] = NULL;
                 }
@@ -223,21 +223,21 @@ void myEngine::loadLevel_retro()
                     m_levelGrid[col][row] = new retroObject(getImage("o_heart"));
                     m_levelGrid[col][row]->setNumFrames(6);
                     m_levelGrid[col][row]->setFrame(randInt(0,5));    //randomize the frame it starts at
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
 
                 case '@':   //rock
                     m_levelGrid[col][row] = new retroObject(getImage("o_rock"));
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
 
                 case '.':   //grass
                     m_levelGrid[col][row] = new retroObject(getImage("o_grass"));
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
@@ -248,7 +248,7 @@ void myEngine::loadLevel_retro()
                     //Set to facing left if on right side of the screen
                     if(col >= LEVEL_WIDTH/2)
                         m_levelGrid[col][row]->setFrame(1);
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     //m_cur->setTrack(m_levelGrid[col][row]);
@@ -257,14 +257,14 @@ void myEngine::loadLevel_retro()
                 case '!':   //exit door
                     m_levelGrid[col][row] = new Door(getImage("o_door"));
                     m_levelGrid[col][row]->setNumFrames(4);
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
 
                 case '&':   //bomb
                     m_levelGrid[col][row] = new retroObject(getImage("o_bomb"));
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
@@ -273,7 +273,7 @@ void myEngine::loadLevel_retro()
                     m_levelGrid[col][row] = new retroObject(getImage("o_balloon"));
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setFrame(randInt(0,3));
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
@@ -281,7 +281,7 @@ void myEngine::loadLevel_retro()
                 case '=':   //plasma
                     m_levelGrid[col][row] = new retroObject(getImage("o_plasma"));
                     m_levelGrid[col][row]->setNumFrames(8);
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
@@ -291,21 +291,21 @@ void myEngine::loadLevel_retro()
                     m_levelGrid[col][row]->setAnimate(false);   //Don't animate
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setFrame(m_iCurrentLevel % 4);  //Color depends on level number, like original game
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
 
                 case '%':   //metal wall
                     m_levelGrid[col][row] = new retroObject(getImage("o_metalwall"));
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
                 case '<':   //left tunnel
                     m_levelGrid[col][row] = new retroObject(getImage("o_tunnell"));
                     m_levelGrid[col][row]->setNumFrames(4);
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
@@ -313,7 +313,7 @@ void myEngine::loadLevel_retro()
                 case '>':   //right tunnel
                     m_levelGrid[col][row] = new retroObject(getImage("o_tunnelr"));
                     m_levelGrid[col][row]->setNumFrames(4);
-                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
                     break;
@@ -386,7 +386,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                     m_levelGrid[col][row]->setName('X');
                     m_levelGrid[col][row]->setNumFrames(7);
                     m_levelGrid[col][row]->setFrame(1); //Skip first frame
-                    m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
+                    m_levelGrid[col][row]->setPos(col*GRID_WIDTH, row*GRID_HEIGHT);
                     addObject(m_levelGrid[col][row]);
                     explode_retro(row+1, col, true);
                     explode_retro(row, col+1, true);
@@ -429,7 +429,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                                 m_oldGrid[col][row+1] = m_levelGrid[col][row+1];
                                 m_levelGrid[col][row+1]->setName('X');
                                 m_levelGrid[col][row+1]->setNumFrames(7);
-                                m_levelGrid[col][row+1]->setPos(col*GRID_WIDTH*SCALE_FAC, (row+1)*GRID_HEIGHT*SCALE_FAC);
+                                m_levelGrid[col][row+1]->setPos(col*GRID_WIDTH, (row+1)*GRID_HEIGHT);
                                 addObject(m_levelGrid[col][row+1]);
                                 playSound("o_explode");
                                 if(!m_iDyingCount)
@@ -497,7 +497,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                     }
                     else if(row < LEVEL_HEIGHT-1 && m_oldGrid[col][row+1] == NULL)   //Fall down
                     {
-                        obj->offset(0,GRID_HEIGHT*SCALE_FAC);
+                        obj->offset(0,GRID_HEIGHT);
                         m_levelGrid[col][row+1] = obj;
                         m_levelGrid[col][row] = NULL;
                         obj->addData(FALLING_2);
@@ -520,7 +520,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                                                                                     m_levelGrid[col-1][row-1]->getNameChar() != '@'))    //Also check above for falling objects
                                 {
                                     m_levelGrid[col-1][row] = obj;
-                                    obj->offset(-GRID_WIDTH*SCALE_FAC,0);
+                                    obj->offset(-GRID_WIDTH,0);
                                     m_levelGrid[col][row] = NULL;   //Move over
                                 }
                             }
@@ -532,7 +532,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                                                                                     m_levelGrid[col+1][row-1]->getNameChar() != '@'))    //Also check above for falling objects
                                 {
                                     m_levelGrid[col+1][row] = obj;
-                                    obj->offset(GRID_WIDTH*SCALE_FAC,0);
+                                    obj->offset(GRID_WIDTH,0);
                                     m_levelGrid[col][row] = NULL;   //Move over
                                 }
                             }
@@ -552,7 +552,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                         {
                             m_levelGrid[col+1][row] = obj;
                             m_levelGrid[col][row] = NULL;
-                            obj->offset(GRID_WIDTH*SCALE_FAC, 0);
+                            obj->offset(GRID_WIDTH, 0);
                         }
                         if(!keyDown(HGEK_SPACE))
                         {
@@ -575,7 +575,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                         {
                             m_levelGrid[col-1][row] = obj;
                             m_levelGrid[col][row] = NULL;
-                            obj->offset(-GRID_WIDTH*SCALE_FAC, 0);
+                            obj->offset(-GRID_WIDTH, 0);
                         }
                         if(!keyDown(HGEK_SPACE))
                         {
@@ -597,7 +597,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                         {
                             m_levelGrid[col][row+1] = obj;
                             m_levelGrid[col][row] = NULL;
-                            obj->offset(0, GRID_HEIGHT*SCALE_FAC);
+                            obj->offset(0, GRID_HEIGHT);
                         }
                         if(!keyDown(HGEK_SPACE))
                         {
@@ -620,7 +620,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                         {
                             m_levelGrid[col][row-1] = obj;
                             m_levelGrid[col][row] = NULL;
-                            obj->offset(0, -GRID_HEIGHT*SCALE_FAC);
+                            obj->offset(0, -GRID_HEIGHT);
                         }
                         if(!keyDown(HGEK_SPACE))
                         {
@@ -650,7 +650,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                     {
                         m_levelGrid[col][row-1] = m_levelGrid[col][row];
                         m_levelGrid[col][row] = NULL;
-                        obj->offset(0, -GRID_HEIGHT*SCALE_FAC);
+                        obj->offset(0, -GRID_HEIGHT);
                         if(obj->isData(BALLOON_FLOATDELAY))
                             obj->removeData(BALLOON_FLOATDELAY);
                     }
@@ -664,8 +664,8 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             m_levelGrid[col][row-2] = m_levelGrid[col][row-1];
                             m_levelGrid[col][row-1] = obj;
                             m_levelGrid[col][row] = NULL;
-                            obj->offset(0, -GRID_HEIGHT*SCALE_FAC);
-                            m_levelGrid[col][row-2]->offset(0, -GRID_HEIGHT*SCALE_FAC);
+                            obj->offset(0, -GRID_HEIGHT);
+                            m_levelGrid[col][row-2]->offset(0, -GRID_HEIGHT);
                         }
                         else
                             obj->removeData(BALLOON_FLOATDELAY);
@@ -684,8 +684,8 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                         {
                             obj->addData(BALLOON_FLOATDELAY);
                             //Scoot both down one (the third will fall)
-                            m_levelGrid[col][row]->offset(0, GRID_HEIGHT*SCALE_FAC);
-                            m_levelGrid[col][row-1]->offset(0, GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col][row]->offset(0, GRID_HEIGHT);
+                            m_levelGrid[col][row-1]->offset(0, GRID_HEIGHT);
                             m_levelGrid[col][row+1] = obj;
                             m_levelGrid[col][row] = m_levelGrid[col][row-1];
                             m_levelGrid[col][row-1] = NULL;
@@ -713,7 +713,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             m_oldGrid[col-1][row] = m_levelGrid[col-1][row];
                             m_levelGrid[col-1][row]->setNumFrames(8);
                             m_levelGrid[col-1][row]->setFrame(1);
-                            m_levelGrid[col-1][row]->setPos((col-1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col-1][row]->setPos((col-1) * GRID_WIDTH, row * GRID_HEIGHT);
                             m_levelGrid[col-1][row]->setName('*');
                             addObject(m_levelGrid[col-1][row]);
                             obj->setName('<');
@@ -748,7 +748,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             m_levelGrid[col+1][row] = new Dwarf(getImage("o_dwarf"));
                             m_oldGrid[col+1][row] = m_levelGrid[col+1][row];
                             m_levelGrid[col+1][row]->setNumFrames(8);
-                            m_levelGrid[col+1][row]->setPos((col+1) * GRID_WIDTH*SCALE_FAC, row * GRID_HEIGHT*SCALE_FAC);
+                            m_levelGrid[col+1][row]->setPos((col+1) * GRID_WIDTH, row * GRID_HEIGHT);
                             m_levelGrid[col+1][row]->setName('*');
                             addObject(m_levelGrid[col+1][row]);
                             obj->setName('>');
@@ -789,7 +789,7 @@ void myEngine::explode_retro(uint16_t row, uint16_t col, bool bStartFrame1)
         m_levelGrid[col][row]->setNumFrames(7);
         if(bStartFrame1)
             m_levelGrid[col][row]->setFrame(1); //Skip first frame
-        m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
+        m_levelGrid[col][row]->setPos(col*GRID_WIDTH, row*GRID_HEIGHT);
         addObject(m_levelGrid[col][row]);
     }
     else
@@ -812,7 +812,7 @@ void myEngine::explode_retro(uint16_t row, uint16_t col, bool bStartFrame1)
                 m_levelGrid[col][row]->setNumFrames(7);
                 if(bStartFrame1)
                     m_levelGrid[col][row]->setFrame(1); //Skip first frame
-                m_levelGrid[col][row]->setPos(col*GRID_WIDTH*SCALE_FAC, row*GRID_HEIGHT*SCALE_FAC);
+                m_levelGrid[col][row]->setPos(col*GRID_WIDTH, row*GRID_HEIGHT);
                 addObject(m_levelGrid[col][row]);
                 if(obj->getNameChar() == '*' && !m_iDyingCount)
                     m_iDyingCount = DIE_COUNT/2;    //Start dying count

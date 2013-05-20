@@ -44,7 +44,7 @@ public:
     Point           getPos()                    {return m_ptPos;};
     void            setPos(Point ptPos)         {m_ptPos = ptPos;};
     uint16_t        getScale()                  {return m_iSCALE_FAC;};
-    virtual void    setScale(uint16_t iScale);
+//    virtual void    setScale(uint16_t iScale);
     void            setSignal(string sSignal)   {m_sSignal = sSignal;};
     string          getSignal()                 {return m_sSignal;};
     void            setSignalHandler(void (*signalHandler)(string));
@@ -62,7 +62,7 @@ public:
     ~HUDImage();
 
     void draw(float32 fCurTime, DWORD dwCol = 0xFFFFFFFF);
-    void setScale(uint16_t iScale);
+//    void setScale(uint16_t iScale);
 
     void    setImage(Image* img);
     Image*  getImage()              {return m_img;};
@@ -81,7 +81,7 @@ public:
     ~HUDTextbox();
 
     void draw(float32 fCurTime, DWORD dwCol = 0xFFFFFFFF);
-    void setScale(uint16_t iScale);
+//    void setScale(uint16_t iScale);
 
     void    setFont(Text* txt)          {m_txtFont = txt;};     //Set the font used by this textbox
     Text*   getFont()                   {return m_txtFont;};
@@ -110,7 +110,7 @@ public:
 
     void event(hgeInputEvent event);                        //This will create a signal if the event matches our set key
     void draw(float32 fCurTime, DWORD dwCol = 0xFFFFFFFF);  //Draws the enabled or disabled image
-    void setScale(uint16_t iScale);                         //Scales the child images
+//    void setScale(uint16_t iScale);                         //Scales the child images
 
     void setEnabled(bool bValue)        {m_bValue = bValue;};
     bool getEnabled()                   {return m_bValue;};
@@ -159,7 +159,7 @@ public:
     ~HUD();
 
     void create(string sXMLFilename);   //Create this HUD from an XML file
-    void setScale(uint16_t iScale);
+//    void setScale(uint16_t iScale);
 };
 
 
