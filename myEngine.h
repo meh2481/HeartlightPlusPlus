@@ -15,8 +15,8 @@
 #define LEVEL_WIDTH     20
 #define LEVEL_HEIGHT    12
 
-#define SCREEN_WIDTH    320
-#define SCREEN_HEIGHT   200
+//#define SCREEN_WIDTH    320
+//#define SCREEN_HEIGHT   200
 
 //#define SCALE_FAC       1   //By what factor the retro gfx are scaled TODO: Variable
 
@@ -76,7 +76,7 @@ protected:
     void frame();
     void draw();
     void init();
-    void handleEvent(hgeInputEvent event);
+    void handleEvent(SDL_Event event);
 
 public:
     myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle);

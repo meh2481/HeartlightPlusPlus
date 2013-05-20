@@ -9,17 +9,30 @@
 #include <string>
 #include <fstream>
 using namespace std;
-#include "include/hge.h"
-#include "include/hgesprite.h"
-#include "include/hgeparticle.h"
 #include "include/Box2D.h"
 #include "include/tinyxml2.h"
 using namespace tinyxml2;
 #include "include/VFS.h"
 #include "include/VFSTools.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+#include <SDL/SDL_image.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 
 #define Point b2Vec2    //Our point structure
 #define pi 3.1415926535 //Close enough for my calculations
+
+
+//TODO Remove
+typedef uint32_t DWORD;
+#define ARGB(a,r,g,b)	((DWORD(a)<<24) + (DWORD(r)<<16) + (DWORD(g)<<8) + DWORD(b))
+#define GETA(col)		((col)>>24)
+#define GETR(col)		(((col)>>16) & 0xFF)
+#define GETG(col)		(((col)>>8) & 0xFF)
+#define GETB(col)		((col) & 0xFF)
+#define SETA(col,a)		(((col) & 0x00FFFFFF) + (DWORD(a)<<24))
 
 class Rect {
 public:

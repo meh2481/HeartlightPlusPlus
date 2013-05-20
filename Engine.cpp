@@ -8,32 +8,35 @@ ofstream errlog("err.log");
 
 bool Engine::_myFrameFunc()
 {
-    //Handle input events HGE is giving us
-    hgeInputEvent event;
-    while(m_hge->Input_GetEvent(&event))
+    //Handle input events from SDL
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
     {
         handleEvent(event);
         //See if cursor has moved
-        if(event.type == INPUT_MOUSEMOVE)
+        if(event.type == SDL_MOUSEMOTION)
         {
-            m_ptCursorPos.x = event.x;
-            m_ptCursorPos.y = event.y;
+            m_ptCursorPos.x = event.motion.x;
+            m_ptCursorPos.y = event.motion.y;
         }
+        if(event.type == SDL_QUIT)
+            return true;
     }
 
-    float32 dt = m_hge->Timer_GetDelta();
-    m_fAccumulatedTime += dt;
-    if(m_fAccumulatedTime >= m_fTargetTime)
+    float32 fCurTime = (float32)SDL_GetTicks()/1000.0;
+    //m_fAccumulatedTime += dt;
+    if(m_fAccumulatedTime <= fCurTime)
     {
-        m_fAccumulatedTime -= m_fTargetTime;
+        m_fAccumulatedTime += m_fTargetTime;
         //Box2D wants fixed timestep, so we use target framerate here instead of actual elapsed time
         m_physicsWorld->Step(m_fTargetTime, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);
         m_cursor->update(m_fTargetTime);
         frame();
+        _myRenderFunc();
     }
 
-    if(m_fAccumulatedTime > m_fTargetTime * 3.0)    //We've gotten far too behind; we could have a huge FPS jump if the load lessens
-        m_fAccumulatedTime = m_fTargetTime * 3.0;   //Drop any frames past this
+    if(m_fAccumulatedTime + m_fTargetTime * 3.0 < fCurTime)    //We've gotten far too behind; we could have a huge FPS jump if the load lessens
+        m_fAccumulatedTime = fCurTime;   //Drop any frames past this
 
     return m_bQuitting;
 }
@@ -41,10 +44,11 @@ bool Engine::_myFrameFunc()
 bool Engine::_myRenderFunc()
 {
     // Begin rendering
-	m_hge->Gfx_BeginScene();
+	//m_hge->Gfx_BeginScene();
 
 	// Clear screen with black color
-	m_hge->Gfx_Clear(0);
+	//m_hge->Gfx_Clear(0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Game-specific drawing
     draw();
@@ -52,7 +56,8 @@ bool Engine::_myRenderFunc()
         m_cursor->draw(m_ptCursorPos);
 
     // End rendering and update the screen
-	m_hge->Gfx_EndScene();
+	//m_hge->Gfx_EndScene();
+    SDL_GL_SwapBuffers();
     return false;   //Keep going
 }
 
@@ -63,7 +68,9 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
     m_cursor = NULL;
     m_ptCursorPos.SetZero();
     m_physicsWorld->SetAllowSleeping(true);
-    m_hge = hgeCreate(HGE_VERSION);
+    m_iWidth = iWidth;
+    m_iHeight = iHeight;
+    /*m_hge = hgeCreate(HGE_VERSION);
 
 	// Set up log file, frame function, render function and window title
 	m_hge->System_SetState(HGE_LOGFILE, "hge.log");
@@ -83,15 +90,17 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 	{
 		errlog << "Error: " << m_hge->System_GetErrorMessage() << endl;
 		exit(1);    //Abort
-	}
+	}*/
+	setup_sdl();
+    setup_opengl();
 
 	//Initialize engine stuff
 	setFramerate(60);   //60 fps default
 	m_fAccumulatedTime = 0.0;
-	m_sprFill = new hgeSprite(0,0,0,64,64); //Initialize to blank sprite
+	//m_sprFill = new hgeSprite(0,0,0,64,64); //Initialize to blank sprite
 	m_bFirstMusic = true;
 	m_bQuitting = false;
-	m_hge->Random_Seed();   //Seed the random number generator
+	//m_hge->Random_Seed();   //Seed the random number generator
 	m_iImgScaleFac = 0;
 }
 
@@ -103,17 +112,19 @@ Engine::~Engine()
     //Clean up our image map
     clearImages();
 
+    //TODO Any form of OpenGL cleanup?
+
     //Clean up our sound effects
-    for(map<string, HEFFECT>::iterator i = m_mSounds.begin(); i != m_mSounds.end(); i++)
+    /*for(map<string, HEFFECT>::iterator i = m_mSounds.begin(); i != m_mSounds.end(); i++)
     {
         errlog << "Freeing sound effect \"" << i->first << "\"" << endl;
         m_hge->Effect_Free(i->second);
-    }
+    }*/
 
-    delete m_sprFill;
+    //delete m_sprFill;
     // Clean up and shutdown
-	m_hge->System_Shutdown();
-	m_hge->Release();
+	//m_hge->System_Shutdown();
+	//m_hge->Release();
 	delete m_physicsWorld;
 }
 
@@ -143,7 +154,8 @@ void Engine::start()
     // Load all that we need to
     init();
     // Let's rock now!
-    m_hge->System_Start();
+    while(!_myFrameFunc());
+    //m_hge->System_Start();
 }
 
 void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
@@ -153,8 +165,8 @@ void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t bl
 
 void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
-    m_sprFill->SetColor(ARGB(alpha,red,green,blue));    //Set the color of the sprite
-    m_sprFill->Render4V(x1, y1, x2, y1, x2, y2, x1, y2);    //And draw it
+//    m_sprFill->SetColor(ARGB(alpha,red,green,blue));    //Set the color of the sprite
+//    m_sprFill->Render4V(x1, y1, x2, y1, x2, y2, x1, y2);    //And draw it
 }
 
 void Engine::fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
@@ -186,7 +198,7 @@ void Engine::createSound(string sPath, string sName)
     m_mSoundNames[sName] = sPath;
 }
 
-HEFFECT Engine::_getEffect(string sName)
+/*HEFFECT Engine::_getEffect(string sName)
 {
     map<string, HEFFECT>::iterator i = m_mSounds.find(sName);
     if(i == m_mSounds.end())   //This sound isn't here yet; load
@@ -197,7 +209,7 @@ HEFFECT Engine::_getEffect(string sName)
         return eff;
     }
     return i->second; //Return this sound
-}
+}*/
 
 void Engine::addObject(Object* obj)
 {
@@ -243,21 +255,21 @@ void Engine::drawObjects(Rect rcScreen)
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
 {
-    HEFFECT eff = _getEffect(sName);
-    m_hge->Effect_PlayEx(eff,volume,pan,pitch);
+    //HEFFECT eff = _getEffect(sName);
+    //m_hge->Effect_PlayEx(eff,volume,pan,pitch);
 }
 
 void Engine::pauseMusic()
 {
-    if(!m_bFirstMusic)
-        m_hge->Channel_Pause(m_MusicChannel);
+    //if(!m_bFirstMusic)
+    //    m_hge->Channel_Pause(m_MusicChannel);
 }
 
 void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
 {
-    HEFFECT eff = _getEffect(sName); //Can take a while, depending on the song
-    if(!m_bFirstMusic)
-    {
+    /*HEFFECT eff = _getEffect(sName); //Can take a while, depending on the song
+    //if(!m_bFirstMusic)
+    //{
         if(sName == m_sLastMusic)
         {
             m_hge->Channel_Resume(m_MusicChannel);
@@ -268,12 +280,15 @@ void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
     }
     m_sLastMusic = sName;
     m_MusicChannel = m_hge->Effect_PlayEx(eff,volume,pan,pitch,true);
-    m_bFirstMusic = false;
+    m_bFirstMusic = false;*/
 }
 
 bool Engine::keyDown(int32_t keyCode)
 {
-    return(m_hge->Input_GetKeyState(keyCode));
+    //TODO Keep actual list
+    Uint8 *keystate = SDL_GetKeyState(NULL);
+    return(keystate[keyCode]);
+    //return(m_hge->Input_GetKeyState(keyCode));
 }
 
 /*void Engine::scaleImages(uint16_t scaleFac)
@@ -286,7 +301,7 @@ bool Engine::keyDown(int32_t keyCode)
 void Engine::setFramerate(float32 fFramerate)
 {
     if(m_fFramerate == 0.0)
-        m_fAccumulatedTime = 0.0;   //If we're stuck at 0fps for a while, this number could be huge, which would cause unlimited fps for a bit
+        m_fAccumulatedTime = (float32)SDL_GetTicks()/1000.0;   //If we're stuck at 0fps for a while, this number could be huge, which would cause unlimited fps for a bit
     m_fFramerate = fFramerate;
     if(m_fFramerate == 0.0)
         m_fTargetTime = FLT_MAX;    //Avoid division by 0
@@ -301,7 +316,80 @@ void Engine::setCursor(Cursor* cur)
     m_cursor = cur;
 }
 
+void Engine::setup_sdl()
+{
+  const SDL_VideoInfo* video;
 
+  if(SDL_Init(SDL_INIT_VIDEO) < 0)
+  {
+  	fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+    exit(1);
+  }
+
+  // Quit SDL properly on exit
+  atexit(SDL_Quit);
+
+  // Get the current video information
+  video = SDL_GetVideoInfo();
+  if(video == NULL)
+  {
+  	fprintf(stderr, "Couldn't get video information: %s\n", SDL_GetError());
+    exit(1);
+  }
+
+  // Set the minimum requirements for the OpenGL window
+  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+  //TODO: Set icon for window
+  //SDL_Surface *image;
+  //image = IMG_Load("res/icon.png");
+  SDL_WM_SetCaption("Heartlight++", NULL);
+  //SDL_WM_SetIcon(image, NULL);
+  //SDL_FreeSurface(image);
+
+  // Create SDL window
+  if(SDL_SetVideoMode(m_iWidth, m_iHeight, video->vfmt->BitsPerPixel, SDL_OPENGL) == 0)
+  {
+  	fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
+    exit(1);
+  }
+}
+
+//Set up OpenGL
+void Engine::setup_opengl()
+{
+	// Make the viewport
+  glViewport(0, 0, m_iWidth, m_iHeight);
+
+  // Set the camera projection matrix
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  gluPerspective( 45.0f, (GLfloat)m_iWidth/(GLfloat)m_iHeight, 0.1f, 100.0f );
+
+  glMatrixMode(GL_MODELVIEW);
+
+  // set the clear color to grey
+  glClearColor(0.0, 0.0, 0.0, 0.0);
+
+  glEnable(GL_TEXTURE_2D);
+  glLoadIdentity();
+
+  //Enable image transparency
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  glShadeModel( GL_SMOOTH );
+  glClearDepth( 1.0f );
+  glEnable( GL_DEPTH_TEST );
+  glDepthFunc( GL_LEQUAL );
+  glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+}
 
 
 

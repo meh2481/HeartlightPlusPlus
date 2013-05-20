@@ -23,7 +23,7 @@ HUDItem::~HUDItem()
         delete (*i);    //Clean up all children also
 }
 
-void HUDItem::event(hgeInputEvent event)
+void HUDItem::event(SDL_Event event)
 {
     //Base class does nothing with this, except pass on
     for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
@@ -175,7 +175,7 @@ void HUDTextbox::setText(uint32_t iNum)
 //-------------------------------------------------------------------------------------
 HUDToggle::HUDToggle(string sName) : HUDItem(sName)
 {
-    m_iKey = 0; //No HGEK_ code has this value. Convenient, wot wot?
+    m_iKey = SDLK_UNKNOWN;
     m_imgEnabled = NULL;
     m_imgDisabled = NULL;
     m_bValue = false;   //Default is disabled
@@ -186,10 +186,10 @@ HUDToggle::~HUDToggle()
 
 }
 
-void HUDToggle::event(hgeInputEvent event)
+void HUDToggle::event(SDL_Event event)
 {
     HUDItem::event(event);
-    if(event.type == INPUT_KEYDOWN && event.key == m_iKey)
+    if(event.type == SDL_KEYDOWN && event.key.keysym.sym == m_iKey)
     {
         m_signalHandler(m_sSignal); //Generate signal
         m_bValue = !m_bValue;   //Toggle
@@ -272,11 +272,11 @@ void HUDGroup::draw(float32 fCurTime, DWORD dwCol)
         HUDItem::draw(fCurTime, dwCol);
 }
 
-void HUDGroup::event(hgeInputEvent event)
+void HUDGroup::event(SDL_Event event)
 {
     HUDItem::event(event);
 
-    if(event.type == INPUT_KEYDOWN && m_mKeys.find(event.key) != m_mKeys.end())
+    if(event.type == SDL_KEYDOWN && m_mKeys.find(event.key.keysym.sym) != m_mKeys.end())
     {
         m_fStartTime = FLT_MIN; //Cause this to reset
     }

@@ -8,19 +8,35 @@
 
 #include "globaldefs.h"
 
+//TODO: Should be variable or such
+#define SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 200
+
+//TODO: Figure out what causes this and calculate mathematically
+#define MAGIC_ZOOM_NUMBER -2.415f
+
+class Color
+{
+public:
+	float32 r,g,b,a;
+	Color();
+
+	void from256(int32_t ir, int32_t ig, int32_t ib, int32_t a = 255);
+	void set(float32 fr, float32 fg, float32 fb, float32 fa = 1.0) {r=fr;g=fg;b=fb;a=fa;};
+};
+
 class Image
 {
 private:
     Image(){};  //Default constructor is uncallable
 
-    HTEXTURE   m_hTex;
-    HTEXTURE   m_hscaledTex;    //If we've scaled it
-    hgeSprite* m_hSprite;
+    GLuint   m_hTex;
+//    hgeSprite* m_hSprite;
     string     m_sFilename;
+    Color m_col;
     uint32_t m_iWidth, m_iHeight;
-    uint32_t m_iID;  //Used to differentiate objects easily so can draw in batches
-                    // (it's faster to draw one image several times in a row than it is to draw images in random order)
-    uint16_t m_iScaleFac;
+    uint32_t m_iID;  //TODO: Remove/isolate/optimize
+//    uint16_t m_iScaleFac;
 
 public:
     //Constructor/destructor
@@ -46,11 +62,13 @@ public:
     void drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactorx = 1.0, float32 stretchFactory = 0.0);    //Center part of the image at x,y
     void drawCentered(Point pt, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactorx = 1.0, float32 stretchFactory = 0.0);    //Center part of the image at pt
 
-    void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);  //Set the image to this color
+    void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) {m_col.from256(r,g,b,a);};  //Set the image to this color
     void setColor(DWORD dwCol);
+    void setColor(Color col)    {m_col = col;};
+    void setColor(float32 r, float32 g, float32 b, float32 a = 1.0) {m_col.set(r,g,b,a);};
 //    void scale(uint16_t iScaleFac); //Scales this image up by a given factor from the original, without interpolation. (scale(1) to reset to original size)
-    void setHotSpot(float32 x, float32 y)   {m_hSprite->SetHotSpot(x,y);};
-    Point getHotSpot()                      {Point pt; m_hSprite->GetHotSpot(&pt.x, &pt.y); return pt;};
+    void setHotSpot(float32 x, float32 y)   {/*m_hSprite->SetHotSpot(x,y);*/};  //TODO
+    Point getHotSpot()                      {Point pt; pt.SetZero();/*m_hSprite->GetHotSpot(&pt.x, &pt.y);*/ return pt;}; //TODO
     void setHotSpot(Point pt)               {setHotSpot(pt.x, pt.y);};
 };
 

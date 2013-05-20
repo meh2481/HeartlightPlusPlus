@@ -18,31 +18,34 @@ class Engine
 {
 private:
     //Variables for use by the engine
-    HGE* m_hge;
+//    HGE* m_hge;
     b2World* m_physicsWorld;
     Cursor* m_cursor;
     Point m_ptCursorPos;
     float32 m_fFramerate;
     float32 m_fAccumulatedTime;
     float32 m_fTargetTime;
-    hgeSprite* m_sprFill;   //Sprite for filling a color
+//    hgeSprite* m_sprFill;   //Sprite for filling a color
     map<string, Image*> m_mImages;  //Image handler
     map<string, string> m_mImageNames;  //And names of images
-    map<string, HEFFECT> m_mSounds; //Sound handler
+//    map<string, HEFFECT> m_mSounds; //Sound handler
     map<string, string> m_mSoundNames; //And names of sounds
     multimap<float32, Object*> m_mObjects;       //Object handler
-    HCHANNEL m_MusicChannel;        //Sound channel we play our music on
+//    HCHANNEL m_MusicChannel;        //Sound channel we play our music on
     bool m_bFirstMusic; //Don't stop a previous song playing if there is none
     string m_sLastMusic;    //Last song we played, so we can pause/resume songs instead of restarting them
     bool m_bQuitting;   //Stop the game if this turns true
     uint16_t m_iImgScaleFac;    //How much images are scaled up by
+    uint16_t m_iWidth, m_iHeight;
 
     //Engine-use function definitions
     friend bool frameFunc();
     friend bool renderFunc();
     bool _myFrameFunc();
     bool _myRenderFunc();
-    HEFFECT _getEffect(string sName);
+//    HEFFECT _getEffect(string sName);
+    void setup_sdl();
+    void setup_opengl();
 
     Engine(){}; //Default constructor isn't callable
 
@@ -52,7 +55,7 @@ protected:
     virtual void frame() = 0;   //Function that's called every frame
     virtual void draw() = 0;    //Actual function that draws stuff
     virtual void init() = 0;    //So we can load all our images and such
-    virtual void handleEvent(hgeInputEvent event) = 0;  //Function that's called for each HGE input event
+    virtual void handleEvent(SDL_Event event) = 0;  //Function that's called for each SDL input event
 
 public:
     //Constructor/destructor
@@ -60,7 +63,7 @@ public:
     ~Engine();
 
     //Methods
-    void start();   //Runs HGE and doesn't exit until the engine ends
+    void start();   //Runs engine and doesn't exit until the engine ends
     void fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha); //Fill the specified rect with the specified color
     void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
     void fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
@@ -78,7 +81,7 @@ public:
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
     void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
 //    void scaleImages(uint16_t scaleFac);    //scale all images by scaleFac
-    float32 getTime()      {return m_hge->Timer_GetTime();}; //Get the time the engine's been running
+    float32 getTime()      {return (float32)SDL_GetTicks()/1000.0;}; //Get the time the engine's been running
     Rect getScreenRect()    {Rect rc = {0,0,getWidth(),getHeight()}; return rc;};
     b2Body* createBody(b2BodyDef* bdef) {return m_physicsWorld->CreateBody(bdef);};
     void setCursor(Cursor* cur);
@@ -89,8 +92,8 @@ public:
     //Accessor methods
     void setFramerate(float32 fFramerate);
     float32 getFramerate()   {return m_fFramerate;};
-    uint16_t getWidth() {return m_hge->System_GetState(HGE_SCREENWIDTH);};
-    uint16_t getHeight() {return m_hge->System_GetState(HGE_SCREENHEIGHT);};
+    uint16_t getWidth() {return m_iWidth;};
+    uint16_t getHeight() {return m_iHeight;};
 
 };
 

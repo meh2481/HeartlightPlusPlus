@@ -333,7 +333,7 @@ void myEngine::updateGrid_new()
     b2Body* bPlayer = m_objTest->getBody();
     Point ptVelocity = bPlayer->GetLinearVelocity();
     //Move player around
-    if(keyDown(HGEK_LEFT))//Move left
+    if(keyDown(SDLK_LEFT))//Move left
         ptVelocity.x -= SPEED_UP_AMT;
     else if(ptVelocity.x < 0)
     {
@@ -351,7 +351,7 @@ void myEngine::updateGrid_new()
         }
     }
 
-    if(keyDown(HGEK_RIGHT))//Move right
+    if(keyDown(SDLK_RIGHT))//Move right
         ptVelocity.x += SPEED_UP_AMT;
     else if(ptVelocity.x > 0)
     {
@@ -369,7 +369,7 @@ void myEngine::updateGrid_new()
         }
     }
 
-    if(keyDown(HGEK_UP))//Jump
+    if(keyDown(SDLK_UP))//Jump
     {
         if(bIsOnGround)
         {

@@ -8,13 +8,59 @@
 
 Image::Image(string sFilename)
 {
-    m_iScaleFac = 1;
-    m_sFilename = sFilename;
+//    m_iScaleFac = 1;
+  m_sFilename = sFilename;
+  SDL_Surface *surface;
+  int mode;
 
-    HGE* hge = hgeCreate(HGE_VERSION);
-    m_hTex = hge->Texture_Load(sFilename.c_str());
-    m_hscaledTex = 0;
+  surface = IMG_Load(sFilename.c_str());	//Use SDL_image to load various formats
 
+  // could not load filename
+  if(!surface)
+  {
+	std::cout << "No img " << sFilename << std::endl;
+	m_hTex = 0;
+    return;
+  }
+
+  // work out what format to tell glTexImage2D to use...
+  if(surface->format->BytesPerPixel == 3) // RGB 24bit
+  {
+	mode = GL_RGB;
+  }
+  else if(surface->format->BytesPerPixel == 4)  // RGBA 32bit
+  {
+	mode = GL_RGBA;
+  }
+  else //Unsupported format
+  {
+	SDL_FreeSurface(surface);
+	m_hTex = 0;
+    return;
+  }
+
+  m_iWidth=surface->w;
+  m_iHeight=surface->h;
+  // create one texture name
+  glGenTextures(1, &m_hTex);
+
+  // tell opengl to use the generated texture name
+  glBindTexture(GL_TEXTURE_2D, m_hTex);
+
+  // this reads from the sdl surface and puts it into an opengl texture
+  glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
+
+  // these affect how this texture is drawn later on...
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+  // clean up
+  SDL_FreeSurface(surface);
+
+//    HGE* hge = hgeCreate(HGE_VERSION);
+//    m_hTex = hge->Texture_Load(sFilename.c_str());
+//    m_hscaledTex = 0;
+/*
     if(!m_hTex) //Failed to load texture
     {
         errlog << "Error loading image " << sFilename << endl;
@@ -31,18 +77,20 @@ Image::Image(string sFilename)
 
     m_hSprite = new hgeSprite(m_hTex, 0, 0, m_iWidth, m_iHeight);
 
-    hge->Release();
+    hge->Release();*/
 }
 
 Image::~Image()
 {
-    errlog << "Freeing image \"" << m_sFilename << "\"" << endl;
+    //TODO Any form of image cleanup?
+
+    /*errlog << "Freeing image \"" << m_sFilename << "\"" << endl;
     HGE* hge = hgeCreate(HGE_VERSION);
     delete m_hSprite;
     hge->Texture_Free(m_hTex);
     if(m_hscaledTex)
         hge->Texture_Free(m_hscaledTex);
-    hge->Release();
+    hge->Release();*/
 }
 
 void Image::draw(Rect rcScreenPos)
@@ -53,14 +101,43 @@ void Image::draw(Rect rcScreenPos)
 
 void Image::draw(Rect rcScreenPos, Rect rcImgPos)
 {
-    if(m_hSprite == NULL)
+    /*if(m_hSprite == NULL)
     {
         errlog << "NULL hgeSprite in Image::draw()" << endl;
         return;
     }
     m_hSprite->SetTextureRect(rcImgPos.left, rcImgPos.top, rcImgPos.width(), rcImgPos.height());
     //m_hSprite->SetHotSpot(0,0); //In case we've set this hot spot before
-    m_hSprite->RenderStretch(rcScreenPos.left, rcScreenPos.top, rcScreenPos.right, rcScreenPos.bottom);
+    m_hSprite->RenderStretch(rcScreenPos.left, rcScreenPos.top, rcScreenPos.right, rcScreenPos.bottom);*/
+    if(m_hTex == 0)
+		return;
+
+    glLoadIdentity( );
+    glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
+    // tell opengl to use the generated texture
+    glBindTexture(GL_TEXTURE_2D, m_hTex);
+    glEnable(GL_TEXTURE_2D);
+
+    // make a rectangle
+    glBegin(GL_QUADS);
+    glColor4f(m_col.r,m_col.g,m_col.b,m_col.a);	//Colorize according to how we've colorized this image
+    // top left
+    glTexCoord2i((rcImgPos.left / (float32)m_iWidth), (rcImgPos.top / (float32)m_iHeight));
+    glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)rcScreenPos.left/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)SCREEN_HEIGHT + 1.0, 0.0);
+    // bottom left
+    glTexCoord2i((rcImgPos.left / (float32)m_iWidth), (rcImgPos.bottom / (float32)m_iHeight));
+    glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)rcScreenPos.left/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
+    // bottom right
+    glTexCoord2i((rcImgPos.right / (float32)m_iWidth), (rcImgPos.bottom / (float32)m_iHeight));
+    glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(rcScreenPos.right)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
+    // top right
+    glTexCoord2i((rcImgPos.right / (float32)m_iWidth), (rcImgPos.top / (float32)m_iHeight));
+    glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(rcScreenPos.right)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
+
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+
+    glLoadIdentity();
 }
 
 void Image::draw(float32 x, float32 y)
@@ -98,7 +175,7 @@ void Image::drawCentered(Point pt, float32 rotation, float32 stretchFactorx, flo
 
 void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
-    if(m_hSprite == NULL)
+    /*if(m_hSprite == NULL)
     {
         errlog << "NULL hgeSprite in Image::drawCentered()" << endl;
         return;
@@ -108,7 +185,8 @@ void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, 
     m_hSprite->GetHotSpot(&xh, &yh);
     if(xh == 0 && yh == 0)
         m_hSprite->SetHotSpot(rcImgPos.width()/2.0, rcImgPos.height()/2.0); //Only center hot spot if it hasn't been altered already
-    m_hSprite->RenderEx(x, y, rotation, stretchFactorx, stretchFactory);
+    m_hSprite->RenderEx(x, y, rotation, stretchFactorx, stretchFactory);*/
+    draw(x-(float32)m_iWidth/2.0,y-(float32)m_iHeight/2.0, rcImgPos);  //TODO
 }
 
 void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
@@ -119,13 +197,7 @@ void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stre
 //Set the color of this image
 void Image::setColor(DWORD dwCol)
 {
-    m_hSprite->SetColor(dwCol);
-}
-
-void Image::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-    DWORD dwCol = ARGB(a,r,g,b);
-    setColor(dwCol);
+    m_col.from256((dwCol & 0xFF0000) >> 16, (dwCol & 0xFF00) >> 8, dwCol & 0xFF, (dwCol & 0xFF000000) >> 24);
 }
 
 //Stretch this image onto a larger one, without interpolation
@@ -194,7 +266,18 @@ void Image::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 
 */
 
+Color::Color()
+{
+    r = g = b = a = 1.0;
+}
 
+void Color::from256(int ir, int ig, int ib, int ia)
+{
+	r = (float32)ir/255.0;
+	g = (float32)ig/255.0;
+	b = (float32)ib/255.0;
+	a = (float32)ia/255.0;
+}
 
 
 

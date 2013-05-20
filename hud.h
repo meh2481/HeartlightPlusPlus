@@ -33,7 +33,7 @@ public:
     HUDItem(string sName);
     ~HUDItem();
 
-    virtual void    event(hgeInputEvent event);                         //For handling input events as they come in
+    virtual void    event(SDL_Event event);                         //For handling input events as they come in
     virtual void    draw(float32 fCurTime, DWORD dwCol = 0xFFFFFFFF);   //For drawing to the screen
     void            addChild(HUDItem* hiChild);                         //Add this child to this HUDItem
     HUDItem*        getChild(string sName);                             //Get the first child that has this name (return NULL if none)
@@ -108,7 +108,7 @@ public:
     HUDToggle(string sName);
     ~HUDToggle();
 
-    void event(hgeInputEvent event);                        //This will create a signal if the event matches our set key
+    void event(SDL_Event event);                        //This will create a signal if the event matches our set key
     void draw(float32 fCurTime, DWORD dwCol = 0xFFFFFFFF);  //Draws the enabled or disabled image
 //    void setScale(uint16_t iScale);                         //Scales the child images
 
@@ -134,7 +134,7 @@ public:
     HUDGroup(string sName);
     ~HUDGroup();
 
-    void event(hgeInputEvent event);                        //If this event matches any of our keys, set alpha to 255
+    void event(SDL_Event event);                        //If this event matches any of our keys, set alpha to 255
     void draw(float32 fCurTime, DWORD dwCol = 0xFFFFFFFF);  //Override draw so can draw members with low alpha and such
 
     void    setFadeDelay(float32 fDelay)    {m_fFadeDelay = fDelay;};

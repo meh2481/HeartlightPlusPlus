@@ -7,7 +7,8 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-//For HGE-based functions to be able to call our Engine class functions - Note that this means there can be no more than one Engine at a time
+//For our engine functions to be able to call our Engine class functions - Note that this means there can be no more than one Engine at a time
+//TODO: Because of using SDL+OpenGL now, don't really need -- remove
 static myEngine* g_pGlobalEngine;
 
 bool frameFunc()
@@ -424,17 +425,17 @@ void myEngine::hudSignalHandler(string sSignal)
     playSound("o_toggle");  //Play sound for toggling hud item
 }
 
-void myEngine::handleEvent(hgeInputEvent event)
+void myEngine::handleEvent(SDL_Event event)
 {
     m_hud->event(event);    //Let our HUD handle any events it needs to
     switch(event.type)
     {
         //Key pressed
-        case INPUT_KEYDOWN:
-            switch(event.key)
+        case SDL_KEYDOWN:
+            switch(event.key.keysym.sym)
             {
-                case HGEK_RIGHT:
-                    if(keyDown(HGEK_SPACE)) //Space-right goes to next level
+                case SDLK_RIGHT:
+                    if(keyDown(SDLK_SPACE)) //Space-right goes to next level
                     {
                         m_iCurrentLevel++;
                         if(m_iCurrentLevel >= m_vLevels.size())
@@ -453,8 +454,8 @@ void myEngine::handleEvent(hgeInputEvent event)
                     //}
                     break;
 
-                case HGEK_LEFT:
-                    if(keyDown(HGEK_SPACE)) //Space-left goes to previous level
+                case SDLK_LEFT:
+                    if(keyDown(SDLK_SPACE)) //Space-left goes to previous level
                     {
                         if(m_iCurrentLevel == 0)
                             m_iCurrentLevel = m_vLevels.size();
@@ -473,34 +474,34 @@ void myEngine::handleEvent(hgeInputEvent event)
                     //}
                     break;
 
-                case HGEK_ESCAPE:
+                case SDLK_ESCAPE:
                     //Make gnome die
                     if(!m_iDyingCount)
                         m_iDyingCount = DIE_COUNT;
                     break;
 
-                case HGEK_F11:      //F11: Decrease fps
+                case SDLK_F11:      //F11: Decrease fps
                     setFramerate(std::max(getFramerate()-1.0,0.0));
                     break;
 
-                case HGEK_F12:      //F12: Increase fps
+                case SDLK_F12:      //F12: Increase fps
                     setFramerate(getFramerate()+1.0);
                     break;
 
-                case HGEK_V:
+                case SDLK_v:
                     m_bDebug = !m_bDebug;
                     break;
 
-                case HGEK_F5:   //Refresh cursor XML
+                case SDLK_F5:   //Refresh cursor XML
                     m_cur->loadFromXML("res/cursor/cursor1.xml");
                     loadLevelDirectory("res/levels");
                     break;
 
-                case HGEK_0:
+                case SDLK_0:
                     m_rcViewScreen.set(0,0,getWidth(),getHeight());
                     break;
 
-                case HGEK_EQUALS:
+                case SDLK_EQUALS:
                     if(m_iCurGun != m_lGuns.end())
                         (*m_iCurGun)->clear();
                     if(m_iCurGun != m_lGuns.end())
@@ -511,7 +512,7 @@ void myEngine::handleEvent(hgeInputEvent event)
                         (*m_iCurGun)->mouseMove(getCursorPos().x, getCursorPos().y);
                     break;
 
-                case HGEK_MINUS:
+                case SDLK_MINUS:
                     if(m_iCurGun != m_lGuns.end())
                         (*m_iCurGun)->clear();
                     if(m_iCurGun == m_lGuns.begin())
@@ -525,22 +526,22 @@ void myEngine::handleEvent(hgeInputEvent event)
             break;
 
         //Key released
-        case INPUT_KEYUP:
-            switch(event.key)
+        case SDL_KEYUP:
+            switch(event.key.keysym.sym)
             {
 
             }
             break;
 
-        case INPUT_MBUTTONDOWN:
-            if(event.key == HGEK_LBUTTON)
+        case SDL_MOUSEBUTTONDOWN:
+            if(event.button.button == SDL_BUTTON_LEFT)
             {
                 if(m_iCurGun != m_lGuns.end())
                 {
-                    (*m_iCurGun)->mouseDown(event.x, event.y);
+                    (*m_iCurGun)->mouseDown(event.button.x, event.button.y);
                 }
             }
-            /*else if(event.key == HGEK_RBUTTON)
+            /*else if(event.key == SDLK_RBUTTON)
             {
                 if(!RETRO)
                     place_new(event.x, event.y);
@@ -549,23 +550,23 @@ void myEngine::handleEvent(hgeInputEvent event)
             }*/
             break;
 
-        case INPUT_MBUTTONUP:
-            if(event.key == HGEK_LBUTTON)
+        case SDL_MOUSEBUTTONUP:
+            if(event.button.button == SDL_BUTTON_LEFT)
             {
                 if(m_iCurGun != m_lGuns.end())
                 {
-                    (*m_iCurGun)->mouseUp(event.x, event.y);
+                    (*m_iCurGun)->mouseUp(event.button.x, event.button.y);
                 }
             }
 //                m_bDragScreen = false;
-//            else if(event.key == HGEK_RBUTTON)
+//            else if(event.key == SDLK_RBUTTON)
 //                m_bScaleScreen = false;
             break;
 
-        case INPUT_MOUSEMOVE:
+        case SDL_MOUSEMOTION:
             if(m_iCurGun != m_lGuns.end())
             {
-                (*m_iCurGun)->mouseMove(event.x,event.y);
+                (*m_iCurGun)->mouseMove(event.motion.x,event.motion.y);
             }
 /*            if(m_bDragScreen)
             {
@@ -586,14 +587,15 @@ void myEngine::handleEvent(hgeInputEvent event)
             }*/
             break;
 
-        case INPUT_MOUSEWHEEL:
+        //TODO
+        /*case INPUT_MOUSEWHEEL:
             m_rcViewScreen.right -= (float32)event.wheel * getWidth()/getHeight();
             m_rcViewScreen.bottom -= (float32)event.wheel;
             m_rcViewScreen.left += (float32)event.wheel * getWidth()/getHeight();
             m_rcViewScreen.top += (float32)event.wheel;
             //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
             //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;
-            break;
+            break;*/
     }
 }
 

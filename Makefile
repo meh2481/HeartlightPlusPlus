@@ -1,5 +1,5 @@
 objects := Cursor.o Image.o Engine.o Object.o SceneLayer.o Text.o ballGun.o globaldefs.o hud.o main.o myEngine.o myEngine_new.o myEngine_retro.o
-libs := -lhge_helpers -lGL -lGLU -lhge -lSDLmain -lSDL -lvorbis -lvorbisfile -lopenal -lalut -ljpeg -lpng -logg -ltinyxml2 -lttvfs -lBox2D
+libs := -lGL -lGLU -lhge -lSDLmain -lSDL -lSDL_image -lvorbis -lvorbisfile -lopenal -logg -ltinyxml2 -lttvfs -lBox2D
 
 all: Heartlight++
 

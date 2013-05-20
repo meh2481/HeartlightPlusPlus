@@ -13,7 +13,7 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
        col >= LEVEL_WIDTH)
         return false; //We're at the edge of the map -- ignore
     retroObject* obj = m_levelGrid[col][row];
-    if(obj == NULL || keyDown(HGEK_SPACE))
+    if(obj == NULL || keyDown(SDLK_SPACE))
         return false; //Nothing to do here
     switch(obj->getNameChar())
     {
@@ -150,7 +150,7 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
                m_levelGrid[col-1][row] != NULL &&
                m_levelGrid[col-1][row]->getNameChar() == '*' &&
                m_levelGrid[col-1][row]->getFrame() < 2 &&
-               keyDown(HGEK_RIGHT) && !keyDown(HGEK_SPACE))    //Pushing to the right
+               keyDown(SDLK_RIGHT) && !keyDown(SDLK_SPACE))    //Pushing to the right
             {
                 if(col < LEVEL_WIDTH-1 && m_levelGrid[col+1][row] == NULL)  //There's an empty space for us to push it
                 {
@@ -165,7 +165,7 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
                     m_levelGrid[col+1][row] != NULL &&
                     m_levelGrid[col+1][row]->getNameChar() == '*' &&
                     m_levelGrid[col+1][row]->getFrame() < 2 &&
-                    keyDown(HGEK_LEFT) && !keyDown(HGEK_SPACE))    //Pushing to the left
+                    keyDown(SDLK_LEFT) && !keyDown(SDLK_SPACE))    //Pushing to the left
             {
                 if(col > 0 && m_levelGrid[col-1][row] == NULL)
                 {
@@ -544,17 +544,17 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                     if(obj->getFrame() > 3)
                         break;
                     //Move the player if pressing keys
-                    if(keyDown(HGEK_RIGHT))
+                    if(keyDown(SDLK_RIGHT))
                     {
                         if(_moveToGridSquare_retro(row, col+1))
                             break;
-                        if(!keyDown(HGEK_SPACE) && col+1 < LEVEL_WIDTH && m_levelGrid[col+1][row] == NULL)
+                        if(!keyDown(SDLK_SPACE) && col+1 < LEVEL_WIDTH && m_levelGrid[col+1][row] == NULL)
                         {
                             m_levelGrid[col+1][row] = obj;
                             m_levelGrid[col][row] = NULL;
                             obj->offset(GRID_WIDTH, 0);
                         }
-                        if(!keyDown(HGEK_SPACE))
+                        if(!keyDown(SDLK_SPACE))
                         {
                             //Set to right frame
                             int16_t iFrame = obj->getFrame();
@@ -567,17 +567,17 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             obj->setFrame(iFrame);
                         }
                     }
-                    else if(keyDown(HGEK_LEFT))
+                    else if(keyDown(SDLK_LEFT))
                     {
                         if(_moveToGridSquare_retro(row, col-1))
                             break;
-                        if(!keyDown(HGEK_SPACE) && col > 0 && m_levelGrid[col-1][row] == NULL)
+                        if(!keyDown(SDLK_SPACE) && col > 0 && m_levelGrid[col-1][row] == NULL)
                         {
                             m_levelGrid[col-1][row] = obj;
                             m_levelGrid[col][row] = NULL;
                             obj->offset(-GRID_WIDTH, 0);
                         }
-                        if(!keyDown(HGEK_SPACE))
+                        if(!keyDown(SDLK_SPACE))
                         {
                             //Set to right frame
                             int16_t iFrame = obj->getFrame();
@@ -590,16 +590,16 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             obj->setFrame(iFrame);
                         }
                     }
-                    else if(keyDown(HGEK_DOWN))
+                    else if(keyDown(SDLK_DOWN))
                     {
                         _moveToGridSquare_retro(row+1, col);
-                        if(!keyDown(HGEK_SPACE) && row+1 < LEVEL_HEIGHT && m_levelGrid[col][row+1] == NULL)
+                        if(!keyDown(SDLK_SPACE) && row+1 < LEVEL_HEIGHT && m_levelGrid[col][row+1] == NULL)
                         {
                             m_levelGrid[col][row+1] = obj;
                             m_levelGrid[col][row] = NULL;
                             obj->offset(0, GRID_HEIGHT);
                         }
-                        if(!keyDown(HGEK_SPACE))
+                        if(!keyDown(SDLK_SPACE))
                         {
                             //Set to right frame
                             int16_t iFrame = obj->getFrame();
@@ -613,16 +613,16 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
                             obj->setFrame(iFrame);
                         }
                     }
-                    else if(keyDown(HGEK_UP))
+                    else if(keyDown(SDLK_UP))
                     {
                         _moveToGridSquare_retro(row-1, col);
-                        if(!keyDown(HGEK_SPACE) && row > 0 && m_levelGrid[col][row-1] == NULL)
+                        if(!keyDown(SDLK_SPACE) && row > 0 && m_levelGrid[col][row-1] == NULL)
                         {
                             m_levelGrid[col][row-1] = obj;
                             m_levelGrid[col][row] = NULL;
                             obj->offset(0, -GRID_HEIGHT);
                         }
-                        if(!keyDown(HGEK_SPACE))
+                        if(!keyDown(SDLK_SPACE))
                         {
                             //Set to right frame
                             int16_t iFrame = obj->getFrame();
