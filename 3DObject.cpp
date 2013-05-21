@@ -21,11 +21,15 @@ Object3D::~Object3D()
 void Object3D::fromOBJFile(string sFilename)
 {
     vector<Vertex> vVerts;
+    vector<Vertex> vNormals;
     vector<UV> vUVs;
     UV tmp;
     tmp.u = tmp.v = 0.0;
     vUVs.push_back(tmp);    //Push a 0,0 UV coordinate in case there's no UVs in this .obj file
     list<Face> lFaces;
+
+    bool bUVs = false;
+    bool bNorms = false;
 
     ifstream infile(sFilename.c_str());
     if(infile.fail())
@@ -43,22 +47,26 @@ void Object3D::fromOBJFile(string sFilename)
         istringstream iss(s);
         string c;
         if(!(iss >> c)) break;
-        //errlog << c << endl;
         switch (c[0])
         {
-            case '#':
-            case 's':
-                continue;   //Skip over comment lines and "s off" lines
             case 'v': //Vertex
                 if(c[1] == 't') //"vt" denotes UV coordinate
                 {
-                    UV v;
-                    if(!(iss >> v.u >> v.v)) continue;
-                    //v.u = 1.0 - v.u; //Flip UV coordinates to match up right
-                    v.v = 1.0 - v.v;
-                    vUVs.push_back(v);
+                    bUVs = true;
+                    UV vt;
+                    if(!(iss >> vt.u >> vt.v)) continue;
+                    //Flip UV coordinates to match up right
+                    vt.v = 1.0 - vt.v;
+                    vUVs.push_back(vt);
                 }
-                else    //Normal vertex
+                else if(c[1] == 'n')    //"vn" denotes face normal
+                {
+                    bNorms = true;
+                    Vertex vn;
+                    if(!(iss >> vn.x >> vn.y >> vn.z)) continue; //Skip over malformed lines
+                    vNormals.push_back(vn);
+                }
+                else    //"v" denotes vertex
                 {
                     Vertex v;
                     if(!(iss >> v.x >> v.y >> v.z)) continue; //Skip over malformed lines
@@ -66,27 +74,32 @@ void Object3D::fromOBJFile(string sFilename)
                 }
                 break;
             case 'f':
-                //Gonna have to pull in faces by hand if UV vertices are specified as well
                 Face f;
                 char ctmp;
                 iss.get(ctmp);
-                //errlog << "peek: " << iss.peek() << endl;
                 if(iss.eof() || infile.eof() || iss.fail() || infile.fail())
                     break;
                 for(int i = 0; i < 3; i++)
                 {
-                    float32 vertPos = 0.0;
-                    float32 uvPos = 0.0;
+                    uint32_t vertPos = 0;
+                    uint32_t uvPos = 0;
+                    uint32_t normPos = 0;
                     string sCoord;
                     getline(iss, sCoord, ' ');
                     istringstream issCord(sCoord);
                     issCord >> vertPos;
-                    //errlog << "vert pos: " <<vertPos << endl;
-                    if(issCord.peek() == '/') //Have a UV coordinate here, as well
+                    if(bNorms)
+                    {
+                        issCord.ignore();   //Ignore the '/' character
+                        if(bUVs)
+                            issCord >> uvPos;
+                        issCord.ignore();
+                        issCord >> normPos;
+                    }
+                    else if(bUVs)
                     {
                         issCord.ignore();
                         issCord >> uvPos;
-                        //errlog << "UV pos: " << uvPos << endl;
                     }
 
                     switch(i)
@@ -102,13 +115,14 @@ void Object3D::fromOBJFile(string sFilename)
                         case 2:
                             f.v3 = vertPos;
                             f.uv3 = uvPos;
+                            f.norm = normPos;
                             break;
 
                     }
                 }
                 lFaces.push_back(f);
                 break;
-            default:
+            default:    //Skip anything else we don't care about (Comment lines; mtl definitions, etc)
                 continue;
         }
     }
@@ -122,23 +136,20 @@ void Object3D::fromOBJFile(string sFilename)
     glBegin(GL_TRIANGLES);
     for(list<Face>::iterator i = lFaces.begin(); i != lFaces.end(); i++)
     {
-        //errlog << "faces" << endl;
-        /*errlog << "Face: " << vVerts[i->v1-1].x << ", " << vVerts[i->v1-1].y << ", " << vVerts[i->v1-1].z << endl
-               << vVerts[i->v2-1].x << ", " << vVerts[i->v2-1].y << ", " << vVerts[i->v2-1].z << endl
-               << vVerts[i->v3-1].x << ", " << vVerts[i->v3-1].y << ", " << vVerts[i->v3-1].z << endl
-               << vUVs[i->uv1-1].u << " " << vUVs[i->uv1-1].v << endl
-               << vUVs[i->uv2-1].u << " " << vUVs[i->uv2-1].v << endl
-               << vUVs[i->uv3-1].u << " " << vUVs[i->uv3-1].v << endl;*/
-        glTexCoord2f(vUVs[i->uv1].u, vUVs[i->uv1].v);
+        if(bNorms)
+            glNormal3f(vNormals[i->norm-1].x, vNormals[i->norm-1].y, vNormals[i->norm-1].z);
+        if(bUVs)
+            glTexCoord2f(vUVs[i->uv1].u, vUVs[i->uv1].v);
         glVertex3f(vVerts[i->v1-1].x, vVerts[i->v1-1].y, vVerts[i->v1-1].z);
-        glTexCoord2f(vUVs[i->uv2].u, vUVs[i->uv2].v);
+        if(bUVs)
+            glTexCoord2f(vUVs[i->uv2].u, vUVs[i->uv2].v);
         glVertex3f(vVerts[i->v2-1].x, vVerts[i->v2-1].y, vVerts[i->v2-1].z);
-        glTexCoord2f(vUVs[i->uv3].u, vUVs[i->uv3].v);
+        if(bUVs)
+            glTexCoord2f(vUVs[i->uv3].u, vUVs[i->uv3].v);
         glVertex3f(vVerts[i->v3-1].x, vVerts[i->v3-1].y, vVerts[i->v3-1].z);
     }
 
     glEnd();
-//    glDisable(GL_TEXTURE_2D);
 
     glEndList();
 
@@ -188,13 +199,13 @@ void Object3D::setTexture(string sFilename)
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
+
     // clean up
     SDL_FreeSurface(surface);
 }
 
 void Object3D::render()
 {
-//    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_tex);
     glCallList(m_obj);
 }

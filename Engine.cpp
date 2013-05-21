@@ -6,6 +6,13 @@
 #include "Engine.h"
 ofstream errlog("err.log");
 
+
+GLfloat LightAmbient[]  = { 0.5f, 0.5f, 0.5f, 1.0f };
+/* Diffuse Light Values ( NEW ) */
+GLfloat LightDiffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
+/* Light Position ( NEW ) */
+GLfloat LightPosition[] = { 0.0f, 0.0f, 2.0f, 1.0f };
+
 bool Engine::_myFrameFunc()
 {
     //Handle input events from SDL
@@ -45,10 +52,6 @@ bool Engine::_myRenderFunc()
 {
     // Begin rendering by clearing the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //Start out at default location/zoom
-    glLoadIdentity( );
-    glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
 
     // Game-specific drawing
     draw();
@@ -364,16 +367,58 @@ void Engine::setup_sdl()
 //Set up OpenGL
 void Engine::setup_opengl()
 {
+    /*glEnable( GL_TEXTURE_2D );
+
+    // Enable smooth shading
+    glShadeModel( GL_SMOOTH );
+
+    // Set the background black
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+
+    // Depth buffer setup
+    glClearDepth( 1.0f );
+
+    // Enables Depth Testing
+    glEnable( GL_DEPTH_TEST );
+
+    // The Type Of Depth Test To Do
+    glDepthFunc( GL_LEQUAL );
+
+    // Really Nice Perspective Calculations
+    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+
+    // Setup The Ambient Light
+    glLightfv( GL_LIGHT1, GL_AMBIENT, LightAmbient );
+
+    // Setup The Diffuse Light
+    glLightfv( GL_LIGHT1, GL_DIFFUSE, LightDiffuse );
+
+    // Position The Light
+    glLightfv( GL_LIGHT1, GL_POSITION, LightPosition );
+
+    // Enable Light One
+    glEnable( GL_LIGHT1 );
+
+    glViewport( 0, 0, ( GLint )m_iWidth, ( GLint )m_iHeight );
+
+    // change to the projection matrix and set our viewing volume.
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity( );
+
+    // Set our perspective
+    gluPerspective( 45.0f, (float32)m_iWidth/(float32)m_iHeight, 0.1f, 100.0f );
+
+    // Make sure we're chaning the model view and not the projection
+    glMatrixMode( GL_MODELVIEW );
+
+    // Reset The View
+    glLoadIdentity( );
+
+    //glEnable( GL_LIGHTING );*/
 	// Make the viewport
   glViewport(0, 0, m_iWidth, m_iHeight);
 
-  // Set the camera projection matrix
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
 
-  gluPerspective( 45.0f, (GLfloat)m_iWidth/(GLfloat)m_iHeight, 0.1f, 100.0f );
-
-  glMatrixMode(GL_MODELVIEW);
 
   // set the clear color to grey
   glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -383,23 +428,39 @@ void Engine::setup_opengl()
 
   glEnable(GL_TEXTURE_2D);
 
+  glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+
   //Enable lighting
   glShadeModel( GL_SMOOTH );
   //glEnable( GL_LIGHT0 );
-  //glEnable( GL_LIGHTING );
+  glEnable( GL_LIGHTING );
   //glEnable( GL_COLOR_MATERIAL );
 
-  glLoadIdentity();
+  // Setup The Ambient Light
+  glLightfv( GL_LIGHT1, GL_AMBIENT, LightAmbient );
+
+  // Setup The Diffuse Light
+  glLightfv( GL_LIGHT1, GL_DIFFUSE, LightDiffuse );
+
+  // Position The Light
+  glLightfv( GL_LIGHT1, GL_POSITION, LightPosition );
+
+  // Enable Light One
+  glEnable( GL_LIGHT1 );
 
   //Enable image transparency
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  glShadeModel( GL_SMOOTH );
-  glClearDepth( 1.0f );
-  glEnable( GL_DEPTH_TEST );
-  glDepthFunc( GL_LEQUAL );
-  glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+  // Set the camera projection matrix
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  gluPerspective( 45.0f, (GLfloat)m_iWidth/(GLfloat)m_iHeight, 0.1f, 100.0f );
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
 }
 
 

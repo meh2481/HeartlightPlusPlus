@@ -157,14 +157,16 @@ void myEngine::frame()
 
 void myEngine::draw()
 {
+
+    glEnable( GL_LIGHTING );    //Turn on lighting for 3D objects
     static float rotVal = 0;
-    rotVal += 0.2;
+    rotVal += 0.5;
     glLoadIdentity();
-    glTranslatef( 0.0, 0.0, -2.0 );
+    glTranslatef( 0.0, 0.0, -3.09 );
     glRotatef(rotVal, 1.0,1.0,1.0);
     testObj->render();
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+    glDisable( GL_LIGHTING );   //Don't care about lighting for rendering 2D objects
     drawObjects(m_rcViewScreen);
     if(m_iCurGun != m_lGuns.end())
         (*m_iCurGun)->draw(m_rcViewScreen);
