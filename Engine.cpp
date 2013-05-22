@@ -76,27 +76,11 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
     m_iWidth = iWidth;
     m_iHeight = iHeight;
     m_iKeystates = NULL;
-    /*m_hge = hgeCreate(HGE_VERSION);
-
-	// Set up log file, frame function, render function and window title
-	m_hge->System_SetState(HGE_LOGFILE, "hge.log");
-	m_hge->System_SetState(HGE_FRAMEFUNC, frameFunc);
-	m_hge->System_SetState(HGE_RENDERFUNC, renderFunc);
-	m_hge->System_SetState(HGE_TITLE, sTitle.c_str());
+    /*Set up log file, frame function, render function and window title
 	m_hge->System_SetState(HGE_FPS, HGEFPS_VSYNC);
-	m_hge->System_SetState(HGE_SHOWSPLASH, false);
 
 	// Set up video mode
-	m_hge->System_SetState(HGE_WINDOWED, true);
-	m_hge->System_SetState(HGE_SCREENWIDTH, iWidth);
-	m_hge->System_SetState(HGE_SCREENHEIGHT, iHeight);
-	m_hge->System_SetState(HGE_SCREENBPP, 32);
-
-	if(!m_hge->System_Initiate())
-	{
-		errlog << "Error: " << m_hge->System_GetErrorMessage() << endl;
-		exit(1);    //Abort
-	}*/
+	m_hge->System_SetState(HGE_WINDOWED, true);*/
 	setup_sdl();
     setup_opengl();
 
@@ -148,6 +132,7 @@ void Engine::clearObjects()
 void Engine::clearImages()
 {
     //Note that this clears the memory associated with the images, not the filenames. We can reload images as the need arises
+    //TODO: Wait, what? How?
     for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
         delete (i->second);    //Delete each image
     m_mImages.clear();
@@ -159,7 +144,6 @@ void Engine::start()
     init();
     // Let's rock now!
     while(!_myFrameFunc());
-    //m_hge->System_Start();
 }
 
 void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
@@ -384,6 +368,13 @@ void Engine::setup_opengl()
 
     //Enable lighting
     glShadeModel( GL_SMOOTH );
+    GLboolean smooth;
+    glGetBooleanv(GL_SHADE_MODEL, &smooth);
+    if(smooth == true)
+        errlog << "true smoothing" << endl;
+    else
+        errlog << "False smoothing" << endl;
+
     //glEnable( GL_LIGHT0 );
     glEnable( GL_LIGHTING );
     //glEnable( GL_COLOR_MATERIAL );

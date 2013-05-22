@@ -40,8 +40,8 @@ private:
     Uint8 *m_iKeystates;    //Keep track of keys that are pressed/released so we can poll as needed
 
     //Engine-use function definitions
-    friend bool frameFunc();
-    friend bool renderFunc();
+//    friend bool frameFunc();
+//    friend bool renderFunc();
     bool _myFrameFunc();
     bool _myRenderFunc();
 //    HEFFECT _getEffect(string sName);
@@ -98,8 +98,8 @@ public:
 
 };
 
-bool frameFunc();
-bool renderFunc();
+//bool frameFunc();
+//bool renderFunc();
 
 
 

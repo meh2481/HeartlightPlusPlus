@@ -8,18 +8,8 @@
 #include <GL/glu.h>
 
 //For our engine functions to be able to call our Engine class functions - Note that this means there can be no more than one Engine at a time
-//TODO: Because of using SDL+OpenGL now, don't really need -- remove
+//TODO: Think of workaround? How does everything communicate now?
 static myEngine* g_pGlobalEngine;
-
-bool frameFunc()
-{
-    return g_pGlobalEngine->_myFrameFunc();
-}
-
-bool renderFunc()
-{
-    return g_pGlobalEngine->_myRenderFunc();
-}
 
 void signalHandler(string sSignal)
 {
@@ -155,19 +145,38 @@ void myEngine::frame()
     updateObjects();    //Update the objects in the game
 }
 
+
+#define FLY_AMT 0.02
+#define DEG2RAD 3.141593f / 180.0f
+#define RAD2DEG 180.0f / 3.141593f
 void myEngine::draw()
 {
 
     glEnable( GL_LIGHTING );    //Turn on lighting for 3D objects
-    static float rotVal = 0;
-    rotVal += 0.5;
+    static Vec3 pos = {0.0,0.0,-20.0};
+    static Vec3 rot = {0.0,0.0,0.0};
+    float rotValx = 0;
+    float rotValy = 0;
+    Point ptPos = getCursorPos();
+    rotValx = ((float32)SCREEN_HEIGHT/2.0 - ptPos.y)*(45.0/((float32)SCREEN_HEIGHT/2.0));
+    rotValy = ((float32)SCREEN_WIDTH/2.0 - ptPos.x)*(45.0/((float32)SCREEN_WIDTH/2.0));
+    rotValx *= DEG2RAD;
+    rotValy *= DEG2RAD;
+
+    pos.z = pos.z + FLY_AMT*cos(rotValy)*cos(rotValx);
+    pos.y = pos.y - FLY_AMT*cos(rotValy)*sin(rotValx);
+    pos.x = pos.x + FLY_AMT*cos(rotValx)*sin(rotValy);
     glLoadIdentity();
-    glTranslatef( 0.0, 0.0, -3.09 );
-    glRotatef(rotVal, 1.0,1.0,1.0);
+    glTranslatef( pos.x, pos.y, pos.z );
+    /*glLoadIdentity();
+    glTranslatef( 0.0, 0.0, -6.09 );
+    glRotatef(rotValx, 1.0,0.0,0.0);
+    glRotatef(180+rotValy, 0.0,1.0,0.0);*/
     testObj->render();
 
+
     glDisable( GL_LIGHTING );   //Don't care about lighting for rendering 2D objects
-    drawObjects(m_rcViewScreen);
+    /*drawObjects(m_rcViewScreen);
     if(m_iCurGun != m_lGuns.end())
         (*m_iCurGun)->draw(m_rcViewScreen);
 
@@ -241,7 +250,7 @@ void myEngine::draw()
 
 
     //Draw our HUD
-    m_hud->draw(getTime());
+    m_hud->draw(getTime());*/
 
     //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
 }
@@ -251,7 +260,7 @@ void myEngine::init()
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
 
-    testObj = new Object3D("res/3D/test1.obj", "res/3D/testobj1.png");
+    testObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
 
     //Now scale all the images up
 //    scaleImages(SCALE_FAC);

@@ -49,6 +49,13 @@ public:
     void    set(float32 fleft,float32 ftop,float32 fright,float32 fbottom)  {left=fleft;top=ftop;right=fright;bottom=fbottom;};
 };
 
+class Vec3
+{
+public:
+    float32 x, y, z;
+
+};
+
 extern ofstream errlog;
 
 //Helper functions
