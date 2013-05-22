@@ -12,7 +12,7 @@
 #define SCREEN_WIDTH  800
 #define SCREEN_HEIGHT 600
 
-//TODO: Figure out what causes this and calculate mathematically
+//TODO: Figure out what causes this and calculate mathematically? Or just live with it?
 #define MAGIC_ZOOM_NUMBER -2.415f
 
 class Color

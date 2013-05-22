@@ -26,7 +26,6 @@ private:
     float32 m_fFramerate;
     float32 m_fAccumulatedTime;
     float32 m_fTargetTime;
-//    hgeSprite* m_sprFill;   //Sprite for filling a color
     map<string, Image*> m_mImages;  //Image handler
     map<string, string> m_mImageNames;  //And names of images
 //    map<string, HEFFECT> m_mSounds; //Sound handler
@@ -38,6 +37,7 @@ private:
     bool m_bQuitting;   //Stop the game if this turns true
     uint16_t m_iImgScaleFac;    //How much images are scaled up by
     uint16_t m_iWidth, m_iHeight;
+    Uint8 *m_iKeystates;    //Keep track of keys that are pressed/released so we can poll as needed
 
     //Engine-use function definitions
     friend bool frameFunc();

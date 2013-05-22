@@ -83,15 +83,9 @@ Image::Image(string sFilename)
 
 Image::~Image()
 {
-    //TODO Any form of image cleanup?
-
-    /*errlog << "Freeing image \"" << m_sFilename << "\"" << endl;
-    HGE* hge = hgeCreate(HGE_VERSION);
-    delete m_hSprite;
-    hge->Texture_Free(m_hTex);
-    if(m_hscaledTex)
-        hge->Texture_Free(m_hscaledTex);
-    hge->Release();*/
+    //image cleanup
+    errlog << "Freeing image \"" << m_sFilename << "\"" << endl;
+    glDeleteTextures(1, &m_hTex);
 }
 
 void Image::draw(Rect rcScreenPos)

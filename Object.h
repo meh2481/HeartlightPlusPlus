@@ -36,7 +36,7 @@ public:
     //Helper methods
     virtual bool update();  //Return false to destroy the object
     virtual void updateFrame();
-    virtual void draw(Rect rcScreen, float32 fScaleFacX = 1.0, float32 fScaleFacY = 1.0);
+    virtual void draw(Rect rcScreen);
     virtual void offset(float32 x, float32 y)   {m_ptPos.x += x; m_ptPos.y += y;};
     virtual void offset(Point pt)               {m_ptPos += pt;};
     void kill() {m_bDying = true;};    //Destroy sprite
@@ -126,7 +126,7 @@ public:
     void addFixture(b2FixtureDef* def)   {m_physicsBody->CreateFixture(def);};  //Add a physics fixture to this object
     void addBody(b2Body* body)   {body->SetUserData(this); m_physicsBody = body;};  //TODO Better way of doing this
 
-    virtual void draw(Rect rcScreen, float32 fScaleFacX = 1.0, float32 fScaleFacY = 1.0);
+    virtual void draw(Rect rcScreen);
     virtual Point getCenter()    {Point pt = m_physicsBody->GetWorldCenter();pt*=SCALE_UP_FACTOR;return pt;};
     virtual b2Body* getBody() {return m_physicsBody;};
 

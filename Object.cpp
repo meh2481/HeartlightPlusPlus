@@ -50,11 +50,11 @@ bool Object::update()
     return !m_bDying;
 }
 
-void Object::draw(Rect rcScreen, float32 fScaleFacX, float32 fScaleFacY)
+void Object::draw(Rect rcScreen)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
     layer->pos = m_ptPos;//.Set(m_ptPos.x + getWidth()/2.0, m_ptPos.y + getHeight()/2.0);
-    layer->draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
+    layer->draw(rcScreen, rcImgPos);
 }
 
 void Object::setNumFrames(uint16_t iNumFrames, bool bAnimateOnce)
@@ -112,13 +112,13 @@ physicsObject::~physicsObject()
 {
 }
 
-void physicsObject::draw(Rect rcScreen, float32 fScaleFacX, float32 fScaleFacY)
+void physicsObject::draw(Rect rcScreen)
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
     layer->pos = m_physicsBody->GetPosition();
     layer->pos *= SCALE_UP_FACTOR;
     layer->rot = m_physicsBody->GetAngle();
-    layer->draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
+    layer->draw(rcScreen, rcImgPos);
 }
 
 

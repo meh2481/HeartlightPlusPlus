@@ -30,6 +30,9 @@ bool Engine::_myFrameFunc()
             return true;
     }
 
+    //Get current key state
+    m_iKeystates = SDL_GetKeyState(NULL);
+
     float32 fCurTime = (float32)SDL_GetTicks()/1000.0;
     //m_fAccumulatedTime += dt;
     if(m_fAccumulatedTime <= fCurTime)
@@ -72,6 +75,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
     m_physicsWorld->SetAllowSleeping(true);
     m_iWidth = iWidth;
     m_iHeight = iHeight;
+    m_iKeystates = NULL;
     /*m_hge = hgeCreate(HGE_VERSION);
 
 	// Set up log file, frame function, render function and window title
@@ -99,7 +103,6 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
 	//Initialize engine stuff
 	setFramerate(60);   //60 fps default
 	m_fAccumulatedTime = 0.0;
-	//m_sprFill = new hgeSprite(0,0,0,64,64); //Initialize to blank sprite
 	m_bFirstMusic = true;
 	m_bQuitting = false;
 	srand(SDL_GetTicks());  //Not as random as it could be... narf
@@ -123,10 +126,7 @@ Engine::~Engine()
         m_hge->Effect_Free(i->second);
     }*/
 
-    //delete m_sprFill;
     // Clean up and shutdown
-	//m_hge->System_Shutdown();
-	//m_hge->Release();
 	delete m_physicsWorld;
 
 	SDL_Quit();
@@ -169,8 +169,17 @@ void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t bl
 
 void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
-//    m_sprFill->SetColor(ARGB(alpha,red,green,blue));    //Set the color of the sprite
-//    m_sprFill->Render4V(x1, y1, x2, y1, x2, y2, x1, y2);    //And draw it
+    Color col;
+    col.from256(red, green, blue, alpha);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBegin(GL_QUADS);
+    glColor4f(col.r,col.g,col.b,col.a);	//Colorize
+    //Draw
+    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight + 1.0, 0.0);
+    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
+    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
+    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight+1.0, 0.0);
+    glEnd();
 }
 
 void Engine::fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
@@ -249,12 +258,8 @@ void Engine::updateObjects()
 
 void Engine::drawObjects(Rect rcScreen)
 {
-    //m_hge->Gfx_SetTransform(0,0,0,0,0,(float32)getWidth()/rcScreen.width(), (float32)getHeight()/rcScreen.height());
     for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
-    {
-        (*i).second->draw(rcScreen, (float32)getWidth()/rcScreen.width(), (float32)getHeight()/rcScreen.height());
-    }
-    //m_hge->Gfx_SetTransform();
+        (*i).second->draw(rcScreen);
 }
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
@@ -289,10 +294,7 @@ void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
 
 bool Engine::keyDown(int32_t keyCode)
 {
-    //TODO Keep actual list
-    Uint8 *keystate = SDL_GetKeyState(NULL);
-    return(keystate[keyCode]);
-    //return(m_hge->Input_GetKeyState(keyCode));
+    return(m_iKeystates[keyCode]);
 }
 
 /*void Engine::scaleImages(uint16_t scaleFac)
@@ -349,12 +351,12 @@ void Engine::setup_sdl()
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  //TODO: Set icon for window
-  //SDL_Surface *image;
-  //image = IMG_Load("res/icon.png");
+  //Set icon for window
+  SDL_Surface *image;
+  image = IMG_Load("res/icon.png");
   SDL_WM_SetCaption("Heartlight++", NULL);
-  //SDL_WM_SetIcon(image, NULL);
-  //SDL_FreeSurface(image);
+  SDL_WM_SetIcon(image, NULL);
+  SDL_FreeSurface(image);
 
   // Create SDL window
   if(SDL_SetVideoMode(m_iWidth, m_iHeight, video->vfmt->BitsPerPixel, SDL_OPENGL) == 0)
@@ -367,25 +369,24 @@ void Engine::setup_sdl()
 //Set up OpenGL
 void Engine::setup_opengl()
 {
-    /*glEnable( GL_TEXTURE_2D );
+	// Make the viewport
+    glViewport(0, 0, m_iWidth, m_iHeight);
 
-    // Enable smooth shading
-    glShadeModel( GL_SMOOTH );
-
-    // Set the background black
-    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-
-    // Depth buffer setup
+    // set the clear color to grey
+    glClearColor(0.0, 0.0, 0.0, 0.0);
     glClearDepth( 1.0f );
-
-    // Enables Depth Testing
     glEnable( GL_DEPTH_TEST );
-
-    // The Type Of Depth Test To Do
     glDepthFunc( GL_LEQUAL );
 
-    // Really Nice Perspective Calculations
+    glEnable(GL_TEXTURE_2D);
+
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+
+    //Enable lighting
+    glShadeModel( GL_SMOOTH );
+    //glEnable( GL_LIGHT0 );
+    glEnable( GL_LIGHTING );
+    //glEnable( GL_COLOR_MATERIAL );
 
     // Setup The Ambient Light
     glLightfv( GL_LIGHT1, GL_AMBIENT, LightAmbient );
@@ -399,67 +400,18 @@ void Engine::setup_opengl()
     // Enable Light One
     glEnable( GL_LIGHT1 );
 
-    glViewport( 0, 0, ( GLint )m_iWidth, ( GLint )m_iHeight );
+    //Enable image transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // change to the projection matrix and set our viewing volume.
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity( );
+    // Set the camera projection matrix
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
 
-    // Set our perspective
-    gluPerspective( 45.0f, (float32)m_iWidth/(float32)m_iHeight, 0.1f, 100.0f );
+    gluPerspective( 45.0f, (GLfloat)m_iWidth/(GLfloat)m_iHeight, 0.1f, 100.0f );
 
-    // Make sure we're chaning the model view and not the projection
-    glMatrixMode( GL_MODELVIEW );
-
-    // Reset The View
-    glLoadIdentity( );
-
-    //glEnable( GL_LIGHTING );*/
-	// Make the viewport
-  glViewport(0, 0, m_iWidth, m_iHeight);
-
-
-
-  // set the clear color to grey
-  glClearColor(0.0, 0.0, 0.0, 0.0);
-  glClearDepth( 1.0f );
-  glEnable( GL_DEPTH_TEST );
-  glDepthFunc( GL_LEQUAL );
-
-  glEnable(GL_TEXTURE_2D);
-
-  glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-
-  //Enable lighting
-  glShadeModel( GL_SMOOTH );
-  //glEnable( GL_LIGHT0 );
-  glEnable( GL_LIGHTING );
-  //glEnable( GL_COLOR_MATERIAL );
-
-  // Setup The Ambient Light
-  glLightfv( GL_LIGHT1, GL_AMBIENT, LightAmbient );
-
-  // Setup The Diffuse Light
-  glLightfv( GL_LIGHT1, GL_DIFFUSE, LightDiffuse );
-
-  // Position The Light
-  glLightfv( GL_LIGHT1, GL_POSITION, LightPosition );
-
-  // Enable Light One
-  glEnable( GL_LIGHT1 );
-
-  //Enable image transparency
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  // Set the camera projection matrix
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-
-  gluPerspective( 45.0f, (GLfloat)m_iWidth/(GLfloat)m_iHeight, 0.1f, 100.0f );
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
 }
 

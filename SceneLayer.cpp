@@ -15,14 +15,14 @@ parallaxLayer::~parallaxLayer()
 {
 }
 
-void parallaxLayer::draw(Rect rcScreen, float32 fScaleFacX, float32 fScaleFacY)
+void parallaxLayer::draw(Rect rcScreen)
 {
     Rect rcImgPos;
     rcImgPos.set(0,0,image->getWidth(),image->getHeight());
-    draw(rcScreen, rcImgPos, fScaleFacX, fScaleFacY);
+    draw(rcScreen, rcImgPos);
 }
 
-void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos, float32 fScaleFacX, float32 fScaleFacY)  //TODO: Why do I even have scalefacx/y here?
+void parallaxLayer::draw(Rect rcScreen, Rect rcImgPos)
 {
     if(image == NULL)
         return;
