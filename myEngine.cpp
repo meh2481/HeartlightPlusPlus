@@ -147,9 +147,8 @@ void myEngine::frame()
 
 
 #define FLY_AMT 0.02
-#define DEG2RAD 3.141593f / 180.0f
-#define RAD2DEG 180.0f / 3.141593f
 #define MOUSE_SPEED 0.5
+#define MOVE_SPEED 0.2
 
 Vec3 CameraPos = {0,0,1};
 Vec3 CameraLook = {0,0,-1};
@@ -164,38 +163,39 @@ void myEngine::draw()
     //Movement = wasd
     if(keyDown(SDLK_w))
     {
-        CameraPos.x += CameraLook.x;
-        CameraPos.y += CameraLook.y;
-        CameraPos.z += CameraLook.z;
+        CameraPos.x += MOVE_SPEED*CameraLook.x;
+        CameraPos.y += MOVE_SPEED*CameraLook.y;
+        CameraPos.z += MOVE_SPEED*CameraLook.z;
     }
     if(keyDown(SDLK_s))
     {
-        CameraPos.x -= CameraLook.x;
-        CameraPos.y -= CameraLook.y;
-        CameraPos.z -= CameraLook.z;
+        CameraPos.x -= MOVE_SPEED*CameraLook.x;
+        CameraPos.y -= MOVE_SPEED*CameraLook.y;
+        CameraPos.z -= MOVE_SPEED*CameraLook.z;
     }
     if(keyDown(SDLK_a))
     {
         Vec3 cross = crossProduct(CameraUp, CameraLook);
-        CameraPos.x += cross.x;
-        CameraPos.y += cross.y;
-        CameraPos.z += cross.z;
+        CameraPos.x += MOVE_SPEED*cross.x;
+        CameraPos.y += MOVE_SPEED*cross.y;
+        CameraPos.z += MOVE_SPEED*cross.z;
     }
     if(keyDown(SDLK_d))
     {
         Vec3 cross = crossProduct(CameraUp, CameraLook);
-        CameraPos.x -= cross.x;
-        CameraPos.y -= cross.y;
-        CameraPos.z -= cross.z;
+        CameraPos.x -= MOVE_SPEED*cross.x;
+        CameraPos.y -= MOVE_SPEED*cross.y;
+        CameraPos.z -= MOVE_SPEED*cross.z;
     }
 
     //Camera rotation = mouse
     Point ptMousePos = getCursorPos();
 
-    //X rotation
+    //local Y rotation (left/right)
     float32 rotAngle = MOUSE_SPEED*(lastMousePos.x - ptMousePos.x);
     CameraLook.x = (CameraLook.x * cos(rotAngle*DEG2RAD)) + (CameraLook.z * sin(rotAngle*DEG2RAD));
     CameraLook.z = (CameraLook.x * -sin(rotAngle*DEG2RAD)) + (CameraLook.z * cos(rotAngle*DEG2RAD));
+    //CameraLook.normalize();
     if(ptMousePos.x < 10)
     {
         ptMousePos.x = SCREEN_WIDTH-10;
@@ -208,12 +208,17 @@ void myEngine::draw()
     }
     lastMousePos.x = ptMousePos.x;
 
-    //Y rotation
-    rotAngle = MOUSE_SPEED*(lastMousePos.y - ptMousePos.y);
+    //local X rotation (up/down)
+    if(CameraLook.z < 0)
+        rotAngle = MOUSE_SPEED*(lastMousePos.y - ptMousePos.y);
+    else
+        rotAngle = MOUSE_SPEED*(ptMousePos.y - lastMousePos.y);
     //CameraUp.y = (CameraUp.y * cos(rotAngle*DEG2RAD)) + (CameraUp.z * -sin(rotAngle*DEG2RAD));
     //CameraUp.z = (CameraUp.y * sin(rotAngle*DEG2RAD)) + (CameraUp.z * cos(rotAngle*DEG2RAD));
+    //CameraLook = rotateAroundVector(CameraLook, crossProduct(CameraUp, CameraLook), rotAngle);
     CameraLook.y = (CameraLook.y * cos(rotAngle*DEG2RAD)) + (CameraLook.z * -sin(rotAngle*DEG2RAD));
     CameraLook.z = (CameraLook.y * sin(rotAngle*DEG2RAD)) + (CameraLook.z * cos(rotAngle*DEG2RAD));
+    //CameraLook.normalize();
     if(CameraLook.y < -0.9)
     {
         CameraLook.y = -0.9;

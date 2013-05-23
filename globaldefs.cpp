@@ -100,7 +100,45 @@ void Vec3::normalize()
     z = z / fMag;
 }
 
-
+//Rotate the point (x,y,z) around the vector (u,v,w)
+Vec3 rotateAroundVector(Vec3 vecToRot, Vec3 rotVec, float32 fAngle)
+{
+    Vec3 result;
+    float32 ux = rotVec.x * vecToRot.x;
+    float32 uy = rotVec.x * vecToRot.y;
+    float32 uz = rotVec.x * vecToRot.z;
+    float32 vx = rotVec.y * vecToRot.x;
+    float32 vy = rotVec.y * vecToRot.y;
+    float32 vz = rotVec.y * vecToRot.z;
+    float32 wx = rotVec.z * vecToRot.x;
+    float32 wy = rotVec.z * vecToRot.y;
+    float32 wz = rotVec.z * vecToRot.z;
+    float32 sa = sin(DEG2RAD*fAngle);
+    float32 ca = cos(DEG2RAD*fAngle);
+    float32 x = vecToRot.x;
+    float32 y = vecToRot.y;
+    float32 z = vecToRot.z;
+    result.x = rotVec.x*(ux+vy+wz)+(x*(rotVec.y*rotVec.y+rotVec.z*rotVec.z)-rotVec.x*(vy+wz))*ca+(-wy+vz)*sa;
+    result.y = rotVec.y*(ux+vy+wz)+(y*(rotVec.x*rotVec.x+rotVec.z*rotVec.z)-rotVec.y*(ux+wz))*ca+(wx-uz)*sa;
+    result.z = rotVec.z*(ux+vy+wz)+(z*(rotVec.x*rotVec.x+rotVec.y*rotVec.y)-rotVec.z*(ux+vy))*ca+(-vx+uy)*sa;
+    return result;
+}
+/*Function RotatePointAroundVector(x#,y#,z#,u#,v#,w#,a#)
+ux#=u*x
+uy#=u*y
+uz#=u*z
+vx#=v*x
+vy#=v*y
+vz#=v*z
+wx#=w*x
+wy#=w*y
+wz#=w*z
+sa#=Sin(a)
+ca#=Cos(a)
+x#=u*(ux+vy+wz)+(x*(v*v+w*w)-u*(vy+wz))*ca+(-wy+vz)*sa
+y#=v*(ux+vy+wz)+(y*(u*u+w*w)-v*(ux+wz))*ca+(wx-uz)*sa
+z#=w*(ux+vy+wz)+(z*(u*u+v*v)-w*(ux+vy))*ca+(-vx+uy)*sa
+End Function*/
 
 
 
