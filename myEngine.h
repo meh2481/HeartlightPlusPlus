@@ -62,6 +62,7 @@ private:
     Rect m_rcViewScreen;    //Screen we can currently see
     list<ballGun*> m_lGuns; //Bombs for throwing at you
     list<ballGun*>::iterator m_iCurGun; //Our current weapon
+    Vec2 lastMousePos;
     //bool m_bDragScreen;
     //bool m_bScaleScreen;
     //Point m_ptLastMousePos;

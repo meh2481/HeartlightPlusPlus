@@ -22,6 +22,7 @@ using namespace tinyxml2;
 
 
 #define Point b2Vec2    //Our point structure
+#define Vec2 Point
 #define pi 3.1415926535 //Close enough for my calculations
 
 
@@ -54,11 +55,15 @@ class Vec3
 public:
     float32 x, y, z;
 
+    //Helpful math functions
+    void normalize();
+
 };
 
 extern ofstream errlog;
 
 //Helper functions
+Vec3 crossProduct(Vec3 vec1, Vec3 vec2);    //Cross product of two vectors
 string stripCommas(string s);       //Strip all the commas from s, leaving spaces in their place
 Rect rectFromString(string s);      //Get a rectangle from comma-separated values in a string
 Point pointFromString(string s);    //Get a point from comma-separated values in a string

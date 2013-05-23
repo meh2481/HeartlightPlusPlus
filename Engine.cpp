@@ -406,7 +406,10 @@ void Engine::setup_opengl()
 
 }
 
-
+void Engine::setCursorPos(int32_t x, int32_t y)
+{
+    SDL_WarpMouse(x,y);
+}
 
 
 

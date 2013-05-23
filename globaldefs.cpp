@@ -79,7 +79,26 @@ float32 randFloat(float32 min, float32 max)
 //    return ret;
 }
 
+//void crossProduct(float v1[], float v2[], float vR[])
+Vec3 crossProduct(Vec3 vec1, Vec3 vec2)
+{
+    Vec3 ret;
+    ret.x = ((vec1.y * vec2.z) - (vec1.z * vec2.y));
+    ret.y = -((vec1.z * vec2.z) - (vec1.z * vec2.x));
+    ret.z = ((vec1.x * vec2.y) - (vec1.y * vec2.x));
+    return ret;
+}
 
+//void normalize(float v1[], float vR[])
+void Vec3::normalize()
+{
+    float32 fMag;
+    fMag = sqrt(x*x + y*y + z*z);
+
+    x = x / fMag;
+    y = y / fMag;
+    z = z / fMag;
+}
 
 
 

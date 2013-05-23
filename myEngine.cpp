@@ -149,23 +149,108 @@ void myEngine::frame()
 #define FLY_AMT 0.02
 #define DEG2RAD 3.141593f / 180.0f
 #define RAD2DEG 180.0f / 3.141593f
+#define MOUSE_SPEED 0.5
+
+Vec3 CameraPos = {0,0,1};
+Vec3 CameraLook = {0,0,-1};
+Vec3 CameraUp = {0,1,0};
+
+
 void myEngine::draw()
 {
-
     glEnable( GL_LIGHTING );    //Turn on lighting for 3D objects
-    static Vec3 pos = {0.0,0.0,-6.0};
+    gluLookAt(CameraPos.x, CameraPos.y, CameraPos.z, CameraPos.x + CameraLook.x, CameraPos.y + CameraLook.y, CameraPos.z + CameraLook.z, CameraUp.x, CameraUp.y, CameraUp.z);
+
+    //Movement = wasd
+    if(keyDown(SDLK_w))
+    {
+        CameraPos.x += CameraLook.x;
+        CameraPos.y += CameraLook.y;
+        CameraPos.z += CameraLook.z;
+    }
+    if(keyDown(SDLK_s))
+    {
+        CameraPos.x -= CameraLook.x;
+        CameraPos.y -= CameraLook.y;
+        CameraPos.z -= CameraLook.z;
+    }
+    if(keyDown(SDLK_a))
+    {
+        Vec3 cross = crossProduct(CameraUp, CameraLook);
+        CameraPos.x += cross.x;
+        CameraPos.y += cross.y;
+        CameraPos.z += cross.z;
+    }
+    if(keyDown(SDLK_d))
+    {
+        Vec3 cross = crossProduct(CameraUp, CameraLook);
+        CameraPos.x -= cross.x;
+        CameraPos.y -= cross.y;
+        CameraPos.z -= cross.z;
+    }
+
+    //Camera rotation = mouse
+    Point ptMousePos = getCursorPos();
+
+    //X rotation
+    float32 rotAngle = MOUSE_SPEED*(lastMousePos.x - ptMousePos.x);
+    CameraLook.x = (CameraLook.x * cos(rotAngle*DEG2RAD)) + (CameraLook.z * sin(rotAngle*DEG2RAD));
+    CameraLook.z = (CameraLook.x * -sin(rotAngle*DEG2RAD)) + (CameraLook.z * cos(rotAngle*DEG2RAD));
+    if(ptMousePos.x < 10)
+    {
+        ptMousePos.x = SCREEN_WIDTH-10;
+        setCursorPos(ptMousePos);
+    }
+    if(ptMousePos.x > SCREEN_WIDTH-10)
+    {
+        ptMousePos.x = 10;
+        setCursorPos(ptMousePos);
+    }
+    lastMousePos.x = ptMousePos.x;
+
+    //Y rotation
+    rotAngle = MOUSE_SPEED*(lastMousePos.y - ptMousePos.y);
+    //CameraUp.y = (CameraUp.y * cos(rotAngle*DEG2RAD)) + (CameraUp.z * -sin(rotAngle*DEG2RAD));
+    //CameraUp.z = (CameraUp.y * sin(rotAngle*DEG2RAD)) + (CameraUp.z * cos(rotAngle*DEG2RAD));
+    CameraLook.y = (CameraLook.y * cos(rotAngle*DEG2RAD)) + (CameraLook.z * -sin(rotAngle*DEG2RAD));
+    CameraLook.z = (CameraLook.y * sin(rotAngle*DEG2RAD)) + (CameraLook.z * cos(rotAngle*DEG2RAD));
+    if(CameraLook.y < -0.9)
+    {
+        CameraLook.y = -0.9;
+        CameraLook.normalize();
+    }
+    if(CameraLook.y > 0.9)
+    {
+        CameraLook.y = 0.9;
+        CameraLook.normalize();
+    }
+    if(ptMousePos.y < 10)
+    {
+        ptMousePos.y = SCREEN_HEIGHT-10;
+        setCursorPos(ptMousePos);
+    }
+    if(ptMousePos.y > SCREEN_HEIGHT-10)
+    {
+        ptMousePos.y = 10;
+        setCursorPos(ptMousePos);
+    }
+    lastMousePos.y = ptMousePos.y;
+
+
+    /*static Vec3 pos = {0.0,0.0,-6.0};
     static Vec3 rot = {0.0,0.0,0.0};
     float rotValx = 0;
     float rotValy = 0;
     Point ptPos = getCursorPos();
-    rotValx = ((float32)SCREEN_HEIGHT/2.0 - ptPos.y)*(45.0/((float32)SCREEN_HEIGHT/2.0));
-    rotValy = ((float32)SCREEN_WIDTH/2.0 - ptPos.x)*(45.0/((float32)SCREEN_WIDTH/2.0));
-    rot.x = rotValx;
-    rot.y = rotValy;
+    rotValx = ((float32)SCREEN_HEIGHT/2.0 - ptPos.y)*(2.0/((float32)SCREEN_HEIGHT/2.0));
+    rotValy = ((float32)SCREEN_WIDTH/2.0 - ptPos.x)*(2.0/((float32)SCREEN_WIDTH/2.0));
+    rot.x += rotValx*cos(rot.y*DEG2RAD);
+    rot.y += rotValy*cos(rot.x*DEG2RAD);
+    rot.z -= rotValx*cos(rot.y*DEG2RAD);
 
-    pos.z = pos.z + FLY_AMT*cos(rot.y*DEG2RAD)*cos(rot.x*DEG2RAD);
-    pos.y = pos.y - FLY_AMT*cos(rot.y*DEG2RAD)*sin(rot.x*DEG2RAD);
-    pos.x = pos.x + FLY_AMT*cos(rot.x*DEG2RAD)*sin(rot.y*DEG2RAD);
+    pos.z = pos.z + FLY_AMT*cos(rotValy*DEG2RAD)*cos(rotValx*DEG2RAD);
+    pos.y = pos.y - FLY_AMT*cos(rotValy*DEG2RAD)*sin(rotValx*DEG2RAD);
+    pos.x = pos.x + FLY_AMT*cos(rotValx*DEG2RAD)*sin(rotValy*DEG2RAD);
 
     if(keyDown(SDLK_s))
         pos.z -= 0.2;
@@ -177,7 +262,7 @@ void myEngine::draw()
     glTranslatef( pos.x, pos.y, pos.z );
     glRotatef(rot.x, 1.0, 0.0, 0.0);
     glRotatef(rot.y, 0.0, 1.0, 0.0);
-    glRotatef(rot.z, 0.0, 0.0, 1.0);
+    glRotatef(rot.z, 0.0, 0.0, 1.0);*/
     /*glLoadIdentity();
     glTranslatef( 0.0, 0.0, -6.09 );
     glRotatef(rotValx, 1.0,0.0,0.0);
@@ -267,10 +352,13 @@ void myEngine::draw()
 
 void myEngine::init()
 {
+    lastMousePos.Set(SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0);
+    setCursorPos(SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0);
+
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
 
-    testObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
+    testObj = new Object3D("res/3D/plane.obj", "res/3D/plane.png");
 
     //Now scale all the images up
 //    scaleImages(SCALE_FAC);
@@ -512,6 +600,8 @@ void myEngine::handleEvent(SDL_Event event)
                         if(!m_iDyingCount)
                             m_iDyingCount = DIE_COUNT;
                     }
+                    else
+                        quit(); //TODO: Menu blah blah blah
                     break;
 
                 case SDLK_F11:      //F11: Decrease fps

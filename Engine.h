@@ -87,6 +87,8 @@ public:
     b2Body* createBody(b2BodyDef* bdef) {return m_physicsWorld->CreateBody(bdef);};
     void setCursor(Cursor* cur);
     Point getCursorPos()    {return m_ptCursorPos;};
+    void setCursorPos(int32_t x, int32_t y);
+    void setCursorPos(Point ptPos)  {setCursorPos(ptPos.x, ptPos.y);};
     void setGravity(Point ptGravity)    {m_physicsWorld->SetGravity(ptGravity);};
     void setGravity(float32 x, float32 y)   {setGravity(Point(x,y));};
 
