@@ -153,21 +153,31 @@ void myEngine::draw()
 {
 
     glEnable( GL_LIGHTING );    //Turn on lighting for 3D objects
-    static Vec3 pos = {0.0,0.0,-20.0};
+    static Vec3 pos = {0.0,0.0,-6.0};
     static Vec3 rot = {0.0,0.0,0.0};
     float rotValx = 0;
     float rotValy = 0;
     Point ptPos = getCursorPos();
     rotValx = ((float32)SCREEN_HEIGHT/2.0 - ptPos.y)*(45.0/((float32)SCREEN_HEIGHT/2.0));
     rotValy = ((float32)SCREEN_WIDTH/2.0 - ptPos.x)*(45.0/((float32)SCREEN_WIDTH/2.0));
-    rotValx *= DEG2RAD;
-    rotValy *= DEG2RAD;
+    rot.x = rotValx;
+    rot.y = rotValy;
 
-    pos.z = pos.z + FLY_AMT*cos(rotValy)*cos(rotValx);
-    pos.y = pos.y - FLY_AMT*cos(rotValy)*sin(rotValx);
-    pos.x = pos.x + FLY_AMT*cos(rotValx)*sin(rotValy);
+    pos.z = pos.z + FLY_AMT*cos(rot.y*DEG2RAD)*cos(rot.x*DEG2RAD);
+    pos.y = pos.y - FLY_AMT*cos(rot.y*DEG2RAD)*sin(rot.x*DEG2RAD);
+    pos.x = pos.x + FLY_AMT*cos(rot.x*DEG2RAD)*sin(rot.y*DEG2RAD);
+
+    if(keyDown(SDLK_s))
+        pos.z -= 0.2;
+    if(keyDown(SDLK_w))
+        pos.z += 0.2;
+    if(keyDown(SDLK_SPACE))
+        pos.x = pos.y = pos.z = 0;
     glLoadIdentity();
     glTranslatef( pos.x, pos.y, pos.z );
+    glRotatef(rot.x, 1.0, 0.0, 0.0);
+    glRotatef(rot.y, 0.0, 1.0, 0.0);
+    glRotatef(rot.z, 0.0, 0.0, 1.0);
     /*glLoadIdentity();
     glTranslatef( 0.0, 0.0, -6.09 );
     glRotatef(rotValx, 1.0,0.0,0.0);
