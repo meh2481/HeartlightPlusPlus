@@ -367,7 +367,7 @@ void Engine::setup_opengl()
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
     //Enable lighting
-    glShadeModel( GL_SMOOTH );
+    glShadeModel(GL_FLAT);
     GLboolean smooth;
     glGetBooleanv(GL_SHADE_MODEL, &smooth);
     if(smooth == true)

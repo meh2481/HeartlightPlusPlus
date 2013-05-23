@@ -164,7 +164,7 @@ void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, 
     rcDrawPos.offset(-rcDrawPos.width()/2.0 + (float32)SCREEN_WIDTH/2.0 - m_ptHotSpot.x, -rcDrawPos.height()/2.0 + (float32)SCREEN_HEIGHT/2.0 - m_ptHotSpot.y);
     glLoadIdentity( );
     glTranslatef( (2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(x)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(y)/(GLfloat)SCREEN_HEIGHT + 1.0, MAGIC_ZOOM_NUMBER);
-    glRotatef(-rotation*180.0/pi,0.0f,0.0f,1.0f);
+    glRotatef(-rotation*180.0/PI,0.0f,0.0f,1.0f);
     draw(rcDrawPos,rcImgPos);
     //Reset rotation
     glLoadIdentity( );

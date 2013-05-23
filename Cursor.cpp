@@ -51,7 +51,7 @@ void Cursor::draw(float32 x, float32 y)
             float32 fAngle2;
             if(vAngle.x == 0)
             {
-                fAngle2 = pi/2.0;
+                fAngle2 = PI/2.0;
                 if(vAngle.y > 0)
                     fAngle2 = -fAngle2;
             }
@@ -59,13 +59,13 @@ void Cursor::draw(float32 x, float32 y)
             {
                 fAngle2 = 0.0;
                 if(vAngle.x > 0)
-                    fAngle2 = pi;
+                    fAngle2 = PI;
             }
             else
             {
                 fAngle2 = atan(vAngle.y/vAngle.x);
                 if(vAngle.x > 0)
-                    fAngle2 += pi;
+                    fAngle2 += PI;
             }
             fAngle += fAngle2;
         }
@@ -165,7 +165,7 @@ bool Cursor::loadFromXML(string sXMLFilename)
     m_breathe.ptBaseScale.Set(1.0,1.0);
     m_breathe.ptFrequency.Set(1.0,1.0);
     m_breathe.ptTimeOffset.Set(0.0,0.0);
-    m_sway.fAmplitude = pi/4.0;
+    m_sway.fAmplitude = PI/4.0;
     m_sway.fBaseRot = 0.0;
     m_sway.fFrequency = 1.0;
 

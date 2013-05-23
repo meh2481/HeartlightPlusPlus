@@ -23,7 +23,7 @@ using namespace tinyxml2;
 
 #define Point b2Vec2    //Our point structure
 #define Vec2 Point
-#define pi 3.1415926535 //Close enough for my calculations
+#define PI 3.1415926535 //Close enough for my calculations
 #define DEG2RAD 3.141593f / 180.0f  //Convert degrees to radians
 #define RAD2DEG 180.0f / 3.141593f  //Convert radians to degrees
 #define DIFF_EPSILON 0.0000001      //HACK: How much different two vectors must be to register as a difference

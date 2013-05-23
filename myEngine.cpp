@@ -148,17 +148,16 @@ void myEngine::frame()
 
 #define FLY_AMT 0.02
 #define MOUSE_ROT_SPEED 0.5
-#define MOVE_SPEED 0.3
+#define MOVE_SPEED 0.5
 
 Vec3 CameraPos = {0,0,0};
-Vec3 CameraLook = {0,0,-1};
+Vec3 CameraLook = {0,0,1};
 Vec3 CameraUp = {0,1,0};
-
 
 void myEngine::draw()
 {
     glEnable(GL_LIGHTING);    //Turn on lighting for 3D objects
-
+    glLoadIdentity();
     //Movement = wasd
     if(keyDown(SDLK_w))
     {
@@ -236,10 +235,13 @@ void myEngine::draw()
     gluLookAt(CameraPos.x, CameraPos.y, CameraPos.z, CameraPos.x + CameraLook.x, CameraPos.y + CameraLook.y, CameraPos.z + CameraLook.z, CameraUp.x, CameraUp.y, CameraUp.z);
 
     testObj->render();
+    glLoadIdentity();
+    glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
 
 
     glDisable( GL_LIGHTING );   //Don't care about lighting for rendering 2D objects
-    /*drawObjects(m_rcViewScreen);
+
+    drawObjects(m_rcViewScreen);
     if(m_iCurGun != m_lGuns.end())
         (*m_iCurGun)->draw(m_rcViewScreen);
 
@@ -313,7 +315,7 @@ void myEngine::draw()
 
 
     //Draw our HUD
-    m_hud->draw(getTime());*/
+    m_hud->draw(getTime());
 
     //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
 }

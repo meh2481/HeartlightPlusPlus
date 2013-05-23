@@ -98,7 +98,7 @@ void ballGun::draw(Rect rcScreen)
         if(dist.x != 0.0 || dist.y != 0.0)
             angle = atan2(dist.y, dist.x);
         float32 fScale = 1.0;
-        if(angle > pi/2.0 || angle < -pi/2.0)
+        if(angle > PI/2.0 || angle < -PI/2.0)
             fScale = -1.0;
         gunImg->setHotSpot(-(gunImg->getWidth()/2.0),0);
         gunImg->drawCentered(pos, angle, 1.0, fScale);  //Flip on Y axis if we're pointing behind us
