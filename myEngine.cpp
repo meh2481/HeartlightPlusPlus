@@ -147,18 +147,17 @@ void myEngine::frame()
 
 
 #define FLY_AMT 0.02
-#define MOUSE_SPEED 0.5
-#define MOVE_SPEED 0.2
+#define MOUSE_ROT_SPEED 0.5
+#define MOVE_SPEED 0.3
 
-Vec3 CameraPos = {0,0,1};
+Vec3 CameraPos = {0,0,0};
 Vec3 CameraLook = {0,0,-1};
 Vec3 CameraUp = {0,1,0};
 
 
 void myEngine::draw()
 {
-    glEnable( GL_LIGHTING );    //Turn on lighting for 3D objects
-    gluLookAt(CameraPos.x, CameraPos.y, CameraPos.z, CameraPos.x + CameraLook.x, CameraPos.y + CameraLook.y, CameraPos.z + CameraLook.z, CameraUp.x, CameraUp.y, CameraUp.z);
+    glEnable(GL_LIGHTING);    //Turn on lighting for 3D objects
 
     //Movement = wasd
     if(keyDown(SDLK_w))
@@ -191,11 +190,10 @@ void myEngine::draw()
     //Camera rotation = mouse
     Point ptMousePos = getCursorPos();
 
-    //local Y rotation (left/right)
-    float32 rotAngle = MOUSE_SPEED*(lastMousePos.x - ptMousePos.x);
+    //Global Y rotation (left/right)
+    float32 rotAngle = MOUSE_ROT_SPEED*(lastMousePos.x - ptMousePos.x);
     CameraLook.x = (CameraLook.x * cos(rotAngle*DEG2RAD)) + (CameraLook.z * sin(rotAngle*DEG2RAD));
     CameraLook.z = (CameraLook.x * -sin(rotAngle*DEG2RAD)) + (CameraLook.z * cos(rotAngle*DEG2RAD));
-    //CameraLook.normalize();
     if(ptMousePos.x < 10)
     {
         ptMousePos.x = SCREEN_WIDTH-10;
@@ -208,27 +206,20 @@ void myEngine::draw()
     }
     lastMousePos.x = ptMousePos.x;
 
-    //local X rotation (up/down)
-    if(CameraLook.z < 0)
-        rotAngle = MOUSE_SPEED*(lastMousePos.y - ptMousePos.y);
-    else
-        rotAngle = MOUSE_SPEED*(ptMousePos.y - lastMousePos.y);
-    //CameraUp.y = (CameraUp.y * cos(rotAngle*DEG2RAD)) + (CameraUp.z * -sin(rotAngle*DEG2RAD));
-    //CameraUp.z = (CameraUp.y * sin(rotAngle*DEG2RAD)) + (CameraUp.z * cos(rotAngle*DEG2RAD));
-    //CameraLook = rotateAroundVector(CameraLook, crossProduct(CameraUp, CameraLook), rotAngle);
-    CameraLook.y = (CameraLook.y * cos(rotAngle*DEG2RAD)) + (CameraLook.z * -sin(rotAngle*DEG2RAD));
-    CameraLook.z = (CameraLook.y * sin(rotAngle*DEG2RAD)) + (CameraLook.z * cos(rotAngle*DEG2RAD));
-    //CameraLook.normalize();
-    if(CameraLook.y < -0.9)
-    {
-        CameraLook.y = -0.9;
-        CameraLook.normalize();
-    }
-    if(CameraLook.y > 0.9)
-    {
-        CameraLook.y = 0.9;
-        CameraLook.normalize();
-    }
+    //Local X rotation (up/down). Quite a bit more complicated because of the camera's local coordinates
+    rotAngle = MOUSE_ROT_SPEED*(ptMousePos.y - lastMousePos.y);
+    Vec3 origXAxis = crossProduct(CameraUp, CameraLook);
+    origXAxis.normalize();
+    Vec3 origCameraLook = CameraLook;
+    CameraLook = rotateAroundVector(CameraLook, origXAxis, rotAngle);
+
+    //Now check and see if our local X axis has flipped (Meaning we've turned around accidentally)
+    Vec3 newXAxis = crossProduct(CameraUp, CameraLook);
+    newXAxis.normalize();
+    if(origXAxis != newXAxis)
+        CameraLook = origCameraLook;    //Axis has flipped, meaning we shouldn't move the camera here
+
+    //Wrap mouse around screen if it's near the edge
     if(ptMousePos.y < 10)
     {
         ptMousePos.y = SCREEN_HEIGHT-10;
@@ -241,37 +232,9 @@ void myEngine::draw()
     }
     lastMousePos.y = ptMousePos.y;
 
+    //Render our 3D object(s)
+    gluLookAt(CameraPos.x, CameraPos.y, CameraPos.z, CameraPos.x + CameraLook.x, CameraPos.y + CameraLook.y, CameraPos.z + CameraLook.z, CameraUp.x, CameraUp.y, CameraUp.z);
 
-    /*static Vec3 pos = {0.0,0.0,-6.0};
-    static Vec3 rot = {0.0,0.0,0.0};
-    float rotValx = 0;
-    float rotValy = 0;
-    Point ptPos = getCursorPos();
-    rotValx = ((float32)SCREEN_HEIGHT/2.0 - ptPos.y)*(2.0/((float32)SCREEN_HEIGHT/2.0));
-    rotValy = ((float32)SCREEN_WIDTH/2.0 - ptPos.x)*(2.0/((float32)SCREEN_WIDTH/2.0));
-    rot.x += rotValx*cos(rot.y*DEG2RAD);
-    rot.y += rotValy*cos(rot.x*DEG2RAD);
-    rot.z -= rotValx*cos(rot.y*DEG2RAD);
-
-    pos.z = pos.z + FLY_AMT*cos(rotValy*DEG2RAD)*cos(rotValx*DEG2RAD);
-    pos.y = pos.y - FLY_AMT*cos(rotValy*DEG2RAD)*sin(rotValx*DEG2RAD);
-    pos.x = pos.x + FLY_AMT*cos(rotValx*DEG2RAD)*sin(rotValy*DEG2RAD);
-
-    if(keyDown(SDLK_s))
-        pos.z -= 0.2;
-    if(keyDown(SDLK_w))
-        pos.z += 0.2;
-    if(keyDown(SDLK_SPACE))
-        pos.x = pos.y = pos.z = 0;
-    glLoadIdentity();
-    glTranslatef( pos.x, pos.y, pos.z );
-    glRotatef(rot.x, 1.0, 0.0, 0.0);
-    glRotatef(rot.y, 0.0, 1.0, 0.0);
-    glRotatef(rot.z, 0.0, 0.0, 1.0);*/
-    /*glLoadIdentity();
-    glTranslatef( 0.0, 0.0, -6.09 );
-    glRotatef(rotValx, 1.0,0.0,0.0);
-    glRotatef(180+rotValy, 0.0,1.0,0.0);*/
     testObj->render();
 
 
@@ -363,7 +326,7 @@ void myEngine::init()
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
 
-    testObj = new Object3D("res/3D/plane.obj", "res/3D/plane.png");
+    testObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
 
     //Now scale all the images up
 //    scaleImages(SCALE_FAC);

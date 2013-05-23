@@ -26,6 +26,7 @@ using namespace tinyxml2;
 #define pi 3.1415926535 //Close enough for my calculations
 #define DEG2RAD 3.141593f / 180.0f  //Convert degrees to radians
 #define RAD2DEG 180.0f / 3.141593f  //Convert radians to degrees
+#define DIFF_EPSILON 0.0000001      //HACK: How much different two vectors must be to register as a difference
 
 
 //TODO Remove
@@ -60,6 +61,8 @@ public:
     //Helpful math functions
     void normalize();
 
+    //Operators for easy use
+    bool operator!=(const Vec3& v);
 };
 
 extern ofstream errlog;
