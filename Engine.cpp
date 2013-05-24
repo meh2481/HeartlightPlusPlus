@@ -58,7 +58,7 @@ bool Engine::_myRenderFunc()
 
     // Game-specific drawing
     draw();
-    if(m_cursor != NULL)    //Draw cursor if it's there
+    if(m_cursor != NULL && m_bShowCursor)    //Draw cursor if it's there and if we should
         m_cursor->draw(m_ptCursorPos);
 
     // End rendering and update the screen
@@ -76,6 +76,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
     m_iWidth = iWidth;
     m_iHeight = iHeight;
     m_iKeystates = NULL;
+    m_bShowCursor = true;
     /*Set up log file, frame function, render function and window title
 	m_hge->System_SetState(HGE_FPS, HGEFPS_VSYNC);
 
@@ -348,6 +349,9 @@ void Engine::setup_sdl()
   	fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
     exit(1);
   }
+
+  //Hide system cursor for SDL, so we can use our own
+  SDL_ShowCursor(0);
 }
 
 //Set up OpenGL
@@ -403,6 +407,7 @@ void Engine::setup_opengl()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glEnable(GL_CULL_FACE);
 
 }
 

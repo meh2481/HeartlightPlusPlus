@@ -147,8 +147,8 @@ void myEngine::frame()
 
 
 #define FLY_AMT 0.02
-#define MOUSE_ROT_SPEED 0.5
-#define MOVE_SPEED 0.5
+#define MOUSE_ROT_SPEED 0.3
+#define MOVE_SPEED 0.1
 
 Vec3 CameraPos = {0,0,0};
 Vec3 CameraLook = {0,0,1};
@@ -159,12 +159,12 @@ void myEngine::draw()
     glEnable(GL_LIGHTING);    //Turn on lighting for 3D objects
     glLoadIdentity();
     //Movement = wasd
-    if(keyDown(SDLK_w))
-    {
+    //if(keyDown(SDLK_w))
+    //{
         CameraPos.x += MOVE_SPEED*CameraLook.x;
         CameraPos.y += MOVE_SPEED*CameraLook.y;
         CameraPos.z += MOVE_SPEED*CameraLook.z;
-    }
+    //}
     if(keyDown(SDLK_s))
     {
         CameraPos.x -= MOVE_SPEED*CameraLook.x;
@@ -174,6 +174,7 @@ void myEngine::draw()
     if(keyDown(SDLK_a))
     {
         Vec3 cross = crossProduct(CameraUp, CameraLook);
+        cross.normalize();
         CameraPos.x += MOVE_SPEED*cross.x;
         CameraPos.y += MOVE_SPEED*cross.y;
         CameraPos.z += MOVE_SPEED*cross.z;
@@ -181,6 +182,7 @@ void myEngine::draw()
     if(keyDown(SDLK_d))
     {
         Vec3 cross = crossProduct(CameraUp, CameraLook);
+        cross.normalize();
         CameraPos.x -= MOVE_SPEED*cross.x;
         CameraPos.y -= MOVE_SPEED*cross.y;
         CameraPos.z -= MOVE_SPEED*cross.z;
@@ -231,6 +233,7 @@ void myEngine::draw()
     }
     lastMousePos.y = ptMousePos.y;
 
+    CameraLook.normalize();
     //Render our 3D object(s)
     gluLookAt(CameraPos.x, CameraPos.y, CameraPos.z, CameraPos.x + CameraLook.x, CameraPos.y + CameraLook.y, CameraPos.z + CameraLook.z, CameraUp.x, CameraUp.y, CameraUp.z);
 
@@ -328,7 +331,7 @@ void myEngine::init()
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
 
-    testObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
+    testObj = new Object3D("res/3D/axistest.obj", "res/3D/none.png");
 
     //Now scale all the images up
 //    scaleImages(SCALE_FAC);

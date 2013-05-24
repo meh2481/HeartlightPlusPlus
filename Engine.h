@@ -23,6 +23,7 @@ private:
     b2World* m_physicsWorld;
     Cursor* m_cursor;
     Point m_ptCursorPos;
+    bool  m_bShowCursor;
     float32 m_fFramerate;
     float32 m_fAccumulatedTime;
     float32 m_fTargetTime;
@@ -89,6 +90,8 @@ public:
     Point getCursorPos()    {return m_ptCursorPos;};
     void setCursorPos(int32_t x, int32_t y);
     void setCursorPos(Point ptPos)  {setCursorPos(ptPos.x, ptPos.y);};
+    void showCursor()   {m_bShowCursor = true;};
+    void hideCursor()   {m_bShowCursor = false;};
     void setGravity(Point ptGravity)    {m_physicsWorld->SetGravity(ptGravity);};
     void setGravity(float32 x, float32 y)   {setGravity(Point(x,y));};
 
