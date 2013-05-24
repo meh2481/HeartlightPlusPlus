@@ -69,6 +69,7 @@ extern ofstream errlog;
 
 //Helper functions
 Vec3 crossProduct(Vec3 vec1, Vec3 vec2);    //Cross product of two vectors
+float32 dotProduct(Vec3 vec1, Vec3 vec2);   //Dot product of two vectors
 Vec3 rotateAroundVector(Vec3 vecToRot, Vec3 rotVec, float32 fAngle);    //Rotate one vector around another
 string stripCommas(string s);       //Strip all the commas from s, leaving spaces in their place
 Rect rectFromString(string s);      //Get a rectangle from comma-separated values in a string

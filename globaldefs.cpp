@@ -89,6 +89,11 @@ Vec3 crossProduct(Vec3 vec1, Vec3 vec2)
     return ret;
 }
 
+float32 dotProduct(Vec3 vec1, Vec3 vec2)
+{
+    return (vec1.x*vec2.x + vec1.y*vec2.y + vec1.z*vec2.z);
+}
+
 //void normalize(float v1[], float vR[])
 void Vec3::normalize()
 {

@@ -68,6 +68,7 @@ private:
     //Point m_ptLastMousePos;
 
     Object3D* testObj;
+    Object3D* shipObj;
 
     //list<physicsObject*> m_lSpheres_new;
 

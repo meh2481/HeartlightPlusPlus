@@ -43,6 +43,7 @@ myEngine::~myEngine()
     delete m_cur;
     delete m_hud;
     delete testObj;
+    delete shipObj;
 }
 
 void myEngine::frame()
@@ -149,10 +150,14 @@ void myEngine::frame()
 #define FLY_AMT 0.02
 #define MOUSE_ROT_SPEED 0.3
 #define MOVE_SPEED 0.1
+#define STAY_LEVEL
+#define SHIP_ROT_SPEED  3.0
+#define SHIP_CATCH_UP_DELAY 0.2
 
 Vec3 CameraPos = {0,0,0};
 Vec3 CameraLook = {0,0,1};
 Vec3 CameraUp = {0,1,0};
+Vec2 ShipRot(0,0);
 
 void myEngine::draw()
 {
@@ -193,8 +198,13 @@ void myEngine::draw()
 
     //Global Y rotation (left/right)
     float32 rotAngle = MOUSE_ROT_SPEED*(lastMousePos.x - ptMousePos.x);
+    ShipRot.y += rotAngle*SHIP_ROT_SPEED;
+#ifdef STAY_LEVEL
     CameraLook.x = (CameraLook.x * cos(rotAngle*DEG2RAD)) + (CameraLook.z * sin(rotAngle*DEG2RAD));
     CameraLook.z = (CameraLook.x * -sin(rotAngle*DEG2RAD)) + (CameraLook.z * cos(rotAngle*DEG2RAD));
+#else
+    CameraLook = rotateAroundVector(CameraLook, CameraUp, rotAngle);
+#endif
     if(ptMousePos.x < 10)
     {
         ptMousePos.x = SCREEN_WIDTH-10;
@@ -209,16 +219,27 @@ void myEngine::draw()
 
     //Local X rotation (up/down). Quite a bit more complicated because of the camera's local coordinates
     rotAngle = MOUSE_ROT_SPEED*(ptMousePos.y - lastMousePos.y);
+    ShipRot.x += SHIP_ROT_SPEED*rotAngle;
     Vec3 origXAxis = crossProduct(CameraUp, CameraLook);
     origXAxis.normalize();
     Vec3 origCameraLook = CameraLook;
     CameraLook = rotateAroundVector(CameraLook, origXAxis, rotAngle);
+#ifndef STAY_LEVEL
+    CameraUp = rotateAroundVector(CameraUp, origXAxis, rotAngle);
+#endif
+
+    //bool bStop = false;
 
     //Now check and see if our local X axis has flipped (Meaning we've turned around accidentally)
+#ifdef STAY_LEVEL
     Vec3 newXAxis = crossProduct(CameraUp, CameraLook);
     newXAxis.normalize();
     if(origXAxis != newXAxis)
+    {
         CameraLook = origCameraLook;    //Axis has flipped, meaning we shouldn't move the camera here
+        //bStop = true;
+    }
+#endif
 
     //Wrap mouse around screen if it's near the edge
     if(ptMousePos.y < 10)
@@ -236,15 +257,65 @@ void myEngine::draw()
     CameraLook.normalize();
     //Render our 3D object(s)
     gluLookAt(CameraPos.x, CameraPos.y, CameraPos.z, CameraPos.x + CameraLook.x, CameraPos.y + CameraLook.y, CameraPos.z + CameraLook.z, CameraUp.x, CameraUp.y, CameraUp.z);
-
     testObj->render();
+
+    //Render ship to follow camera movement, just a tad slower
+    glLoadIdentity();
+    glTranslatef(0.0,0.0,-5.0);
+    //glTranslatef(CameraPos.x + CameraLook.x * 5.0, CameraPos.y + CameraLook.y * 5.0, CameraPos.z + CameraLook.z * 5.0);
+
+    //Don't get too far behind viewport
+    if(ShipRot.x > 45.0)
+        ShipRot.x = 45.0;
+    else if(ShipRot.x < -45.0)
+        ShipRot.x = -45.0;
+    if(ShipRot.y > 45.0)
+        ShipRot.y = 45.0;
+    else if(ShipRot.y < -45.0)
+        ShipRot.y = -45.0;
+
+    //Up/down
+    float linearScale = abs(ShipRot.x)/(45.0)*SHIP_CATCH_UP_DELAY*45.0;
+    if(ShipRot.x > 0)
+    {
+        ShipRot.x -= linearScale;
+        if(ShipRot.x < 0)
+            ShipRot.x = 0;
+    }
+    else if(ShipRot.x < 0)
+    {
+        ShipRot.x += linearScale;
+        if(ShipRot.x > 0)
+            ShipRot.x = 0;
+    }
+    //if(bStop)
+    //    ShipRot.x = 0;
+    glRotatef(-ShipRot.x, 1.0, 0.0, 0.0);
+
+    //left/right
+    linearScale = abs(ShipRot.y)/(45.0)*SHIP_CATCH_UP_DELAY*45.0;
+    if(ShipRot.y > 0)
+    {
+        ShipRot.y -= linearScale;
+        if(ShipRot.y < 0)
+            ShipRot.y = 0;
+    }
+    else if(ShipRot.y < 0)
+    {
+        ShipRot.y += linearScale;
+        if(ShipRot.y > 0)
+            ShipRot.y = 0;
+    }
+    glRotatef(ShipRot.y, 0.0, 1.0, 0.0);
+
+    shipObj->render();
     glLoadIdentity();
     glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
 
 
     glDisable( GL_LIGHTING );   //Don't care about lighting for rendering 2D objects
-
-    drawObjects(m_rcViewScreen);
+    hideCursor();
+    /*drawObjects(m_rcViewScreen);
     if(m_iCurGun != m_lGuns.end())
         (*m_iCurGun)->draw(m_rcViewScreen);
 
@@ -318,7 +389,7 @@ void myEngine::draw()
 
 
     //Draw our HUD
-    m_hud->draw(getTime());
+    m_hud->draw(getTime());*/
 
     //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
 }
@@ -331,7 +402,8 @@ void myEngine::init()
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
 
-    testObj = new Object3D("res/3D/axistest.obj", "res/3D/none.png");
+    testObj = new Object3D("res/3D/axistest.obj", "nothing");
+    shipObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
 
     //Now scale all the images up
 //    scaleImages(SCALE_FAC);
