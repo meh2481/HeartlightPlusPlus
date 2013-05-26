@@ -14,6 +14,7 @@ creation_stuff/*
 ######################
 *.depend
 *.layout
+*.cbTemp
 
 # Logs and databases #
 ######################
@@ -32,3 +33,8 @@ Icon?
 ehthumbs.db
 Thumbs.db
 ~$*
+
+# Blender temp files #
+######################
+*.blend1
+*.blend2
