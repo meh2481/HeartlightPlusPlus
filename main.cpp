@@ -5,7 +5,17 @@
 
 #include "myEngine.h"
 
+#ifndef _UNIX
+#include <windows.h>
+int CALLBACK WinMain(
+  HINSTANCE hInstance,
+  HINSTANCE hPrevInstance,
+  LPSTR lpCmdLine,
+  int nCmdShow
+)
+#else
 int main(int argc, char *argv[])
+#endif
 {
     errlog << "Starting program" << endl;
     myEngine* eng = new myEngine(SCREEN_WIDTH, SCREEN_HEIGHT, "Heartlight++"); //Create our engine
