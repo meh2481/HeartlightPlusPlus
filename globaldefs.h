@@ -30,7 +30,9 @@ using namespace tinyxml2;
 
 
 //TODO Remove
+#ifndef _WIN32
 typedef uint32_t DWORD;
+#endif
 #define ARGB(a,r,g,b)	((DWORD(a)<<24) + (DWORD(r)<<16) + (DWORD(g)<<8) + DWORD(b))
 #define GETA(col)		((col)>>24)
 #define GETR(col)		(((col)>>16) & 0xFF)
