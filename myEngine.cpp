@@ -158,6 +158,7 @@ Vec3 CameraPos = {0,0,0};
 Vec3 CameraLook = {0,0,1};
 Vec3 CameraUp = {0,1,0};
 Vec2 ShipRot(0,0);
+bool bFlipped = false;
 
 void myEngine::draw()
 {
@@ -192,6 +193,21 @@ void myEngine::draw()
         CameraPos.y -= MOVE_SPEED*cross.y;
         CameraPos.z -= MOVE_SPEED*cross.z;
     }
+    if(keyDown(SDLK_SPACE))
+    {
+        CameraPos.setZero();
+        CameraLook.set(0,0,1);
+    }
+    if(keyDown(SDLK_MINUS))
+    {
+        if(!bFlipped)
+        {
+            CameraLook.set(0,0,-CameraLook.z);
+            bFlipped = true;
+        }
+    }
+    else
+        bFlipped = false;
 
     //Camera rotation = mouse
     Point ptMousePos = getCursorPos();
@@ -263,6 +279,67 @@ void myEngine::draw()
     glLoadIdentity();
     glTranslatef(0.0,0.0,-5.0);
     //glTranslatef(CameraPos.x + CameraLook.x * 5.0, CameraPos.y + CameraLook.y * 5.0, CameraPos.z + CameraLook.z * 5.0);
+
+    //Rotate to face along the camera
+    Vec3 from = {0.0,0.0,-1.0};
+    //Vec3 rotVec = crossProduct(CameraLook, CameraUp).normalized();
+    //rotVec = crossProduct(rotVec, CameraLook).normalized();
+    float32 dotprod = dotProduct(from.normalized(), CameraLook.normalized());
+    //errlog << "dot: " << dotprod << endl;
+    float32 theta = RAD2DEG*acos(dotprod);
+    //errlog << "Z rot: " << RAD2DEG*atan2(CameraLook.y, CameraLook.x) << endl;
+    //errlog << "Theta: " << theta << endl;
+
+/*
+    if(CameraLook.z > 0)
+        glRotatef(RAD2DEG*atan2(CameraLook.y, CameraLook.x), 0, 0, 1);
+    else
+    {
+        if(CameraLook.x < 0)
+            glRotatef(RAD2DEG*atan2(CameraLook.y, CameraLook.x), 0, 0, 1);
+        else
+            glRotatef(-RAD2DEG*atan2(-CameraLook.y, CameraLook.x), 0, 0, 1);
+    }
+
+
+    glRotatef(-theta, 0, 1, 0);
+    //if(CameraLook.x < 0)
+    //    glRotatef(180, 0, 0, 1);
+
+    if(CameraLook.z < 0)
+    {
+        if(CameraLook.x < 0)
+            glRotatef(-RAD2DEG*atan2(CameraLook.y, CameraLook.x), 0, 0, 1);
+        else
+            glRotatef(RAD2DEG*atan2(-CameraLook.y, CameraLook.x), 0, 0, 1);
+    }
+    else
+        glRotatef(-RAD2DEG*atan2(-CameraLook.y, CameraLook.x), 0, 0, 1);*/
+        //glRotatef(-RAD2DEG*atan2(CameraLook.y, CameraLook.x), 0, 0, 1);
+    /*GLfloat mat[16];
+    mat[0] = rotVec.x;
+    mat[1] = CameraUp.x;
+    mat[2] = -CameraLook.x;
+    mat[3] = 0;
+    mat[4] = rotVec.y;
+    mat[5] = CameraUp.y;
+    mat[6] = -CameraLook.y;
+    mat[7] = 0;
+    mat[8] = rotVec.z;
+    mat[9] = CameraUp.z;
+    mat[10] = -CameraLook.z;
+    mat[11] = 0;
+    mat[12] = 0;
+    mat[13] = 0;
+    mat[14] = 0;
+    mat[15] = 1;*/
+
+    //glMultMatrixf(mat);
+
+    //glRotatef(-RAD2DEG*atan2(CameraLook.y, CameraLook.z)+180, 1.0, 0.0, 0.0);
+    //glRotatef(-RAD2DEG*atan2(CameraLook.z, CameraLook.x)-90, 0.0, 1.0, 0.0);
+    //glRotatef(RAD2DEG*atan2(CameraLook.y, CameraLook.x), 0.0, 0.0, 1.0);
+    //cout << "rot: " << RAD2DEG*fRotateAngle << endl;
 
     //Don't get too far behind viewport
     if(ShipRot.x > 45.0)

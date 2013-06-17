@@ -61,10 +61,6 @@ int32_t randInt(int32_t min, int32_t max)
         return min;
     int32_t diff = max-min+1;
     return(rand()%diff + min);
-//    HGE* h = hgeCreate(HGE_VERSION);
-//    ret = h->Random_Int(min, max);
-//    h->Release();
-//    return ret;
 }
 
 float32 randFloat(float32 min, float32 max)
@@ -73,28 +69,8 @@ float32 randFloat(float32 min, float32 max)
         return min;
     float32 scale = rand() % 1001;
     return((float32)scale/1000.0*(max-min) + min);
-//    HGE* h = hgeCreate(HGE_VERSION);
-//    ret = h->Random_Float(min, max);
-//    h->Release();
-//    return ret;
 }
 
-//void crossProduct(float v1[], float v2[], float vR[])
-Vec3 crossProduct(Vec3 vec1, Vec3 vec2)
-{
-    Vec3 ret;
-    ret.x = ((vec1.y * vec2.z) - (vec1.z * vec2.y));
-    ret.y = -((vec1.z * vec2.z) - (vec1.z * vec2.x));
-    ret.z = ((vec1.x * vec2.y) - (vec1.y * vec2.x));
-    return ret;
-}
-
-float32 dotProduct(Vec3 vec1, Vec3 vec2)
-{
-    return (vec1.x*vec2.x + vec1.y*vec2.y + vec1.z*vec2.z);
-}
-
-//void normalize(float v1[], float vR[])
 void Vec3::normalize()
 {
     float32 fMag;
@@ -103,6 +79,17 @@ void Vec3::normalize()
     x = x / fMag;
     y = y / fMag;
     z = z / fMag;
+}
+
+Vec3 Vec3::normalized()
+{
+    Vec3 ret;
+    float32 fMag = sqrt(x*x + y*y + z*z);
+
+    ret.x = x / fMag;
+    ret.y = y / fMag;
+    ret.z = z / fMag;
+    return ret;
 }
 
 //Test for inequality between vectors
@@ -115,6 +102,20 @@ bool Vec3::operator!=(const Vec3& v)
     if(xdiff > DIFF_EPSILON || ydiff > DIFF_EPSILON || zdiff > DIFF_EPSILON)    //I call hacks. But it works.
         return true;
     return false;
+}
+
+Vec3 crossProduct(Vec3 vec1, Vec3 vec2)
+{
+    Vec3 ret;
+    ret.x = ((vec1.y * vec2.z) - (vec1.z * vec2.y));
+    ret.y = -((vec1.z * vec2.z) - (vec1.z * vec2.x));
+    ret.z = ((vec1.x * vec2.y) - (vec1.y * vec2.x));
+    return ret;
+}
+
+float32 dotProduct(Vec3 vec1, Vec3 vec2)
+{
+    return (vec1.x*vec2.x + vec1.y*vec2.y + vec1.z*vec2.z);
 }
 
 //Rotate the vector vecToRot around the vector rotVec

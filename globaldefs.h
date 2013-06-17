@@ -58,8 +58,12 @@ class Vec3
 public:
     float32 x, y, z;
 
+    void set(float32 fx, float32 fy, float32 fz)    {x=fx;y=fy;z=fz;};
+    void setZero()  {set(0,0,0);};
+
     //Helpful math functions
     void normalize();
+    Vec3 normalized();  //Doesn't modify original vector, returns normalized version
 
     //Operators for easy use
     bool operator!=(const Vec3& v);
