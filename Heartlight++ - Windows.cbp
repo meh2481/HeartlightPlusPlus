@@ -3,55 +3,46 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="Heartlight++" />
+		<Option makefile="Makefile.win" />
+		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
+		<MakeCommands>
+			<Build command="make all" />
+			<CompileFile command="make all" />
+			<Clean command="make clean" />
+			<DistClean command="$make -f $makefile distclean$target" />
+			<AskRebuildNeeded command="$make -q -f $makefile" />
+			<SilentBuild command="$make -s -f $makefile" />
+		</MakeCommands>
 		<Build>
-			<Target title="Debug">
+			<Target title="all">
 				<Option output="Heartlight++" prefix_auto="1" extension_auto="1" />
-				<Option object_output=".obj\Debug\" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O2" />
-					<Add option="-Wredundant-decls" />
-					<Add option="-g" />
-				</Compiler>
-				<Linker>
-					<Add option="`sdl-config --libs`" />
-					<Add option="-lSDLmain -lSDL -lhge -lhgehelp -lttvfs -ltinyxml2" />
-					<Add option="-lBox2D" />
-				</Linker>
-			</Target>
-			<Target title="Release">
-				<Option output="Heartlight++-release" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".obj\Release\" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="`sdl-config --libs`" />
-					<Add option="-lSDLmain -lSDL -lhge -lhgehelp -lttvfs -ltinyxml2" />
-					<Add option="-lBox2D" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-O2" />
-			<Add option="-Wredundant-decls" />
 			<Add option="-Wall" />
 			<Add option="`sdl-config --cflags` -lSDL -lSDLmain" />
-			<Add directory=".\include\Win32\" />
-			<Add directory=".\include\" />
 		</Compiler>
 		<Linker>
 			<Add option="`sdl-config --libs`" />
-			<Add option="-lSDLmain -lSDL -lhge -lhgehelp -lttvfs -ltinyxml2" />
-			<Add option="-lBox2D" />
-			<Add directory=".\lib\Win32\" />
+			<Add option="-lSDLmain -lSDL -lvorbis -lvorbisfile" />
+			<Add option="-lopenal -lhge -lhge_helpers -ljpeg -lpng" />
+			<Add option="-logg -ltinyxml2 -lttvfs -lBox2D" />
+			<Add directory=".\lib\Linux_x64\" />
 		</Linker>
+		<Unit filename="3DObject.cpp" />
+		<Unit filename="3DObject.h" />
 		<Unit filename="Cursor.cpp" />
 		<Unit filename="Cursor.h" />
 		<Unit filename="Engine.cpp" />

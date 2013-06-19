@@ -392,7 +392,7 @@ void myEngine::draw()
 
     glDisable( GL_LIGHTING );   //Don't care about lighting for rendering 2D objects
     hideCursor();
-    /*drawObjects(m_rcViewScreen);
+    drawObjects(m_rcViewScreen);
     if(m_iCurGun != m_lGuns.end())
         (*m_iCurGun)->draw(m_rcViewScreen);
 
@@ -466,7 +466,7 @@ void myEngine::draw()
 
 
     //Draw our HUD
-    m_hud->draw(getTime());*/
+    m_hud->draw(getTime());
 
     //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
 }
@@ -479,8 +479,8 @@ void myEngine::init()
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
 
-    testObj = new Object3D("res/3D/test1.obj", "nothing");
-    shipObj = new Object3D("res/3D/test1.obj", "res/3D/testobj1.png");
+    testObj = new Object3D("res/3D/axistest.obj", "nothing");
+    shipObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
 
     //Now scale all the images up
 //    scaleImages(SCALE_FAC);
