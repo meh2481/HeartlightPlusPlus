@@ -121,7 +121,55 @@ void physicsObject::draw(Rect rcScreen)
     layer->draw(rcScreen, rcImgPos);
 }
 
+//-----------------------------------------------------------------------------------------------------------------------
+// obj class
 
+obj::obj()
+{
+
+}
+
+obj::~obj()
+{
+    for(list<physSegment*>::iterator i = segments.begin(); i != segments.end(); i++)
+        delete (*i);
+}
+
+void obj::draw()
+{
+    for(list<physSegment*>::iterator i = segments.begin(); i != segments.end(); i++)
+    {
+        Point ptPos(0,0);
+        float32 rot = 0.0;
+        if((*i)->body != NULL)
+        {
+            ptPos = (*i)->body->GetPosition();
+            rot = (*i)->body->GetAngle();
+        }
+        if((*i)->image != NULL)
+            (*i)->image->drawCentered(ptPos.x + (*i)->pos.x*cos(rot) - (*i)->pos.y*sin(rot),
+                                      ptPos.y + (*i)->pos.y*cos(rot) + (*i)->pos.x*sin(rot),
+                                      (*i)->rot + rot, (*i)->scale.x, (*i)->scale.y);
+    }
+}
+
+void obj::addSegment(physSegment* seg)
+{
+    segments.push_back(seg);
+}
+
+
+//----------------------------------------------------------------------------------------------------
+// physSegment class
+physSegment::physSegment()
+{
+    body = NULL;
+    image = NULL;
+    depth = 0.0;
+    scale.SetZero();
+    pos.SetZero();
+    rot = 0.0;
+}
 
 
 

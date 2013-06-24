@@ -114,6 +114,34 @@ public:
 #define SCALE_UP_FACTOR 16.0
 #define SCALE_DOWN_FACTOR 0.0625
 
+class physSegment
+{
+public:
+    b2Body* body;
+    Image*  image;
+    float32 depth;
+    Point   scale;
+    Point   pos;
+    float32 rot;
+
+    physSegment();
+
+};
+
+class obj
+{
+protected:
+    list<physSegment*> segments;
+
+public:
+    obj();
+    ~obj();
+
+    void draw();
+    void addSegment(physSegment* seg);
+
+};
+
 class physicsObject : public Object
 {
 protected:

@@ -1,5 +1,5 @@
 objects := 3DObject.o Cursor.o Image.o Engine.o Object.o SceneLayer.o Text.o ballGun.o globaldefs.o hud.o main.o myEngine.o myEngine_new.o myEngine_retro.o
-libs := -L./lib/Win32 -lopengl32 -lglu32 -lSDLmain -lSDL -lSDL_image -ltinyxml2 -lttvfs -lBox2D
+libs := -L./lib/Win32 -lopengl32 -lglu32 -lSDLmain -lSDL -lSDL_image -ltinyxml2 -lttvfs -lBox2D -lwinmm -ldxguid -lgdi32
 
 all: Heartlight++
 

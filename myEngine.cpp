@@ -479,7 +479,7 @@ void myEngine::init()
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
 
-    testObj = new Object3D("res/3D/axistest.obj", "nothing");
+    testObj = new Object3D("cs/trixie2.obj", "cs/trixie.png");
     shipObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
 
     //Now scale all the images up
