@@ -4,8 +4,6 @@
 */
 
 #include "myEngine.h"
-#include <GL/gl.h>
-#include <GL/glu.h>
 
 //For our engine functions to be able to call our Engine class functions - Note that this means there can be no more than one Engine at a time
 //TODO: Think of workaround? How does everything communicate now?

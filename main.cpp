@@ -5,7 +5,7 @@
 
 #include "myEngine.h"
 
-#ifndef _UNIX
+#if !(defined(_UNIX) || defined(__APPLE__)) 
 #include <windows.h>
 int CALLBACK WinMain(
   HINSTANCE hInstance,
