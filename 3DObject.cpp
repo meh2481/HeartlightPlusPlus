@@ -157,6 +157,7 @@ void Object3D::fromOBJFile(string sFilename)
 
 void Object3D::setTexture(string sFilename)
 {
+#ifndef __APPLE__
     SDL_Surface *surface;
     int mode;
 
@@ -202,6 +203,7 @@ void Object3D::setTexture(string sFilename)
 
     // clean up
     SDL_FreeSurface(surface);
+#endif
 }
 
 void Object3D::render()

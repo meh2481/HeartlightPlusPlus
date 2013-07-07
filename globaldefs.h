@@ -16,13 +16,14 @@ using namespace tinyxml2;
 #include "include/VFSTools.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
-#include <SDL/SDL_image.h>
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
+#include "FreeImage.h"
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <SDL/SDL_image.h>
 #endif
 
 

@@ -1,15 +1,23 @@
-objects := 3DObject.o Cursor.o Image.o Engine.o Object.o SceneLayer.o Text.o ballGun.o globaldefs.o hud.o main.o myEngine.o myEngine_new.o myEngine_retro.o
-libs := -lGL -lGLU -lSDLmain -lSDL -lSDL_image -lvorbis -lvorbisfile -lopenal -logg -ltinyxml2 -lttvfs -lBox2D
+# Entry point for Heartlight++ makefiles
+# Based loosely off FreeImage makefiles - thanks, doods
+# Default to 'make -f Makefile.unix' for Linux and for unknown OS. 
+#
+OS = $(shell uname)
+MAKEFILE = unix
 
-all: Heartlight++
+ifeq ($(OS), Darwin)
+    MAKEFILE = osx
+endif
+ifeq ($(OS), windows32)
+    MAKEFILE = win
+endif
 
-Heartlight++: $(objects)
-	g++ -o $@ $^ $(libs)
+default:
+	$(MAKE) -f Makefile.$(MAKEFILE) 
 
-%.o: %.cpp
-	g++ -c -MMD -o $@ $<
-
--include $(objects:.o=.d)
+all:
+	$(MAKE) -f Makefile.$(MAKEFILE) all 
 
 clean:
-	rm -f *.o *.d Heartlight++
+	$(MAKE) -f Makefile.$(MAKEFILE) clean 
+

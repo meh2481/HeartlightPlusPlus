@@ -338,7 +338,11 @@ void Engine::setup_sdl()
 
   //Set icon for window
   SDL_Surface *image;
+#ifdef __APPLE__
+  image = SDL_LoadBMP("res/icon.bmp");
+#else
   image = IMG_Load("res/icon.png");
+#endif
   SDL_WM_SetCaption("Heartlight++", NULL);
   SDL_WM_SetIcon(image, NULL);
   SDL_FreeSurface(image);
@@ -380,7 +384,7 @@ void Engine::setup_opengl()
         errlog << "False smoothing" << endl;
 
     //glEnable( GL_LIGHT0 );
-    glEnable( GL_LIGHTING );
+    //glEnable( GL_LIGHTING );
     //glEnable( GL_COLOR_MATERIAL );
 
     // Setup The Ambient Light
@@ -407,7 +411,7 @@ void Engine::setup_opengl()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
 
 }
 

@@ -5,7 +5,7 @@
 
 #include "myEngine.h"
 
-#if !(defined(_UNIX) || defined(__APPLE__)) 
+#ifdef _WIN32
 #include <windows.h>
 int CALLBACK WinMain(
   HINSTANCE hInstance,
@@ -18,11 +18,19 @@ int main(int argc, char *argv[])
 #endif
 {
     errlog << "Starting program" << endl;
+#ifdef __APPLE__
+    errlog << "Starting FreeImage" << endl;
+    FreeImage_Initialise();
+#endif
     myEngine* eng = new myEngine(SCREEN_WIDTH, SCREEN_HEIGHT, "Heartlight++"); //Create our engine
 
     eng->setFramerate(GAME_FRAMERATE);
     eng->start(); //Get the engine rolling
     delete eng;
+#ifdef __APPLE__
+    errlog << "Closing FreeImage" << endl;
+    FreeImage_DeInitialise();
+#endif
     errlog << "Ending program happily" << endl;
-	return 0;
+    return 0;
 }
