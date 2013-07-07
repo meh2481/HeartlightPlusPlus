@@ -89,5 +89,9 @@ Point pointFromString(string s);    //Get a point from comma-separated values in
 DWORD colorFromString(string s);    //Get a color from comma-separated values in a string
 int32_t randInt(int32_t min, int32_t max);  //Get a random integer
 float32 randFloat(float32 min, float32 max);        //Get a random float32
+#ifdef __APPLE__
+//returns the closest power of two value
+int power_of_two(int input);
+#endif
 
 #endif

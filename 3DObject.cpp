@@ -173,13 +173,9 @@ void Object3D::setTexture(string sFilename)
 
     // work out what format to tell glTexImage2D to use...
     if(surface->format->BytesPerPixel == 3) // RGB 24bit
-    {
         mode = GL_RGB;
-    }
     else if(surface->format->BytesPerPixel == 4)  // RGBA 32bit
-    {
         mode = GL_RGBA;
-    }
     else //Unsupported format
     {
         SDL_FreeSurface(surface);
@@ -203,6 +199,76 @@ void Object3D::setTexture(string sFilename)
 
     // clean up
     SDL_FreeSurface(surface);
+#else
+  //errlog << "Load " << sFilename << endl;
+  //image format
+	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+	//pointer to the image, once loaded
+	FIBITMAP *dib(0);
+	//pointer to the image data
+	BYTE* bits(0);
+	//image width and height
+	unsigned int width(0), height(0);
+	
+	//check the file signature and deduce its format
+	fif = FreeImage_GetFileType(sFilename.c_str(), 0);
+	//if still unknown, try to guess the file format from the file extension
+	if(fif == FIF_UNKNOWN) 
+		fif = FreeImage_GetFIFFromFilename(sFilename.c_str());
+	//if still unkown, return failure
+	if(fif == FIF_UNKNOWN)
+	{
+    errlog << "Unknown image type for file " << sFilename << endl;
+    return;
+  }
+  
+	//check that the plugin has reading capabilities and load the file
+	if(FreeImage_FIFSupportsReading(fif))
+		dib = FreeImage_Load(fif, sFilename.c_str());
+	//if the image failed to load, return failure
+	if(!dib)
+	{
+    errlog << "Error loading image " << sFilename << endl;
+    return;
+  }  
+	//retrieve the image data
+  
+	//get the image width and height
+	width = FreeImage_GetWidth(dib);
+	height = FreeImage_GetHeight(dib);
+  
+  int w = power_of_two(width);
+	int h = power_of_two(height);
+  int mode;
+  if(FreeImage_GetBPP(dib) == 24) // RGB 24bit
+    mode = GL_RGB;
+  else if(FreeImage_GetBPP(dib) == 32)  // RGBA 32bit
+    mode = GL_RGBA;	
+  FIBITMAP *bitmap2 = FreeImage_Allocate(w, h, FreeImage_GetBPP(dib));
+	FreeImage_Paste(bitmap2, dib, 0, 0, 255);
+  FreeImage_FlipVertical(bitmap2);  //Apparently, FreeImage handles this strangely. Flipping beforehand doesn't work right.
+  FreeImage_Unload(dib);
+  
+	bits = FreeImage_GetBits(bitmap2);	//if this somehow one of these failed (they shouldn't), return failure
+	if((bits == 0) || (width == 0) || (height == 0))
+	{
+    errlog << "Something went terribly horribly wrong with getting image bits; just sit and wait for the singularity" << endl;
+    return;
+  }
+  
+	//generate an OpenGL texture ID for this texture
+	glGenTextures(1, &m_tex);
+	//bind to the new texture ID
+	glBindTexture(GL_TEXTURE_2D, m_tex);
+	//store the texture data for OpenGL use
+	glTexImage2D(GL_TEXTURE_2D, 0, mode, w, h, 0, mode, GL_UNSIGNED_BYTE, bits);
+  
+  // these affect how this texture is drawn later on...
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+  
+	//Free FreeImage's copy of the data
+	FreeImage_Unload(bitmap2);
 #endif
 }
 

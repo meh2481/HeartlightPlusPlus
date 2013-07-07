@@ -36,6 +36,9 @@ private:
     string     m_sFilename;
     Color m_col;
     uint32_t m_iWidth, m_iHeight;
+#ifdef __APPLE__
+    uint32_t m_iRealWidth, m_iRealHeight;
+#endif
     uint32_t m_iID;  //TODO: Remove/isolate/optimize
 //    uint16_t m_iScaleFac;
 

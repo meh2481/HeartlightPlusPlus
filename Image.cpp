@@ -6,21 +6,8 @@
 
 #include "Image.h"
 
-#ifdef __APPLE__
-//returns the closest power of two value
-int power_of_two(int input)
-{
-	int value = 1;
-	while ( value < input ) {
-		value <<= 1;
-	}
-	return value;
-}
-#endif
-
 Image::Image(string sFilename)
 {
-//    m_iScaleFac = 1;
   m_ptHotSpot.SetZero();
   m_sFilename = sFilename;
 #ifdef __APPLE__  //For some reason, SDL_Image isn't working for me in PPC Mac. Hermph. Using FreeImage for now instead.
@@ -56,47 +43,36 @@ Image::Image(string sFilename)
     return;
   }  
 	//retrieve the image data
-  FreeImage_FlipVertical(dib);
   
-  int w = power_of_two(FreeImage_GetWidth(dib));
-	int h = power_of_two(FreeImage_GetHeight(dib));
-	FIBITMAP *bitmap2 = FreeImage_Allocate(w, h, 32);
-	FreeImage_Paste(bitmap2, dib, 0, 0, 255);
-  
-	bits = FreeImage_GetBits(bitmap2);
 	//get the image width and height
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
-	//if this somehow one of these failed (they shouldn't), return failure
+  
+  int w = power_of_two(width);
+	int h = power_of_two(height);
+  int mode;
+  if(FreeImage_GetBPP(dib) == 24) // RGB 24bit
+    mode = GL_RGB;
+  else if(FreeImage_GetBPP(dib) == 32)  // RGBA 32bit
+    mode = GL_RGBA;	
+  FIBITMAP *bitmap2 = FreeImage_Allocate(w, h, FreeImage_GetBPP(dib));
+	FreeImage_Paste(bitmap2, dib, 0, 0, 255);
+  FreeImage_FlipVertical(bitmap2);  //Apparently, FreeImage handles this strangely. Flipping beforehand doesn't work right.
+  FreeImage_Unload(dib);
+  
+	bits = FreeImage_GetBits(bitmap2);	//if this somehow one of these failed (they shouldn't), return failure
 	if((bits == 0) || (width == 0) || (height == 0))
 	{
     errlog << "Something went terribly horribly wrong with getting image bits; just sit and wait for the singularity" << endl;
     return;
   }
   
-  int mode;
-  if(FreeImage_GetBPP(dib) == 24) // RGB 24bit
-    mode = GL_RGB;
-  else if(FreeImage_GetBPP(dib) == 32)  // RGBA 32bit
-    mode = GL_RGBA;
-  FreeImage_Unload(dib);
-  
-  //errlog << "Width: " << width << ", Height: " << height << endl;
-  //for(int i = 0; i < FreeImage_GetBPP(dib) * width * height / 8; i++)
-	//{
-  //  errlog << (unsigned int)(bits[i]) << " ";
-	//}
-  //errlog << endl;
-	
-	//if this texture ID is in use, unload the current texture
-	//if(m_texID.find(texID) != m_texID.end())
-	//	glDeleteTextures(1, &(m_texID[texID]));
-  
 	//generate an OpenGL texture ID for this texture
   m_iWidth = width;
   m_iHeight = height;
+  m_iRealWidth = w;
+  m_iRealHeight = h;
 	glGenTextures(1, &m_hTex);
-  //errlog << "Generated texture: " << m_hTex << endl;
 	//bind to the new texture ID
 	glBindTexture(GL_TEXTURE_2D, m_hTex);
 	//store the texture data for OpenGL use
@@ -181,26 +157,33 @@ void Image::draw(Rect rcScreenPos, Rect rcImgPos)
 
     // tell opengl to use the generated texture
     glBindTexture(GL_TEXTURE_2D, m_hTex);
-    glEnable(GL_TEXTURE_2D);
+  
+    int32_t w, h;
+#ifdef __APPLE__
+    w = m_iRealWidth;
+    h = m_iRealHeight;
+#else
+    w = m_iWidth;
+    h = m_iHeight;
+#endif
 
     // make a rectangle
     glBegin(GL_QUADS);
     glColor4f(m_col.r,m_col.g,m_col.b,m_col.a);	//Colorize according to how we've colorized this image
     // top left
-    glTexCoord2f((rcImgPos.left / (float32)m_iWidth), (rcImgPos.top / (float32)m_iHeight));
+    glTexCoord2f((rcImgPos.left / (float32)w), (rcImgPos.top / (float32)h));
     glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)rcScreenPos.left/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)SCREEN_HEIGHT + 1.0, 0.0);
     // bottom left
-    glTexCoord2f((rcImgPos.left / (float32)m_iWidth), (rcImgPos.bottom / (float32)m_iHeight));
+    glTexCoord2f((rcImgPos.left / (float32)w), (rcImgPos.bottom / (float32)h));
     glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)rcScreenPos.left/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
     // bottom right
-    glTexCoord2f((rcImgPos.right / (float32)m_iWidth), (rcImgPos.bottom / (float32)m_iHeight));
+    glTexCoord2f((rcImgPos.right / (float32)w), (rcImgPos.bottom / (float32)h));
     glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(rcScreenPos.right)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
     // top right
-    glTexCoord2f((rcImgPos.right / (float32)m_iWidth), (rcImgPos.top / (float32)m_iHeight));
+    glTexCoord2f((rcImgPos.right / (float32)w), (rcImgPos.top / (float32)h));
     glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(rcScreenPos.right)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
 
     glEnd();
-//    glDisable(GL_TEXTURE_2D);
 }
 
 void Image::draw(float32 x, float32 y)

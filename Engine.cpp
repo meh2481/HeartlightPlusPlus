@@ -418,6 +418,9 @@ void Engine::setup_opengl()
 void Engine::setCursorPos(int32_t x, int32_t y)
 {
     SDL_WarpMouse(x,y);
+//#ifdef __APPLE__
+//    hideCursor(); //TODO: Warping the mouse shows it again in Mac, and this doesn't work. Hermph.
+//#endif
 }
 
 

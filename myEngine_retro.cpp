@@ -65,7 +65,7 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
         {
             //See if tunnel is obstructed
             bool bObstructed = true;
-            for(uint16_t coltest = col+1; coltest < LEVEL_WIDTH; coltest++)
+            for(int16_t coltest = col+1; coltest < LEVEL_WIDTH; coltest++)
             {
                 if(coltest == LEVEL_WIDTH)
                     break;
@@ -107,7 +107,7 @@ bool myEngine::_moveToGridSquare_retro(int row, int col)
         {
             //See if tunnel is obstructed
             bool bObstructed = true;
-            for(uint16_t coltest = col-1; coltest >= 0; coltest--)
+            for(int16_t coltest = col-1; coltest >= 0; coltest--)
             {
                 retroObject* tunnelTest = m_oldGrid[coltest][row];
                 if(tunnelTest == NULL || tunnelTest->getNameChar() == '.')
@@ -772,7 +772,7 @@ void myEngine::updateGrid_retro() //Workhorse for updating the objects in the ga
     }
 }
 
-void myEngine::explode_retro(uint16_t row, uint16_t col, bool bStartFrame1)
+void myEngine::explode_retro(int16_t row, int16_t col, bool bStartFrame1)
 {
     if(row < 0 ||
        row > LEVEL_HEIGHT-1 ||

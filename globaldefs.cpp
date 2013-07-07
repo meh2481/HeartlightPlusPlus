@@ -141,6 +141,16 @@ Vec3 rotateAroundVector(Vec3 vecToRot, Vec3 rotVec, float32 fAngle)
 }
 
 
-
+#ifdef __APPLE__
+//returns the closest power of two value
+int power_of_two(int input)
+{
+	int value = 1;
+	while ( value < input ) {
+		value <<= 1;
+	}
+	return value;
+}
+#endif
 
 
