@@ -5,11 +5,21 @@
 */
 
 #include "Image.h"
+#include <set>
+
+int screenDrawWidth;
+int screenDrawHeight;
 
 Image::Image(string sFilename)
 {
   m_ptHotSpot.SetZero();
   m_sFilename = sFilename;
+  _load(sFilename);
+  _addImgReload(this);
+}
+
+void Image::_load(string sFilename)
+{
 #ifdef __APPLE__  //For some reason, SDL_Image isn't working for me in PPC Mac. Hermph. Using FreeImage for now instead.
   errlog << "Load " << sFilename << endl;
   //image format
@@ -80,13 +90,13 @@ Image::Image(string sFilename)
   
 	//Free FreeImage's copy of the data
 	FreeImage_Unload(bitmap2);
-    
+  
 #else
   SDL_Surface *surface;
   int mode;
   
   surface = IMG_Load(sFilename.c_str());	//Use SDL_image to load various formats
-
+  
   // could not load filename
   if(!surface)
   {
@@ -94,7 +104,7 @@ Image::Image(string sFilename)
     m_hTex = 0;
     return;
   }
-
+  
   // work out what format to tell glTexImage2D to use...
   if(surface->format->BytesPerPixel == 3) // RGB 24bit
   {
@@ -112,18 +122,18 @@ Image::Image(string sFilename)
   }
 	
   unsigned char* data = (unsigned char*)surface->pixels;
-
+  
   m_iWidth=surface->w;
   m_iHeight=surface->h;
   // create one texture name
   glGenTextures(1, &m_hTex);
-
+  
   // tell opengl to use the generated texture name
   glBindTexture(GL_TEXTURE_2D, m_hTex);
-
+  
   // this reads from the sdl surface and puts it into an opengl texture
   glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, data);
-
+  
   // clean up
   SDL_FreeSurface(surface);
 #endif //defined __APPLE__
@@ -134,6 +144,7 @@ Image::~Image()
     //image cleanup
     errlog << "Freeing image \"" << m_sFilename << "\"" << endl;
     glDeleteTextures(1, &m_hTex);
+    _removeImgReload(this);
 }
 
 void Image::draw(Rect rcScreenPos)
@@ -169,16 +180,16 @@ void Image::draw(Rect rcScreenPos, Rect rcImgPos)
     glColor4f(m_col.r,m_col.g,m_col.b,m_col.a);	//Colorize according to how we've colorized this image
     // top left
     glTexCoord2f((rcImgPos.left / (float32)w), (rcImgPos.top / (float32)h));
-    glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)rcScreenPos.left/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)SCREEN_HEIGHT + 1.0, 0.0);
+    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)rcScreenPos.left/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)screenDrawHeight + 1.0, 0.0);
     // bottom left
     glTexCoord2f((rcImgPos.left / (float32)w), (rcImgPos.bottom / (float32)h));
-    glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)rcScreenPos.left/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
+    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)rcScreenPos.left/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)screenDrawHeight+1.0, 0.0);
     // bottom right
     glTexCoord2f((rcImgPos.right / (float32)w), (rcImgPos.bottom / (float32)h));
-    glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(rcScreenPos.right)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
+    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(rcScreenPos.right)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)screenDrawHeight+1.0, 0.0);
     // top right
     glTexCoord2f((rcImgPos.right / (float32)w), (rcImgPos.top / (float32)h));
-    glVertex3f((2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(rcScreenPos.right)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)SCREEN_HEIGHT+1.0, 0.0);
+    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(rcScreenPos.right)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)screenDrawHeight+1.0, 0.0);
 
     glEnd();
 }
@@ -221,9 +232,9 @@ void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, 
     Rect rcDrawPos;
     rcDrawPos.set(0, 0, rcImgPos.width(), rcImgPos.height());
     rcDrawPos.scale(stretchFactorx,stretchFactory);
-    rcDrawPos.offset(-rcDrawPos.width()/2.0 + (float32)SCREEN_WIDTH/2.0 - m_ptHotSpot.x, -rcDrawPos.height()/2.0 + (float32)SCREEN_HEIGHT/2.0 - m_ptHotSpot.y);
+    rcDrawPos.offset(-rcDrawPos.width()/2.0 + (float32)screenDrawWidth/2.0 - m_ptHotSpot.x, -rcDrawPos.height()/2.0 + (float32)screenDrawHeight/2.0 - m_ptHotSpot.y);
     glLoadIdentity( );
-    glTranslatef( (2.0*(float32)SCREEN_WIDTH/(float32)SCREEN_HEIGHT)*((GLfloat)(x)/(GLfloat)SCREEN_WIDTH-0.5), -2.0*(GLfloat)(y)/(GLfloat)SCREEN_HEIGHT + 1.0, MAGIC_ZOOM_NUMBER);
+    glTranslatef( (2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(x)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(y)/(GLfloat)screenDrawHeight + 1.0, MAGIC_ZOOM_NUMBER);
     glRotatef(-rotation*180.0/PI,0.0f,0.0f,1.0f);
     draw(rcDrawPos,rcImgPos);
     //Reset rotation
@@ -242,6 +253,11 @@ void Image::setColor(DWORD dwCol)
     m_col.from256((dwCol & 0xFF0000) >> 16, (dwCol & 0xFF00) >> 8, dwCol & 0xFF, (dwCol & 0xFF000000) >> 24);
 }
 
+void Image::_reload()
+{
+  _load(m_sFilename);
+}
+
 Color::Color()
 {
     r = g = b = a = 1.0;
@@ -255,9 +271,25 @@ void Color::from256(int ir, int ig, int ib, int ia)
 	a = (float32)ia/255.0;
 }
 
+static set<Image*> sg_images;
 
+void reloadImages()
+{
+  for(set<Image*>::iterator i = sg_images.begin(); i != sg_images.end(); i++)
+  {
+    (*i)->_reload();
+  }
+}
 
+void _addImgReload(Image* img)
+{
+  sg_images.insert(img);
+}
 
+void _removeImgReload(Image* img)
+{
+  sg_images.erase(img);
+}
 
 
 

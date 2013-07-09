@@ -15,6 +15,12 @@
 #include "3DObject.h"
 #include <map>
 
+typedef struct resolution
+{
+  int w;
+  int h;
+} ;
+
 class Engine
 {
 private:
@@ -39,6 +45,9 @@ private:
     uint16_t m_iImgScaleFac;    //How much images are scaled up by
     uint16_t m_iWidth, m_iHeight;
     Uint8 *m_iKeystates;    //Keep track of keys that are pressed/released so we can poll as needed
+    SDL_Rect** m_rcScreenModes; //Screen modes that are available
+    int m_iNumScreenModes;      //Number of screen modes that are available
+    bool m_bFullscreen;
 
     //Engine-use function definitions
 //    friend bool frameFunc();
@@ -94,6 +103,9 @@ public:
     void hideCursor()   {m_bShowCursor = false;};
     void setGravity(Point ptGravity)    {m_physicsWorld->SetGravity(ptGravity);};
     void setGravity(float32 x, float32 y)   {setGravity(Point(x,y));};
+    void changeScreenResolution(float32 w, float32 h);  //Change resolution mid-game and reload OpenGL textures as needed
+    void toggleFullscreen();                            //Switch between fullscreen/windowed modes
+    list<resolution> getAvailableResolutions();         //Get available fullscreen resolutions
 
     //Accessor methods
     void setFramerate(float32 fFramerate);

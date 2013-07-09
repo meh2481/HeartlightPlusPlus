@@ -63,6 +63,8 @@ private:
     list<ballGun*> m_lGuns; //Bombs for throwing at you
     list<ballGun*>::iterator m_iCurGun; //Our current weapon
     Vec2 lastMousePos;
+    list<resolution> m_lResolutions;
+    list<resolution>::iterator iCurResolution;
     //bool m_bDragScreen;
     //bool m_bScaleScreen;
     //Point m_ptLastMousePos;

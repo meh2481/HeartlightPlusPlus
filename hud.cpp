@@ -293,13 +293,7 @@ HUD::~HUD()
 {
     errlog << "Destroying HUD \"" << m_sName << "\"" << endl;
 
-    //Delete all images
-    for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
-        delete i->second;
-
-    //And all fonts
-    for(map<string, Text*>::iterator i = m_mFonts.begin(); i != m_mFonts.end(); i++)
-        delete i->second;
+    destroy();
 }
 
 HUDItem* HUD::_getItem(XMLElement* elem)
@@ -498,6 +492,21 @@ void HUD::create(string sXMLFilename)
 
     }
     delete doc;
+}
+
+void HUD::destroy()
+{
+  //Delete all images
+  for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
+    delete i->second;
+  
+  //And all fonts
+  for(map<string, Text*>::iterator i = m_mFonts.begin(); i != m_mFonts.end(); i++)
+    delete i->second;
+  
+  for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
+    delete (*i);
+  m_lChildren.clear();
 }
 
 /*void HUD::setScale(uint16_t iScale)

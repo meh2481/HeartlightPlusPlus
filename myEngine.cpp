@@ -233,8 +233,8 @@ void myEngine::draw()
 
 void myEngine::init()
 {
-    lastMousePos.Set(SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0);
-    setCursorPos(SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0);
+    lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
+    setCursorPos(getWidth()/2.0, getHeight()/2.0);
 
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
@@ -332,6 +332,11 @@ void myEngine::init()
 
         setFramerate(60); //YAY 60 fps!
     }
+    
+    //Keep track of current resolution
+    m_lResolutions = getAvailableResolutions();
+    iCurResolution = m_lResolutions.end();
+    iCurResolution--;
 }
 
 void myEngine::loadImages(string sListFilename)
@@ -498,13 +503,27 @@ void myEngine::handleEvent(SDL_Event event)
                     m_bDebug = !m_bDebug;
                     break;
 
-                case SDLK_F5:   //Refresh cursor XML
+                case SDLK_5:   //Refresh cursor XML
                     m_cur->loadFromXML("res/cursor/cursor1.xml");
                     loadLevelDirectory("res/levels");
                     break;
 
                 case SDLK_0:
                     m_rcViewScreen.set(0,0,getWidth(),getHeight());
+                    break;
+                
+                case SDLK_1:
+                    iCurResolution++;
+                    if(iCurResolution == m_lResolutions.end())
+                      iCurResolution = m_lResolutions.begin();
+                    changeScreenResolution(iCurResolution->w, iCurResolution->h);
+                    break;
+                
+                case SDLK_RETURN:
+                    if(keyDown(SDLK_LALT) || keyDown(SDLK_RALT))
+                    {
+                      toggleFullscreen();
+                    }
                     break;
 
                 case SDLK_EQUALS:

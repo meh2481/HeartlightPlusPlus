@@ -8,10 +8,14 @@ ofstream errlog("err.log");
 
 
 GLfloat LightAmbient[]  = { 0.5f, 0.5f, 0.5f, 1.0f };
-/* Diffuse Light Values ( NEW ) */
+/* Diffuse Light Values */
 GLfloat LightDiffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
-/* Light Position ( NEW ) */
+/* Light Position */
 GLfloat LightPosition[] = { 0.0f, 0.0f, 2.0f, 1.0f };
+
+
+extern int screenDrawWidth;
+extern int screenDrawHeight;
 
 bool Engine::_myFrameFunc()
 {
@@ -77,21 +81,19 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
     m_iHeight = iHeight;
     m_iKeystates = NULL;
     m_bShowCursor = true;
-    /*Set up log file, frame function, render function and window title
-	m_hge->System_SetState(HGE_FPS, HGEFPS_VSYNC);
-
-	// Set up video mode
-	m_hge->System_SetState(HGE_WINDOWED, true);*/
-	setup_sdl();
+    setup_sdl();
+    m_bFullscreen = false;  //TODO: Start in fullscreen mode
     setup_opengl();
 
-	//Initialize engine stuff
-	setFramerate(60);   //60 fps default
-	m_fAccumulatedTime = 0.0;
-	m_bFirstMusic = true;
-	m_bQuitting = false;
-	srand(SDL_GetTicks());  //Not as random as it could be... narf
-	m_iImgScaleFac = 0;
+    //Initialize engine stuff
+    setFramerate(60);   //60 fps default
+    m_fAccumulatedTime = 0.0;
+    m_bFirstMusic = true;
+    m_bQuitting = false;
+    srand(SDL_GetTicks());  //Not as random as it could be... narf
+    m_iImgScaleFac = 0;
+    screenDrawWidth = iWidth;
+    screenDrawHeight = iHeight;
 }
 
 Engine::~Engine()
@@ -132,8 +134,6 @@ void Engine::clearObjects()
 
 void Engine::clearImages()
 {
-    //Note that this clears the memory associated with the images, not the filenames. We can reload images as the need arises
-    //TODO: Wait, what? How?
     for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
         delete (i->second);    //Delete each image
     m_mImages.clear();
@@ -282,13 +282,6 @@ bool Engine::keyDown(int32_t keyCode)
     return(m_iKeystates[keyCode]);
 }
 
-/*void Engine::scaleImages(uint16_t scaleFac)
-{
-    for(map<string, Image*>::iterator i = m_mImages.begin(); i != m_mImages.end(); i++)
-        i->second->scale(scaleFac);
-    m_iImgScaleFac = scaleFac;
-}*/
-
 void Engine::setFramerate(float32 fFramerate)
 {
     if(m_fFramerate == 0.0)
@@ -347,15 +340,49 @@ void Engine::setup_sdl()
   SDL_WM_SetIcon(image, NULL);
   SDL_FreeSurface(image);
 
+  
+  //Get supported screen resolutions (TODO: SDL 2.0)
+  m_iNumScreenModes = 0;
+  
+  // Get available fullscreen/hardware modes 
+  m_rcScreenModes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
+  
+  // Check if there are any modes available 
+  if (m_rcScreenModes == (SDL_Rect**)0) 
+  {
+    errlog << "No SDL screen modes available!" << endl;
+    m_iWidth = 800;
+    m_iHeight = 600;
+  }
+   
+  // Check if our resolution is restricted 
+  if (m_rcScreenModes == (SDL_Rect**)-1) 
+  {
+    errlog << "All fullscreen resolutions available." << endl;
+    m_iWidth = 800;
+    m_iHeight = 600;
+  }
+  else
+  {
+       // Print valid modes 
+       errlog << "Available fullscreen modes:" << endl;
+       for (int i = 0; m_rcScreenModes[i]; ++i)
+       {
+         errlog << "  " << m_rcScreenModes[i]->w << " x " << m_rcScreenModes[i]->h << endl;
+         m_iNumScreenModes++;
+       }
+  }
+  
   // Create SDL window
   if(SDL_SetVideoMode(m_iWidth, m_iHeight, video->vfmt->BitsPerPixel, SDL_OPENGL) == 0)
   {
   	fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
     exit(1);
   }
-
+  
   //Hide system cursor for SDL, so we can use our own
   SDL_ShowCursor(0);
+  
 }
 
 //Set up OpenGL
@@ -373,32 +400,7 @@ void Engine::setup_opengl()
     glEnable(GL_TEXTURE_2D);
 
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-
-    //Enable lighting
-    glShadeModel(GL_FLAT);
-    GLboolean smooth;
-    glGetBooleanv(GL_SHADE_MODEL, &smooth);
-    if(smooth == true)
-        errlog << "true smoothing" << endl;
-    else
-        errlog << "False smoothing" << endl;
-
-    //glEnable( GL_LIGHT0 );
-    //glEnable( GL_LIGHTING );
-    //glEnable( GL_COLOR_MATERIAL );
-
-    // Setup The Ambient Light
-    glLightfv( GL_LIGHT1, GL_AMBIENT, LightAmbient );
-
-    // Setup The Diffuse Light
-    glLightfv( GL_LIGHT1, GL_DIFFUSE, LightDiffuse );
-
-    // Position The Light
-    glLightfv( GL_LIGHT1, GL_POSITION, LightPosition );
-
-    // Enable Light One
-    glEnable( GL_LIGHT1 );
-
+  
     //Enable image transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -412,7 +414,69 @@ void Engine::setup_opengl()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     //glEnable(GL_CULL_FACE);
+    
+}
 
+void Engine::changeScreenResolution(float32 w, float32 h)
+{
+  screenDrawWidth = m_iWidth = w;
+  screenDrawHeight = m_iHeight = h;
+  const SDL_VideoInfo* video = SDL_GetVideoInfo();
+  if(video == NULL)
+  {
+  	fprintf(stderr, "Couldn't get video information: %s\n", SDL_GetError());
+    exit(1);
+  }
+  // Create SDL window
+  int flags = SDL_OPENGL;
+  if(m_bFullscreen)
+    flags |= SDL_FULLSCREEN;
+  if(SDL_SetVideoMode(m_iWidth, m_iHeight, video->vfmt->BitsPerPixel, flags) == 0)
+  {
+  	fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
+    exit(1);
+  }
+  //Set OpenGL back up
+  setup_opengl();
+  //Reload images TODO: Reload 3D models and model textures as well
+  reloadImages();
+}
+
+void Engine::toggleFullscreen()
+{
+  m_bFullscreen = !m_bFullscreen;
+  const SDL_VideoInfo* video = SDL_GetVideoInfo();
+  if(video == NULL)
+  {
+  	fprintf(stderr, "Couldn't get video information: %s\n", SDL_GetError());
+    exit(1);
+  }
+  // Create SDL window
+  int flags = SDL_OPENGL;
+  if(m_bFullscreen)
+    flags |= SDL_FULLSCREEN;
+  if(SDL_SetVideoMode(m_iWidth, m_iHeight, video->vfmt->BitsPerPixel, flags) == 0)
+  {
+  	fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
+    exit(1);
+  }
+  //Set OpenGL back up
+  setup_opengl();
+  //Reload images
+  reloadImages();
+}
+
+list<resolution> Engine::getAvailableResolutions()
+{
+  list<resolution> lResolutions;
+  for (int i = 0; m_rcScreenModes[i]; ++i)
+  {
+    resolution r;
+    r.w = m_rcScreenModes[i]->w;
+    r.h = m_rcScreenModes[i]->h;
+    lResolutions.push_back(r);
+  }
+  return lResolutions;  
 }
 
 void Engine::setCursorPos(int32_t x, int32_t y)

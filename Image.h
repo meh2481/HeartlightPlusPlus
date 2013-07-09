@@ -9,8 +9,8 @@
 #include "globaldefs.h"
 
 //TODO: Should be variable or such
-#define SCREEN_WIDTH  800.0
-#define SCREEN_HEIGHT 600.0
+//extern int SCREEN_WIDTH;//  800.0
+//extern int SCREEN_HEIGHT;// 600.0
 
 //TODO: Figure out what causes this and calculate mathematically? Or just live with it?
 #define MAGIC_ZOOM_NUMBER -2.415f
@@ -42,10 +42,14 @@ private:
     uint32_t m_iID;  //TODO: Remove/isolate/optimize
 //    uint16_t m_iScaleFac;
 
+    void _load(string sFilename);
+
 public:
     //Constructor/destructor
     Image(string sFilename);
     ~Image();
+    
+    void _reload();  //Reload memory associated with this image
 
     //Accessor methods
     uint32_t getWidth()     {return m_iWidth;};
@@ -76,6 +80,10 @@ public:
     void setHotSpot(Point pt)               {setHotSpot(pt.x, pt.y);};
 };
 
+//Image reloading handler functions
+void reloadImages();
+void _addImgReload(Image* img);
+void _removeImgReload(Image* img);
 
 #endif
 
