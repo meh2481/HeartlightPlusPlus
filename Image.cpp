@@ -78,10 +78,6 @@ Image::Image(string sFilename)
 	//store the texture data for OpenGL use
 	glTexImage2D(GL_TEXTURE_2D, 0, mode, w, h, 0, mode, GL_UNSIGNED_BYTE, bits);
   
-  // these affect how this texture is drawn later on...
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  
 	//Free FreeImage's copy of the data
 	FreeImage_Unload(bitmap2);
     
@@ -128,10 +124,6 @@ Image::Image(string sFilename)
   // this reads from the sdl surface and puts it into an opengl texture
   glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, data);
 
-  // these affect how this texture is drawn later on...
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
   // clean up
   SDL_FreeSurface(surface);
 #endif //defined __APPLE__
@@ -157,6 +149,11 @@ void Image::draw(Rect rcScreenPos, Rect rcImgPos)
 
     // tell opengl to use the generated texture
     glBindTexture(GL_TEXTURE_2D, m_hTex);
+  
+    // Draw pixellated rather than blurred TODO: If rotated, blur instead
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+  
   
     int32_t w, h;
 #ifdef __APPLE__

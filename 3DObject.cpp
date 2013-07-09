@@ -137,7 +137,7 @@ void Object3D::fromOBJFile(string sFilename)
     for(list<Face>::iterator i = lFaces.begin(); i != lFaces.end(); i++)
     {
         if(bNorms)
-            glNormal3f(vNormals[i->norm-1].x, vNormals[i->norm-1].y, vNormals[i->norm-1].z);
+            glNormal3f(vNormals[i->norm-1].x, vNormals[i->norm-1].y, vNormals[i->norm-1].z);  //Flat shading. TODO: Compute vertex normals as average of surrounding faces for smooth shading
         if(bUVs)
             glTexCoord2f(vUVs[i->uv1].u, vUVs[i->uv1].v);
         glVertex3f(vVerts[i->v1-1].x, vVerts[i->v1-1].y, vVerts[i->v1-1].z);
@@ -274,6 +274,7 @@ void Object3D::setTexture(string sFilename)
 
 void Object3D::render()
 {
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  //TODO For Wireframe Games logo. Woot woot!
     glBindTexture(GL_TEXTURE_2D, m_tex);
     glCallList(m_obj);
 }
