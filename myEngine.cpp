@@ -4,6 +4,7 @@
 */
 
 #include "myEngine.h"
+bool RETRO = true;
 
 //For our engine functions to be able to call our Engine class functions - Note that this means there can be no more than one Engine at a time
 //TODO: Think of workaround? How does everything communicate now?
@@ -235,6 +236,7 @@ void myEngine::init()
 {
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);
+    hideCursor(); //Start in retro mode without a cursor
 
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
@@ -254,6 +256,41 @@ void myEngine::init()
     //m_cur->setType(CURSOR_COLOR);
     setCursor(m_cur);
 
+    //Create guns and such
+    ballGun* gun = new ballGun();
+    gun->bullet = "o_rock";
+    gun->gun = "n_gun";
+    //gun.obj
+    m_lGuns.push_back(gun);
+  
+    gun = new placeGun();
+    gun->bullet = "o_rock";
+    m_lGuns.push_back(gun);
+  
+    gun = new blastGun();
+    gun->bullet = "o_rock";
+    gun->gun = "n_blastgun";
+    m_lGuns.push_back(gun);
+  
+    gun = new shotgun();
+    gun->bullet = "o_rock";
+    gun->gun = "n_shotgun";
+    m_lGuns.push_back(gun);
+  
+    gun = new machineGun();
+    gun->bullet = "o_rock";
+    gun->gun = "n_gun";
+    m_lGuns.push_back(gun);
+  
+    gun = new teleGun();
+    //gun->bullet = "o_rock";
+    m_lGuns.push_back(gun);
+  
+    gun = new superGun();
+    gun->bullet = "o_rock";
+    gun->gun = "n_blastgun";
+    m_lGuns.push_back(gun);
+  
     if(RETRO)
     {
         loadLevel_retro();
@@ -261,43 +298,7 @@ void myEngine::init()
     }
     else
     {
-        //Create guns and such
-        ballGun* gun = new ballGun();
-        gun->bullet = "o_rock";
-        gun->gun = "n_gun";
-        //gun.obj
-        m_lGuns.push_back(gun);
-
-        gun = new placeGun();
-        gun->bullet = "o_rock";
-        m_lGuns.push_back(gun);
-
-        gun = new blastGun();
-        gun->bullet = "o_rock";
-        gun->gun = "n_blastgun";
-        m_lGuns.push_back(gun);
-
-        gun = new shotgun();
-        gun->bullet = "o_rock";
-        gun->gun = "n_shotgun";
-        m_lGuns.push_back(gun);
-
-        gun = new machineGun();
-        gun->bullet = "o_rock";
-        gun->gun = "n_gun";
-        m_lGuns.push_back(gun);
-
-        gun = new teleGun();
-        //gun->bullet = "o_rock";
-        m_lGuns.push_back(gun);
-
-        gun = new superGun();
-        gun->bullet = "o_rock";
-        gun->gun = "n_blastgun";
-        m_lGuns.push_back(gun);
-
         m_iCurGun = m_lGuns.begin();
-
         loadLevel_new();
     }
 
@@ -312,8 +313,8 @@ void myEngine::init()
     //    playMusic("o_mus_menu"); //Start playing menu music
 
     //Create physics boundary if not in retro mode
-    if(!RETRO)
-    {
+    //if(!RETRO)
+    //{
         b2BodyDef grounddef;
         grounddef.position.SetZero();
         b2Body* groundBody = createBody(&grounddef);
@@ -329,9 +330,10 @@ void myEngine::init()
         vertices[4].Set(rcScreen.left, rcScreen.top);
         worldBox.CreateChain(vertices, 5);
         groundBody->CreateFixture(&worldBox, 0.0);
-
+        
+    if(!RETRO)
         setFramerate(60); //YAY 60 fps!
-    }
+    //}
     
     //Keep track of current resolution
     m_lResolutions = getAvailableResolutions();
@@ -501,6 +503,10 @@ void myEngine::handleEvent(SDL_Event event)
 
                 case SDLK_v:
                     m_bDebug = !m_bDebug;
+                    break;
+                  
+                case SDLK_r:
+                    toggleRetro();
                     break;
 
                 case SDLK_5:   //Refresh cursor XML
@@ -710,6 +716,26 @@ bool myEngine::loadLevels(string sFilename)
         return false;
     }
     return true;
+}
+
+void myEngine::toggleRetro()
+{
+  RETRO = !RETRO;
+  //Reload the current level and set the framerate
+  if(RETRO)
+  {
+    loadLevel_retro();
+    setFramerate(GAME_FRAMERATE);
+    m_iCurGun = m_lGuns.end();
+    hideCursor();
+  }
+  else
+  {
+    loadLevel_new();
+    setFramerate(60);
+    m_iCurGun = m_lGuns.begin();     
+    showCursor();                 
+  }  
 }
 
 void myEngine::playSound(string sName)

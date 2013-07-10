@@ -37,7 +37,7 @@
 #define FALLING_1           8
 #define FALLING_2           16
 
-#define RETRO   false   //If we're playing in retro mode or not TODO: Variable
+extern bool RETRO;//   false   //If we're playing in retro mode or not
 
 class myEngine : public Engine
 {
@@ -105,6 +105,7 @@ public:
     bool floatable_retro(retroObject* obj);   //If this object can be pushed upwards by a balloon
     void hudSignalHandler(string sSignal);  //For handling signals that come from the HUD
     bool isOnGround();  //See if the player is on the ground
+    void toggleRetro(); //Toggle retro mode
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine
