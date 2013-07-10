@@ -720,6 +720,8 @@ bool myEngine::loadLevels(string sFilename)
 
 void myEngine::toggleRetro()
 {
+  if(m_iFade != FADE_NONE)
+    return; //Don't allow retro-mode-changing if fading (causes crash)
   RETRO = !RETRO;
   //Reload the current level and set the framerate
   if(RETRO)
