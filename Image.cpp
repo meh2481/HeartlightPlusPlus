@@ -230,16 +230,19 @@ void Image::drawCentered(Point pt, float32 rotation, float32 stretchFactorx, flo
 void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
     Rect rcDrawPos;
+    //TODO This scaling won't work! Fix
     rcDrawPos.set(0, 0, rcImgPos.width(), rcImgPos.height());
     rcDrawPos.scale(stretchFactorx,stretchFactory);
     rcDrawPos.offset(-rcDrawPos.width()/2.0 + (float32)screenDrawWidth/2.0 - m_ptHotSpot.x, -rcDrawPos.height()/2.0 + (float32)screenDrawHeight/2.0 - m_ptHotSpot.y);
-    glLoadIdentity( );
-    glTranslatef( (2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(x)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(y)/(GLfloat)screenDrawHeight + 1.0, MAGIC_ZOOM_NUMBER);
+    //glLoadIdentity( );
+    glTranslatef( (2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(x)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(y)/(GLfloat)screenDrawHeight + 1.0, 0.0);//MAGIC_ZOOM_NUMBER);
     glRotatef(-rotation*180.0/PI,0.0f,0.0f,1.0f);
     draw(rcDrawPos,rcImgPos);
     //Reset rotation
-    glLoadIdentity( );
-    glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
+    //glLoadIdentity( );
+    //glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
+    glRotatef(rotation*180.0/PI,0.0f,0.0f,1.0f);
+    glTranslatef( -((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(x)/(GLfloat)screenDrawWidth-0.5)), -(-2.0*(GLfloat)(y)/(GLfloat)screenDrawHeight + 1.0), 0.0);
 }
 
 void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)

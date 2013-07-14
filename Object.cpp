@@ -50,11 +50,11 @@ bool Object::update()
     return !m_bDying;
 }
 
-void Object::draw(Rect rcScreen)
+void Object::draw()
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
     layer->pos = m_ptPos;//.Set(m_ptPos.x + getWidth()/2.0, m_ptPos.y + getHeight()/2.0);
-    layer->draw(rcScreen, rcImgPos);
+    layer->draw(rcImgPos);
 }
 
 void Object::setNumFrames(uint16_t iNumFrames, bool bAnimateOnce)
@@ -112,13 +112,13 @@ physicsObject::~physicsObject()
 {
 }
 
-void physicsObject::draw(Rect rcScreen)
+void physicsObject::draw()
 {
     Rect rcImgPos = {0,m_iHeight*m_iCurFrame,m_iWidth,m_iHeight*(m_iCurFrame+1)};
     layer->pos = m_physicsBody->GetPosition();
     layer->pos *= SCALE_UP_FACTOR;
     layer->rot = m_physicsBody->GetAngle();
-    layer->draw(rcScreen, rcImgPos);
+    layer->draw(rcImgPos);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -146,10 +146,10 @@ void obj::draw()
             ptPos = (*i)->body->GetPosition();
             rot = (*i)->body->GetAngle();
         }
-        if((*i)->image != NULL)
-            (*i)->image->drawCentered(ptPos.x + (*i)->pos.x*cos(rot) - (*i)->pos.y*sin(rot),
-                                      ptPos.y + (*i)->pos.y*cos(rot) + (*i)->pos.x*sin(rot),
-                                      (*i)->rot + rot, (*i)->scale.x, (*i)->scale.y);
+        if((*i)->layer != NULL && (*i)->layer->image != NULL)
+            (*i)->layer->image->drawCentered(ptPos.x + (*i)->layer->pos.x*cos(rot) - (*i)->layer->pos.y*sin(rot),
+                                      ptPos.y + (*i)->layer->pos.y*cos(rot) + (*i)->layer->pos.x*sin(rot),
+                                      (*i)->layer->rot + rot, (*i)->layer->scale.x, (*i)->layer->scale.y);
     }
 }
 
@@ -164,11 +164,7 @@ void obj::addSegment(physSegment* seg)
 physSegment::physSegment()
 {
     body = NULL;
-    image = NULL;
-    depth = 0.0;
-    scale.SetZero();
-    pos.SetZero();
-    rot = 0.0;
+    layer = NULL;
 }
 
 

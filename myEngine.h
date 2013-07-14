@@ -59,7 +59,7 @@ private:
     HUD* m_hud;
     bool m_bSound, m_bMusic, m_bRad;    //Booleans for music settings and such
     bool m_bJumped; //For supercomplex movement stuff
-    Rect m_rcViewScreen;    //Screen we can currently see
+    //Rect m_rcViewScreen;    //Screen we can currently see
     list<ballGun*> m_lGuns; //Bombs for throwing at you
     list<ballGun*>::iterator m_iCurGun; //Our current weapon
     Vec2 lastMousePos;

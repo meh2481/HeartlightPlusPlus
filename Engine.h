@@ -83,7 +83,7 @@ public:
     void createSound(string sPath, string sName);   //Creates a sound from this name and file path
     void addObject(Object* obj);    //Add an object to the object handler
     void updateObjects();           //update all objects in the game
-    void drawObjects(Rect rcScreen);   //draw all objects in the game
+    void drawObjects();   //draw all objects in the game
     void clearObjects();    //Destroy all objects, freeing memory
     void clearImages();     //Free memory associated with the images in our image map
     virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play a sound

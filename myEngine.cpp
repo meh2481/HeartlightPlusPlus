@@ -32,7 +32,7 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_bMusic = true;
     m_bRad  = false;
     m_bJumped = false;
-    m_rcViewScreen.set(0,0,getWidth(),getHeight());
+    //m_rcViewScreen.set(0,0,getWidth(),getHeight());
 //    m_bDragScreen = false;
 //    m_bScaleScreen = false;
 }
@@ -153,9 +153,9 @@ void myEngine::draw()
 
     //glDisable( GL_LIGHTING );   //Don't care about lighting for rendering 2D objects
     //hideCursor();
-    drawObjects(m_rcViewScreen);
+    drawObjects();
     if(m_iCurGun != m_lGuns.end())
-        (*m_iCurGun)->draw(m_rcViewScreen);
+        (*m_iCurGun)->draw();
 
     //Draw debug stuff if we should
     if(m_bDebug)
@@ -433,8 +433,12 @@ void myEngine::hudSignalHandler(string sSignal)
     playSound("o_toggle");  //Play sound for toggling hud item
 }
 
+float fXpos = 0.0;
+float fYpos = 0.0;
+
 void myEngine::handleEvent(SDL_Event event)
 {
+    static bool isMouseDown = false;
     m_hud->event(event);    //Let our HUD handle any events it needs to
     switch(event.type)
     {
@@ -514,9 +518,9 @@ void myEngine::handleEvent(SDL_Event event)
                     loadLevelDirectory("res/levels");
                     break;
 
-                case SDLK_0:
-                    m_rcViewScreen.set(0,0,getWidth(),getHeight());
-                    break;
+                //case SDLK_0:
+                //    m_rcViewScreen.set(0,0,getWidth(),getHeight());
+                //    break;
                 
                 case SDLK_1:
                     iCurResolution++;
@@ -565,6 +569,7 @@ void myEngine::handleEvent(SDL_Event event)
             break;
 
         case SDL_MOUSEBUTTONDOWN:
+            isMouseDown = true;
             if(event.button.button == SDL_BUTTON_LEFT)
             {
                 if(m_iCurGun != m_lGuns.end())
@@ -582,6 +587,7 @@ void myEngine::handleEvent(SDL_Event event)
             break;
 
         case SDL_MOUSEBUTTONUP:
+            isMouseDown = false;
             if(event.button.button == SDL_BUTTON_LEFT)
             {
                 if(m_iCurGun != m_lGuns.end())
@@ -598,6 +604,13 @@ void myEngine::handleEvent(SDL_Event event)
             if(m_iCurGun != m_lGuns.end())
             {
                 (*m_iCurGun)->mouseMove(event.motion.x,event.motion.y);
+            }
+            if(isMouseDown)
+            {
+              glTranslatef(event.motion.xrel/1000.0, -event.motion.yrel/1000.0, 0.0);
+              fXpos += event.motion.xrel;
+              fYpos -= event.motion.yrel;
+              cout << "pos: " << fXpos << ", " << fYpos << endl;
             }
 /*            if(m_bDragScreen)
             {

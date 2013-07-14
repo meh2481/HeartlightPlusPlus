@@ -22,8 +22,8 @@ public:
     parallaxLayer(Image* img);
     ~parallaxLayer();
 
-    void draw(Rect rcScreen);
-    void draw(Rect rcScreen, Rect rcImgPos);
+    void draw();
+    void draw(Rect rcImgPos);
 };
 
 

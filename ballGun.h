@@ -29,7 +29,7 @@ public:
     virtual void mouseUp(float32 x, float32 y);
     virtual void mouseMove(float32 x, float32 y)     {m_ptCursorPos.Set(x,y);};
     virtual void fire();
-    void draw(Rect rcScreen);
+    void draw();
     void clear();
     virtual void update(float32 fCurTime);
 };

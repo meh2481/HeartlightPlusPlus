@@ -241,10 +241,10 @@ void Engine::updateObjects()
         (*i).second->updateFrame();
 }
 
-void Engine::drawObjects(Rect rcScreen)
+void Engine::drawObjects()
 {
     for(multimap<float32, Object*>::iterator i = m_mObjects.begin(); i != m_mObjects.end(); i++)
-        (*i).second->draw(rcScreen);
+        (*i).second->draw();
 }
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
@@ -413,6 +413,7 @@ void Engine::setup_opengl()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
     //glEnable(GL_CULL_FACE);
     
 }

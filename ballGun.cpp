@@ -82,16 +82,14 @@ void ballGun::fire()//mouseDown(float32 x, float32 y)
     m_lFired.push_back(newObj);
 }
 
-void ballGun::draw(Rect rcScreen)
+void ballGun::draw()
 {
     if(icon != "")
-        getImage(icon)->draw(rcScreen.left + GUN_ICON_DRAW_OFFSET, rcScreen.top + GUN_ICON_DRAW_OFFSET);
+        getImage(icon)->draw(GUN_ICON_DRAW_OFFSET, GUN_ICON_DRAW_OFFSET);
     if(gun != "" && obj != NULL)
     {
         Image* gunImg = getImage(gun);
         Point pos = obj->getCenter();
-        pos.x -= rcScreen.left;
-        pos.y -= rcScreen.top;
         Point dist = m_ptCursorPos;
         dist -= pos;
         float32 angle = 0.0;
