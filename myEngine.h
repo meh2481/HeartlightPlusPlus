@@ -68,10 +68,14 @@ private:
     //bool m_bDragScreen;
     //bool m_bScaleScreen;
     //Point m_ptLastMousePos;
-
+    
+    //Testing stuff
+    obj* myObj;
+    parallaxLayer* objLayer;
+    Image* objImg;
+    physSegment* objSeg;
     Object3D* testObj;
     Object3D* shipObj;
-
     //list<physicsObject*> m_lSpheres_new;
 
     bool _moveToGridSquare_retro(int row, int col);   //Check this pos in the grid before we move there, and clear contents if we can (if return true, player has been destroyed)

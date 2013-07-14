@@ -4,7 +4,7 @@
 
 parallaxLayer::parallaxLayer(Image* img)
 {
-    depth = 1.0f;
+    depth = 0.0f;
     scale.x = scale.y = 1.0f;
     rot = 0.0f;
     image = img;
@@ -26,8 +26,12 @@ void parallaxLayer::draw(Rect rcImgPos)
 {
     if(image == NULL)
         return;
-
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, depth);
+    if(depth != 0.0f)
+      cout << "Depth: " << depth << endl;
     image->drawCentered(pos, rcImgPos, rot, scale.x, scale.y);
+    glPopMatrix();
 }
 
 

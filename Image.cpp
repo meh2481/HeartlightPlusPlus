@@ -147,13 +147,13 @@ Image::~Image()
     _removeImgReload(this);
 }
 
-void Image::draw(Rect rcScreenPos)
+void Image::draw(Rect rcDrawPos)
 {
     Rect rcImg = {0,0,m_iWidth,m_iHeight};
-    draw(rcScreenPos, rcImg);
+    draw(rcDrawPos, rcImg);
 }
 
-void Image::draw(Rect rcScreenPos, Rect rcImgPos)
+void Image::draw(Rect rcDrawPos, Rect rcImgPos)
 {
     if(m_hTex == 0)
       return;
@@ -180,16 +180,16 @@ void Image::draw(Rect rcScreenPos, Rect rcImgPos)
     glColor4f(m_col.r,m_col.g,m_col.b,m_col.a);	//Colorize according to how we've colorized this image
     // top left
     glTexCoord2f((rcImgPos.left / (float32)w), (rcImgPos.top / (float32)h));
-    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)rcScreenPos.left/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)screenDrawHeight + 1.0, 0.0);
+    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)rcDrawPos.left/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)rcDrawPos.top/(GLfloat)screenDrawHeight + 1.0, 0.0);
     // bottom left
     glTexCoord2f((rcImgPos.left / (float32)w), (rcImgPos.bottom / (float32)h));
-    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)rcScreenPos.left/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)screenDrawHeight+1.0, 0.0);
+    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)rcDrawPos.left/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(rcDrawPos.bottom)/(GLfloat)screenDrawHeight+1.0, 0.0);
     // bottom right
     glTexCoord2f((rcImgPos.right / (float32)w), (rcImgPos.bottom / (float32)h));
-    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(rcScreenPos.right)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(rcScreenPos.bottom)/(GLfloat)screenDrawHeight+1.0, 0.0);
+    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(rcDrawPos.right)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(rcDrawPos.bottom)/(GLfloat)screenDrawHeight+1.0, 0.0);
     // top right
     glTexCoord2f((rcImgPos.right / (float32)w), (rcImgPos.top / (float32)h));
-    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(rcScreenPos.right)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)rcScreenPos.top/(GLfloat)screenDrawHeight+1.0, 0.0);
+    glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(rcDrawPos.right)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)rcDrawPos.top/(GLfloat)screenDrawHeight+1.0, 0.0);
 
     glEnd();
 }
@@ -230,19 +230,22 @@ void Image::drawCentered(Point pt, float32 rotation, float32 stretchFactorx, flo
 void Image::drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)
 {
     Rect rcDrawPos;
-    //TODO This scaling won't work! Fix
     rcDrawPos.set(0, 0, rcImgPos.width(), rcImgPos.height());
     rcDrawPos.scale(stretchFactorx,stretchFactory);
     rcDrawPos.offset(-rcDrawPos.width()/2.0 + (float32)screenDrawWidth/2.0 - m_ptHotSpot.x, -rcDrawPos.height()/2.0 + (float32)screenDrawHeight/2.0 - m_ptHotSpot.y);
     //glLoadIdentity( );
-    glTranslatef( (2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(x)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(y)/(GLfloat)screenDrawHeight + 1.0, 0.0);//MAGIC_ZOOM_NUMBER);
+    glPushMatrix();
+    glTranslatef( (2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(x)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(y)/(GLfloat)screenDrawHeight + 1.0, 1.0);//MAGIC_ZOOM_NUMBER);
     glRotatef(-rotation*180.0/PI,0.0f,0.0f,1.0f);
-    draw(rcDrawPos,rcImgPos);
+    //glScalef(stretchFactorx, stretchFactory, 1.0f);
+    draw(rcDrawPos, rcImgPos);
+    glPopMatrix();  //Reset
     //Reset rotation
     //glLoadIdentity( );
     //glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
-    glRotatef(rotation*180.0/PI,0.0f,0.0f,1.0f);
-    glTranslatef( -((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(x)/(GLfloat)screenDrawWidth-0.5)), -(-2.0*(GLfloat)(y)/(GLfloat)screenDrawHeight + 1.0), 0.0);
+    //glScalef(1.0/stretchFactorx, 1.0/stretchFactory, 1.0f);
+    //glRotatef(rotation*180.0/PI,0.0f,0.0f,1.0f);
+    //glTranslatef( -((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(x)/(GLfloat)screenDrawWidth-0.5)), -(-2.0*(GLfloat)(y)/(GLfloat)screenDrawHeight + 1.0), 0.0);
 }
 
 void Image::drawCentered(Point pt, Rect rcImgPos, float32 rotation, float32 stretchFactorx, float32 stretchFactory)

@@ -41,8 +41,12 @@ myEngine::~myEngine()
 {
     delete m_cur;
     delete m_hud;
-    delete testObj;
-    delete shipObj;
+    //delete testObj;
+    //delete shipObj;
+    delete objImg;
+    delete objLayer;
+    //delete objSeg;
+    delete myObj;
 }
 
 void myEngine::frame()
@@ -228,12 +232,33 @@ void myEngine::draw()
 
     //Draw our HUD
     m_hud->draw(getTime());
+    
+    myObj->draw();
+    objLayer->scale.x += 0.001;
+    objLayer->scale.y += 0.004;
+  objLayer->rot += 0.05;//PI/4.0;
+  objLayer->depth = 2.0f;
+
+    //objLayer->pos.x = 200;
+    //objLayer->pos.y = 100;
 
     //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
 }
 
 void myEngine::init()
 {
+    objImg = new Image("res/hud/logo.png");
+    objLayer = new parallaxLayer(objImg);
+    objSeg = new physSegment();
+    objSeg->layer = objLayer;
+    myObj = new obj();
+    myObj->addSegment(objSeg);
+    objLayer->scale.x = 0.5;
+    objLayer->scale.y = 0.4;
+    objLayer->rot = PI/4.0;
+    objLayer->pos.x = 200;
+    objLayer->pos.y = 100;
+    objLayer->depth = 2.0f;
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);
     hideCursor(); //Start in retro mode without a cursor
@@ -241,8 +266,8 @@ void myEngine::init()
     //Load all images, so we can scale all of them up from the start
     loadImages("res/gfx/orig.xml");
 
-    testObj = new Object3D("cs/trixie2.obj", "cs/trixie.png");
-    shipObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
+    //testObj = new Object3D("cs/trixie2.obj", "cs/trixie.png");
+    //shipObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
 
     //Now scale all the images up
 //    scaleImages(SCALE_FAC);

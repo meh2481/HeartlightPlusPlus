@@ -59,8 +59,8 @@ public:
     void _setID(uint32_t id) {m_iID = id;};
 
     //public methods
-    void draw(Rect rcScreenPos);    //Stretch the image into this rect
-    void draw(Rect rcScreenPos, Rect rcImgPos); //Stretch part of the image into this rect
+    void draw(Rect rcDrawPos);
+    void draw(Rect rcDrawPos, Rect rcImgPos);
     void draw(float32 x, float32 y);    //draw the entire image with upper left corner at x,y
     void draw(Point pt);                //draw the entire image with upper left corner at pt
     void draw(float32 x, float32 y, Rect rcImgPos); //draw part of the image at x, y
