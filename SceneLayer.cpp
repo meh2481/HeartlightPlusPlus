@@ -28,8 +28,8 @@ void parallaxLayer::draw(Rect rcImgPos)
         return;
     glPushMatrix();
     glTranslatef(0.0f, 0.0f, depth);
-    if(depth != 0.0f)
-      cout << "Depth: " << depth << endl;
+    //if(depth != 0.0f)
+    //  cout << "Depth: " << depth << endl;
     image->drawCentered(pos, rcImgPos, rot, scale.x, scale.y);
     glPopMatrix();
 }

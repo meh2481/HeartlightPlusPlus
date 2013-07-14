@@ -145,11 +145,14 @@ void obj::draw()
         {
             ptPos = (*i)->body->GetPosition();
             rot = (*i)->body->GetAngle();
-        }
-        if((*i)->layer != NULL && (*i)->layer->image != NULL)
-            (*i)->layer->image->drawCentered(ptPos.x + (*i)->layer->pos.x*cos(rot) - (*i)->layer->pos.y*sin(rot),
+			if((*i)->layer != NULL && (*i)->layer->image != NULL)
+				(*i)->layer->image->drawCentered(ptPos.x + (*i)->layer->pos.x*cos(rot) - (*i)->layer->pos.y*sin(rot),
                                       ptPos.y + (*i)->layer->pos.y*cos(rot) + (*i)->layer->pos.x*sin(rot),
                                       (*i)->layer->rot + rot, (*i)->layer->scale.x, (*i)->layer->scale.y);
+        }
+		else
+			(*i)->layer->draw();
+        
     }
 }
 

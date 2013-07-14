@@ -233,11 +233,12 @@ void myEngine::draw()
     //Draw our HUD
     m_hud->draw(getTime());
     
+	//objLayer->depth = 2.0f;
+	//cout << "Objlayer: " << objLayer->depth << endl;
     myObj->draw();
     objLayer->scale.x += 0.001;
     objLayer->scale.y += 0.004;
-  objLayer->rot += 0.05;//PI/4.0;
-  objLayer->depth = 2.0f;
+	objLayer->rot += 0.05;//PI/4.0;
 
     //objLayer->pos.x = 200;
     //objLayer->pos.y = 100;
@@ -635,7 +636,7 @@ void myEngine::handleEvent(SDL_Event event)
               glTranslatef(event.motion.xrel/1000.0, -event.motion.yrel/1000.0, 0.0);
               fXpos += event.motion.xrel;
               fYpos -= event.motion.yrel;
-              cout << "pos: " << fXpos << ", " << fYpos << endl;
+              //cout << "pos: " << fXpos << ", " << fYpos << endl;
             }
 /*            if(m_bDragScreen)
             {
