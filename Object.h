@@ -121,6 +121,7 @@ public:
     parallaxLayer* layer;
 
     physSegment();
+    ~physSegment();
 
 };
 

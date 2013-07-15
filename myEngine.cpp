@@ -44,7 +44,7 @@ myEngine::~myEngine()
     //delete testObj;
     //delete shipObj;
     delete objImg;
-    delete objLayer;
+    //delete objLayer;
     //delete objSeg;
     delete myObj;
 }
@@ -233,12 +233,12 @@ void myEngine::draw()
     //Draw our HUD
     m_hud->draw(getTime());
     
-	//objLayer->depth = 2.0f;
-	//cout << "Objlayer: " << objLayer->depth << endl;
+    //objLayer->depth = 2.0f;
+    //cout << "Objlayer: " << objLayer->depth << endl;
     myObj->draw();
-    objLayer->scale.x += 0.001;
-    objLayer->scale.y += 0.004;
-	objLayer->rot += 0.05;//PI/4.0;
+    //objLayer->scale.x += 0.001;
+    //objLayer->scale.y += 0.004;
+    //objLayer->rot += 0.05;//PI/4.0;
 
     //objLayer->pos.x = 200;
     //objLayer->pos.y = 100;
@@ -249,8 +249,8 @@ void myEngine::draw()
 void myEngine::init()
 {
     objImg = new Image("res/hud/logo.png");
-    objLayer = new parallaxLayer(objImg);
-    objSeg = new physSegment();
+    parallaxLayer* objLayer = new parallaxLayer(objImg);
+    physSegment* objSeg = new physSegment();
     objSeg->layer = objLayer;
     myObj = new obj();
     myObj->addSegment(objSeg);

@@ -170,5 +170,28 @@ physSegment::physSegment()
     layer = NULL;
 }
 
+physSegment::~physSegment()
+{
+  if(body != NULL)
+    ; //TODO: Free Box2D body
+  if(layer != NULL)
+    delete layer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

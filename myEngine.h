@@ -71,9 +71,9 @@ private:
     
     //Testing stuff
     obj* myObj;
-    parallaxLayer* objLayer;
+    //parallaxLayer* objLayer;
     Image* objImg;
-    physSegment* objSeg;
+    //physSegment* objSeg;
     Object3D* testObj;
     Object3D* shipObj;
     //list<physicsObject*> m_lSpheres_new;
