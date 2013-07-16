@@ -1,4 +1,4 @@
-objects := 3DObject.o Cursor.o Image.o Engine.o Object.o SceneLayer.o Text.o ballGun.o globaldefs.o hud.o main.o myEngine.o myEngine_new.o myEngine_retro.o tinyxml2.o
+objects := 3DObject.o Cursor.o Image.o Engine.o Object.o SceneLayer.o Text.o ballGun.o globaldefs.o hud.o main.o myEngine.o myEngine_new.o myEngine_retro.o tinyxml2.o Interpolate.o
 libs := -L./lib/Mac-PPC/ -framework OpenGL -framework GLUT -lSDLmain -lSDL -lSDL_image -lvorbis -lvorbisfile -framework OpenAL -logg -lttvfs -lBox2D -framework Foundation -framework AppKit -lfreeimage
 includes := -I./include/ 
 

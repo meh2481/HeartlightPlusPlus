@@ -44,7 +44,10 @@ bool Engine::_myFrameFunc()
         m_fAccumulatedTime += m_fTargetTime;
         //Box2D wants fixed timestep, so we use target framerate here instead of actual elapsed time
         m_physicsWorld->Step(m_fTargetTime, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);
-        m_cursor->update(m_fTargetTime);
+        //Use cycle time for everything else
+        float32 fCycleTime = getTime() - m_fLastCycle;
+        m_cursor->update(fCycleTime);
+        _interpolations(fCycleTime);
         frame();
         _myRenderFunc();
     }
@@ -52,6 +55,7 @@ bool Engine::_myFrameFunc()
     if(m_fAccumulatedTime + m_fTargetTime * 3.0 < fCurTime)    //We've gotten far too behind; we could have a huge FPS jump if the load lessens
         m_fAccumulatedTime = fCurTime;   //Drop any frames past this
 
+    m_fLastCycle = getTime();
     return m_bQuitting;
 }
 
@@ -94,6 +98,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
     m_iImgScaleFac = 0;
     screenDrawWidth = iWidth;
     screenDrawHeight = iHeight;
+    m_fLastCycle = getTime();
 }
 
 Engine::~Engine()
@@ -487,6 +492,30 @@ void Engine::setCursorPos(int32_t x, int32_t y)
 //    hideCursor(); //TODO: Warping the mouse shows it again in Mac, and this doesn't work. Hermph.
 //#endif
 }
+
+void Engine::_interpolations(float32 dt)
+{
+  for(list<Interpolate<float32>* >::iterator i = m_lInterpolations.begin(); i != m_lInterpolations.end(); i++)
+  {
+    
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

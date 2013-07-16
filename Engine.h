@@ -13,6 +13,7 @@
 #include "hud.h"
 #include "Cursor.h"
 #include "3DObject.h"
+#include "Interpolate.h"
 #include <map>
 
 typedef struct resolution
@@ -38,6 +39,7 @@ private:
 //    map<string, HEFFECT> m_mSounds; //Sound handler
     map<string, string> m_mSoundNames; //And names of sounds
     multimap<float32, Object*> m_mObjects;       //Object handler
+    list<Interpolate<float32>* > m_lInterpolations;  //Keep track of stuff that's interpolating
 //    HCHANNEL m_MusicChannel;        //Sound channel we play our music on
     bool m_bFirstMusic; //Don't stop a previous song playing if there is none
     string m_sLastMusic;    //Last song we played, so we can pause/resume songs instead of restarting them
@@ -48,12 +50,15 @@ private:
     SDL_Rect** m_rcScreenModes; //Screen modes that are available
     int m_iNumScreenModes;      //Number of screen modes that are available
     bool m_bFullscreen;
+    float32 m_fLastCycle;     //When the last cycle was
 
     //Engine-use function definitions
 //    friend bool frameFunc();
 //    friend bool renderFunc();
     bool _myFrameFunc();
     bool _myRenderFunc();
+    
+    void _interpolations(float32 dt); //update any interpolating variables
 //    HEFFECT _getEffect(string sName);
     void setup_sdl();
     void setup_opengl();
