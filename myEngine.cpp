@@ -261,6 +261,11 @@ void myEngine::init()
     objLayer->pos.y = 100;
     objLayer->depth = 2.0f;
     objLayer->alpha = 0.5;
+    Interpolate* inter = new Interpolate(&(objLayer->alpha));
+    inter->setMinVal(0.0f, false);
+    inter->setMaxVal(1.0f, false);
+    inter->calculateIncrement(1.0f, 1.0f);
+    addInterpolation(inter);
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);
     hideCursor(); //Start in retro mode without a cursor

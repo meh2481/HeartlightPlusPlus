@@ -45,9 +45,9 @@ bool Engine::_myFrameFunc()
         //Box2D wants fixed timestep, so we use target framerate here instead of actual elapsed time
         m_physicsWorld->Step(m_fTargetTime, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);
         //Use cycle time for everything else
-        float32 fCycleTime = getTime() - m_fLastCycle;
-        m_cursor->update(fCycleTime);
-        _interpolations(fCycleTime);
+        //float32 fCycleTime = getTime() - m_fLastCycle;
+        m_cursor->update(m_fTargetTime);
+        _interpolations(m_fTargetTime);
         frame();
         _myRenderFunc();
     }
@@ -108,6 +108,9 @@ Engine::~Engine()
 
     //Clean up our image map
     clearImages();
+    
+    //Clean up interpolations that are currently going on
+    clearInterpolations();
 
     //TODO Any form of OpenGL cleanup?
 
@@ -493,15 +496,34 @@ void Engine::setCursorPos(int32_t x, int32_t y)
 //#endif
 }
 
+void Engine::addInterpolation(Interpolate* inter)
+{
+  m_lInterpolations.push_back(inter);
+}
+
 void Engine::_interpolations(float32 dt)
 {
-  for(list<Interpolate<float32>* >::iterator i = m_lInterpolations.begin(); i != m_lInterpolations.end(); i++)
+  for(list<Interpolate*>::iterator i = m_lInterpolations.begin(); i != m_lInterpolations.end(); i++)
   {
-    
+    if((*i)->update(dt))
+    {
+      list<Interpolate*>::iterator j = i;
+      j--;
+      delete (*i);
+      m_lInterpolations.erase(i);
+      i = j;
+    }
   }
 }
 
-
+void Engine::clearInterpolations()
+{
+  for(list<Interpolate*>::iterator i = m_lInterpolations.begin(); i != m_lInterpolations.end(); i++)
+  {
+    delete (*i);
+  }
+  m_lInterpolations.clear();
+}
 
 
 

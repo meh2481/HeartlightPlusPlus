@@ -39,7 +39,7 @@ private:
 //    map<string, HEFFECT> m_mSounds; //Sound handler
     map<string, string> m_mSoundNames; //And names of sounds
     multimap<float32, Object*> m_mObjects;       //Object handler
-    list<Interpolate<float32>* > m_lInterpolations;  //Keep track of stuff that's interpolating
+    list<Interpolate*> m_lInterpolations;  //Keep track of stuff that's interpolating
 //    HCHANNEL m_MusicChannel;        //Sound channel we play our music on
     bool m_bFirstMusic; //Don't stop a previous song playing if there is none
     string m_sLastMusic;    //Last song we played, so we can pause/resume songs instead of restarting them
@@ -111,6 +111,8 @@ public:
     void changeScreenResolution(float32 w, float32 h);  //Change resolution mid-game and reload OpenGL textures as needed
     void toggleFullscreen();                            //Switch between fullscreen/windowed modes
     list<resolution> getAvailableResolutions();         //Get available fullscreen resolutions
+    void addInterpolation(Interpolate* inter);
+    void clearInterpolations();
 
     //Accessor methods
     void setFramerate(float32 fFramerate);

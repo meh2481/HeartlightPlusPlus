@@ -1,22 +1,22 @@
 #include "Interpolate.h"
 
 
-template <class T>
-Interpolate<T>::~Interpolate()
+//template <class T>
+Interpolate::~Interpolate()
 {
   
 }
 
-template <class T>
-Interpolate<T>::Interpolate(T* interpObj)
+//template <class T>
+Interpolate::Interpolate(float32* interpObj)
 {
   ptr = interpObj;
   bTimed = bMin = bMax = bKillMin = bKillMax = false;
   interpTime = 0.0f;
 }
 
-template <class T>
-bool Interpolate<T>::update(float32 fTimestep)
+//template <class T>
+bool Interpolate::update(float32 fTimestep)
 {
   (*ptr) += increment * fTimestep;
   if(bTimed)
@@ -49,8 +49,8 @@ bool Interpolate<T>::update(float32 fTimestep)
   return false;
 }
 
-template <class T>
-void Interpolate<T>::calculateIncrement(T finalVal, float32 fTime)
+//template <class T>
+void Interpolate::calculateIncrement(float32 finalVal, float32 fTime)
 {
   increment = (finalVal - *ptr) / fTime;
 }
