@@ -8,6 +8,7 @@ parallaxLayer::parallaxLayer(Image* img)
     scale.x = scale.y = 1.0f;
     rot = 0.0f;
     image = img;
+    alpha = 1.0f;
     pos.SetZero();
 }
 
@@ -30,7 +31,10 @@ void parallaxLayer::draw(Rect rcImgPos)
     glTranslatef(0.0f, 0.0f, depth);
     //if(depth != 0.0f)
     //  cout << "Depth: " << depth << endl;
+    float32 fAlpha = image->getAlpha();
+    image->setAlpha(alpha);
     image->drawCentered(pos, rcImgPos, rot, scale.x, scale.y);
+    image->setAlpha(fAlpha);
     glPopMatrix();
 }
 

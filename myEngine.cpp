@@ -260,6 +260,7 @@ void myEngine::init()
     objLayer->pos.x = 200;
     objLayer->pos.y = 100;
     objLayer->depth = 2.0f;
+    objLayer->alpha = 0.5;
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);
     hideCursor(); //Start in retro mode without a cursor

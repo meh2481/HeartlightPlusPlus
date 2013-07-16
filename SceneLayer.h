@@ -18,6 +18,7 @@ public:
     Point pos;
     float32 rot;
     Image* image;
+    float32 alpha;
 
     parallaxLayer(Image* img);
     ~parallaxLayer();
