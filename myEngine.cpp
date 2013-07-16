@@ -265,6 +265,7 @@ void myEngine::init()
     inter->setMinVal(0.0f, false);
     inter->setMaxVal(1.0f, false);
     inter->calculateIncrement(1.0f, 1.0f);
+    inter->setDelay(10.0f);
     addInterpolation(inter);
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);

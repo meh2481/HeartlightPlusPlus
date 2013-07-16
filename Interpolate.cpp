@@ -11,13 +11,26 @@ Interpolate::~Interpolate()
 Interpolate::Interpolate(float32* interpObj)
 {
   ptr = interpObj;
-  bTimed = bMin = bMax = bKillMin = bKillMax = false;
+  bTimed = bMin = bMax = bKillMin = bKillMax = bInitial = false;
   interpTime = 0.0f;
+  initial = *ptr;
+  delay = 0.0f;
 }
 
 //template <class T>
 bool Interpolate::update(float32 fTimestep)
 {
+  if(delay > 0.0f)
+  {
+    delay -= fTimestep;
+    if(delay <= 0.0f);
+    {
+      if(bInitial)
+        *ptr = initial;
+      (*ptr) += increment * -delay;
+    }
+    return false;
+  }
   (*ptr) += increment * fTimestep;
   if(bTimed)
   {
