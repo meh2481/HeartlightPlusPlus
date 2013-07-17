@@ -260,12 +260,12 @@ void myEngine::init()
     objLayer->pos.x = 200;
     objLayer->pos.y = 100;
     objLayer->depth = 2.0f;
-    objLayer->alpha = 0.5;
-    Interpolate* inter = new Interpolate(&(objLayer->alpha));
+    objLayer->col.set(0.0f, 1.0f, 1.0f, 0.0f);
+    Interpolate* inter = new Interpolate(&(objLayer->col.a));
     inter->setMinVal(0.0f, false);
     inter->setMaxVal(1.0f, false);
     inter->calculateIncrement(1.0f, 1.0f);
-    inter->setDelay(10.0f);
+    //inter->setDelay(10.0f);
     addInterpolation(inter);
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);
