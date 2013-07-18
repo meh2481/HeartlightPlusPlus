@@ -1,5 +1,7 @@
 #include "3DObject.h"
 #include <sstream>
+#include <set>
+using namespace std;
 
 Object3D::Object3D(string sOBJFile, string sImgFile)
 {
@@ -10,20 +12,25 @@ Object3D::Object3D(string sOBJFile, string sImgFile)
     rot.x = rot.y = rot.z = 0.0f;
     scale.x = scale.y = scale.z = 1.0f;
     angle = 0.0f;
+    m_sObjFilename = sOBJFile;
+    m_sTexFilename = sImgFile;
+    _add3DObjReload(this);
 }
 
 Object3D::Object3D()
 {
-    m_obj = m_tex = 0;
+  m_obj = m_tex = 0;
+  _add3DObjReload(this);  
 }
 
 Object3D::~Object3D()
 {
-
+  _remove3DObjReload(this);
 }
 
 void Object3D::fromOBJFile(string sFilename)
 {
+    m_sObjFilename = sFilename;
     errlog << "Loading 3D object: " << sFilename << endl;
     vector<Vertex> vVerts;
     vector<Vertex> vNormals;
@@ -162,6 +169,7 @@ void Object3D::fromOBJFile(string sFilename)
 
 void Object3D::setTexture(string sFilename)
 {
+    m_sTexFilename = sFilename;
     errlog << "Creating 3D object texture: " << sFilename << endl;
 #ifndef __APPLE__
     SDL_Surface *surface;
@@ -289,3 +297,30 @@ void Object3D::render()
     glCallList(m_obj);
     glPopMatrix();
 }
+
+void Object3D::_reload()
+{
+  setTexture(m_sTexFilename);
+  fromOBJFile(m_sObjFilename);
+}
+
+static set<Object3D*> sg_objs;
+
+void reload3DObjects()
+{
+  for(set<Object3D*>::iterator i = sg_objs.begin(); i != sg_objs.end(); i++)
+  {
+    (*i)->_reload();
+  }
+}
+
+void _add3DObjReload(Object3D* obj)
+{
+  sg_objs.insert(obj);
+}
+
+void _remove3DObjReload(Object3D* obj)
+{
+  sg_objs.erase(obj);
+}
+

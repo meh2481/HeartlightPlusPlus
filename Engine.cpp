@@ -447,8 +447,10 @@ void Engine::changeScreenResolution(float32 w, float32 h)
   }
   //Set OpenGL back up
   setup_opengl();
-  //Reload images TODO: Reload 3D models and model textures as well
+  //Reload images
   reloadImages();
+  //Reload 3D models
+  reload3DObjects();
 }
 
 void Engine::toggleFullscreen()
@@ -473,6 +475,8 @@ void Engine::toggleFullscreen()
   setup_opengl();
   //Reload images
   reloadImages();
+  //Reload 3D object memory
+  reload3DObjects();
 }
 
 list<resolution> Engine::getAvailableResolutions()

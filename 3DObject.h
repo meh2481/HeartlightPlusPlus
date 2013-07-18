@@ -4,7 +4,6 @@
 #include "Image.h"
 #include "globaldefs.h"
 
-
 class Vertex
 {
 public:
@@ -29,12 +28,16 @@ class Object3D
 protected:
     GLuint m_obj;   //The object in 3D memory
     GLuint m_tex;   //The texture that'll be drawn to the object
+    string m_sObjFilename;
+    string m_sTexFilename;
 
 public:
     Vertex pos;
     Vertex rot;
     Vertex scale;
     float32 angle;  //The angle we'll be rotating
+    
+    void _reload();  //Reload memory associated with this object
 
     Object3D(string sOBJFile, string sImgFile);
     Object3D();
@@ -48,7 +51,10 @@ public:
 
 };
 
-
+//Object3D reloading handler functions
+void reload3DObjects();
+void _add3DObjReload(Object3D* obj);
+void _remove3DObjReload(Object3D* obj);
 
 
 

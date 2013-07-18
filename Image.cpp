@@ -191,6 +191,8 @@ void Image::draw(Rect rcDrawPos, Rect rcImgPos)
     glTexCoord2f((rcImgPos.right / (float32)w), (rcImgPos.top / (float32)h));
     glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(rcDrawPos.right)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)rcDrawPos.top/(GLfloat)screenDrawHeight+1.0, 0.0);
 
+    //Reset color
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glEnd();
 }
 
