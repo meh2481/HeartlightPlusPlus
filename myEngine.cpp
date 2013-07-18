@@ -236,6 +236,7 @@ void myEngine::draw()
     //objLayer->depth = 2.0f;
     //cout << "Objlayer: " << objLayer->depth << endl;
     myObj->draw();
+    o3d->render();
     //objLayer->scale.x += 0.001;
     //objLayer->scale.y += 0.004;
     //objLayer->rot += 0.05;//PI/4.0;
@@ -252,6 +253,8 @@ void myEngine::init()
     parallaxLayer* objLayer = new parallaxLayer(objImg);
     physSegment* objSeg = new physSegment();
     objSeg->layer = objLayer;
+    o3d = 
+    /*objSeg->obj3D =*/ new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
     myObj = new obj();
     myObj->addSegment(objSeg);
     objLayer->scale.x = 0.5;

@@ -6,6 +6,10 @@ Object3D::Object3D(string sOBJFile, string sImgFile)
     m_obj = m_tex = 0;
     setTexture(sImgFile);
     fromOBJFile(sOBJFile);
+    pos.x = pos.y = pos.z = 0.0f;
+    rot.x = rot.y = rot.z = 0.0f;
+    scale.x = scale.y = scale.z = 1.0f;
+    angle = 0.0f;
 }
 
 Object3D::Object3D()
@@ -20,6 +24,7 @@ Object3D::~Object3D()
 
 void Object3D::fromOBJFile(string sFilename)
 {
+    errlog << "Loading 3D object: " << sFilename << endl;
     vector<Vertex> vVerts;
     vector<Vertex> vNormals;
     vector<UV> vUVs;
@@ -157,6 +162,7 @@ void Object3D::fromOBJFile(string sFilename)
 
 void Object3D::setTexture(string sFilename)
 {
+    errlog << "Creating 3D object texture: " << sFilename << endl;
 #ifndef __APPLE__
     SDL_Surface *surface;
     int mode;
@@ -275,6 +281,11 @@ void Object3D::setTexture(string sFilename)
 void Object3D::render()
 {
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  //TODO For Wireframe Games logo. Woot woot!
+    glPushMatrix();
+    glTranslatef(pos.x, pos.y, pos.z);
+    glRotatef(angle, rot.x, rot.y, rot.z);
+    glScalef(scale.x, scale.y, scale.z);
     glBindTexture(GL_TEXTURE_2D, m_tex);
     glCallList(m_obj);
+    glPopMatrix();
 }

@@ -15,6 +15,7 @@ protected:
   float32 min;
   float32 max;
   float32 delay;
+  float32 delayLeft;
   float32 initial;
   bool bTimed;
   bool bMin;
@@ -39,7 +40,7 @@ public:
   void setMaxVal(float32 val, bool bKill = true)  {max = val; bMax = true; bKillMax = bKill;};
   void setTime(float32 fTime)               {interpTime = fTime; bTimed = true;};
   void setIncrement(float32 incr)                 {increment = incr;};
-  void setDelay(float32 del)                {delay = del;};
+  void setDelay(float32 del)                {delay = del;delayLeft = del;};
   void setInitial(float32 init)             {initial = init; bInitial = true;};
   void calculateIncrement(float32 finalVal, float32 fTime); //Interpolate from current value to finalVal over fTime seconds
   

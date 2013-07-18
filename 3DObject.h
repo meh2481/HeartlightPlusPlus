@@ -31,6 +31,11 @@ protected:
     GLuint m_tex;   //The texture that'll be drawn to the object
 
 public:
+    Vertex pos;
+    Vertex rot;
+    Vertex scale;
+    float32 angle;  //The angle we'll be rotating
+
     Object3D(string sOBJFile, string sImgFile);
     Object3D();
     ~Object3D();

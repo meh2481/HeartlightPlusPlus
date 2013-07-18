@@ -9,6 +9,7 @@
 
 #include "globaldefs.h"
 #include "Image.h"
+#include "3DObject.h"
 #include "SceneLayer.h"
 
 class Object
@@ -117,8 +118,9 @@ public:
 class physSegment
 {
 public:
-    b2Body* body;
-    parallaxLayer* layer;
+    b2Body*         body;
+    parallaxLayer*  layer;
+    Object3D*       obj3D;
 
     physSegment();
     ~physSegment();
@@ -133,6 +135,9 @@ protected:
 public:
     obj();
     ~obj();
+    
+    Point pos;
+    float32 rot;
 
     void draw();
     void addSegment(physSegment* seg);
