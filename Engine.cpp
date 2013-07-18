@@ -66,6 +66,7 @@ bool Engine::_myRenderFunc()
 
     // Game-specific drawing
     draw();
+    glClear(GL_DEPTH_BUFFER_BIT); //Draw cursor over everything
     if(m_cursor != NULL && m_bShowCursor)    //Draw cursor if it's there and if we should
         m_cursor->draw(m_ptCursorPos);
 

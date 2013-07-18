@@ -228,10 +228,6 @@ void myEngine::draw()
         else
             tog->setEnabled(false); //We haven't beaten this level yet
     }
-
-
-    //Draw our HUD
-    m_hud->draw(getTime());
     
     //objLayer->depth = 2.0f;
     //cout << "Objlayer: " << objLayer->depth << endl;
@@ -245,6 +241,10 @@ void myEngine::draw()
     //objLayer->pos.y = 100;
 
     //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
+  
+    //Draw our HUD
+    glClear(GL_DEPTH_BUFFER_BIT);
+    m_hud->draw(getTime());
 }
 
 void myEngine::init()
