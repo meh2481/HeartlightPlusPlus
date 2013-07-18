@@ -65,7 +65,7 @@ private:
     Vec2 lastMousePos;
     list<resolution> m_lResolutions;
     list<resolution>::iterator iCurResolution;
-    Object3D* o3d;
+    //Object3D* o3d;
     //bool m_bDragScreen;
     //bool m_bScaleScreen;
     //Point m_ptLastMousePos;

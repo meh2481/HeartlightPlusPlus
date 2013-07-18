@@ -126,7 +126,8 @@ void physicsObject::draw()
 
 obj::obj()
 {
-
+  pos.x = pos.y = 0.0f;
+  rot = 0.0f;
 }
 
 obj::~obj()
@@ -152,7 +153,7 @@ void obj::draw()
         }
         glPushMatrix();
         glTranslatef(pos.x, pos.y, 0.0f);
-        glRotatef(rot, 0.0f, 0.0f, 1.0f);
+        glRotatef(rot*180.0f/PI, 0.0f, 0.0f, 1.0f); //Convert radians to degrees
         if((*i)->layer != NULL)
         {
           (*i)->layer->draw();

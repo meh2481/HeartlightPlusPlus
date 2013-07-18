@@ -232,7 +232,7 @@ void myEngine::draw()
     //objLayer->depth = 2.0f;
     //cout << "Objlayer: " << objLayer->depth << endl;
     myObj->draw();
-    o3d->render();
+    //o3d->render();
     //objLayer->scale.x += 0.001;
     //objLayer->scale.y += 0.004;
     //objLayer->rot += 0.05;//PI/4.0;
@@ -253,8 +253,7 @@ void myEngine::init()
     parallaxLayer* objLayer = new parallaxLayer(objImg);
     physSegment* objSeg = new physSegment();
     objSeg->layer = objLayer;
-    o3d = 
-    /*objSeg->obj3D =*/ new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
+    objSeg->obj3D = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
     myObj = new obj();
     myObj->addSegment(objSeg);
     objLayer->scale.x = 0.5;
@@ -263,6 +262,7 @@ void myEngine::init()
     objLayer->pos.x = 200;
     objLayer->pos.y = 100;
     objLayer->depth = 2.0f;
+    objSeg->obj3D->pos.x = -0.8;
     objLayer->col.set(0.0f, 1.0f, 1.0f, 0.0f);
     Interpolate* inter = new Interpolate(&(objLayer->col.a));
     inter->setMinVal(0.0f, false);
@@ -270,6 +270,9 @@ void myEngine::init()
     inter->calculateIncrement(1.0f, 1.0f);
     //inter->setDelay(10.0f);
     addInterpolation(inter);
+    //inter = new Interpolate(&(myObj->rot));
+    //inter->calculateIncrement(2.0*PI, 1.0f);
+    //addInterpolation(inter);
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);
     hideCursor(); //Start in retro mode without a cursor
