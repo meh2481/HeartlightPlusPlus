@@ -119,15 +119,17 @@ void Object3D::fromOBJFile(string sFilename)
                         case 0:
                             f.v1 = vertPos;
                             f.uv1 = uvPos;
+                            f.norm1 = normPos;
                             break;
                         case 1:
                             f.v2 = vertPos;
                             f.uv2 = uvPos;
+                            f.norm2 = normPos;
                             break;
                         case 2:
                             f.v3 = vertPos;
                             f.uv3 = uvPos;
-                            f.norm = normPos;
+                            f.norm3 = normPos;
                             break;
 
                     }
@@ -143,19 +145,23 @@ void Object3D::fromOBJFile(string sFilename)
     //Done with file; create object
     m_obj = glGenLists(1);
     glNewList(m_obj,GL_COMPILE);
-
+	
     //Loop through and add faces
     glBegin(GL_TRIANGLES);
     for(list<Face>::iterator i = lFaces.begin(); i != lFaces.end(); i++)
     {
         if(bNorms)
-            glNormal3f(vNormals[i->norm-1].x, vNormals[i->norm-1].y, vNormals[i->norm-1].z);  //Flat shading. TODO: Compute vertex normals as average of surrounding faces for smooth shading
+            glNormal3f(vNormals[i->norm1-1].x, vNormals[i->norm1-1].y, vNormals[i->norm1-1].z);  //TODO
         if(bUVs)
             glTexCoord2f(vUVs[i->uv1].u, vUVs[i->uv1].v);
         glVertex3f(vVerts[i->v1-1].x, vVerts[i->v1-1].y, vVerts[i->v1-1].z);
+        if(bNorms)
+            glNormal3f(vNormals[i->norm2-1].x, vNormals[i->norm2-1].y, vNormals[i->norm2-1].z);
         if(bUVs)
             glTexCoord2f(vUVs[i->uv2].u, vUVs[i->uv2].v);
         glVertex3f(vVerts[i->v2-1].x, vVerts[i->v2-1].y, vVerts[i->v2-1].z);
+        if(bNorms)
+            glNormal3f(vNormals[i->norm3-1].x, vNormals[i->norm3-1].y, vNormals[i->norm3-1].z);
         if(bUVs)
             glTexCoord2f(vUVs[i->uv3].u, vUVs[i->uv3].v);
         glVertex3f(vVerts[i->v3-1].x, vVerts[i->v3-1].y, vVerts[i->v3-1].z);
@@ -289,6 +295,7 @@ void Object3D::setTexture(string sFilename)
 void Object3D::render()
 {
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  //TODO For Wireframe Games logo. Woot woot!
+	glEnable(GL_LIGHTING);
     glPushMatrix();
     glTranslatef(pos.x, pos.y, pos.z);
     glRotatef(angle, rot.x, rot.y, rot.z);
@@ -296,6 +303,7 @@ void Object3D::render()
     glBindTexture(GL_TEXTURE_2D, m_tex);
     glCallList(m_obj);
     glPopMatrix();
+	glDisable(GL_LIGHTING);	//TODO: Enable/disable someplace else that makes more sense
 }
 
 void Object3D::_reload()

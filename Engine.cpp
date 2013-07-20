@@ -424,6 +424,23 @@ void Engine::setup_opengl()
     glLoadIdentity();
     glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
     //glEnable(GL_CULL_FACE);
+	
+	//Set up lighting
+    glShadeModel(GL_SMOOTH);
+    glEnable( GL_LIGHT0 );
+    glEnable( GL_COLOR_MATERIAL );
+
+    // Setup The Ambient Light
+    glLightfv( GL_LIGHT1, GL_AMBIENT, LightAmbient );
+
+    // Setup The Diffuse Light
+    glLightfv( GL_LIGHT1, GL_DIFFUSE, LightDiffuse );
+
+    // Position The Light
+    glLightfv( GL_LIGHT1, GL_POSITION, LightPosition );
+
+    // Enable Light One
+    glEnable( GL_LIGHT1 ); 
     
 }
 

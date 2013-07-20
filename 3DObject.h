@@ -20,7 +20,7 @@ struct Face
 {
     uint32_t v1, v2, v3;
     uint32_t uv1, uv2, uv3;
-    uint32_t norm;
+    uint32_t norm1, norm2, norm3;
 };
 
 class Object3D
