@@ -16,7 +16,7 @@
 #include "Interpolate.h"
 #include <map>
 
-typedef struct resolution
+struct resolution
 {
   int w;
   int h;
