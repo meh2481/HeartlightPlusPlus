@@ -243,7 +243,7 @@ void myEngine::draw()
     //fillRect(m_rcViewScreen, 255, 0, 0, 100);   //DEBUG: Draw red rectangle of portion of screen we're looking at
   
     //Draw our HUD
-    glClear(GL_DEPTH_BUFFER_BIT);
+    //glClear(GL_DEPTH_BUFFER_BIT);
     m_hud->draw(getTime());
 }
 
@@ -270,9 +270,10 @@ void myEngine::init()
     inter->calculateIncrement(1.0f, 1.0f);
     //inter->setDelay(10.0f);
     addInterpolation(inter);
-    //inter = new Interpolate(&(myObj->rot));
-    //inter->calculateIncrement(2.0*PI, 1.0f);
-    //addInterpolation(inter);
+    inter = new Interpolate(&(objSeg->obj3D->angle));
+	objSeg->obj3D->rot.y = 1.0;
+    inter->calculateIncrement(180.0f, 1.0f);
+    addInterpolation(inter);
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);
     hideCursor(); //Start in retro mode without a cursor

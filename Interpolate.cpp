@@ -15,6 +15,7 @@ Interpolate::Interpolate(float32* interpObj)
   interpTime = 0.0f;
   initial = *ptr;
   delay = 0.0f;
+  increment = 0.0f;
 }
 
 //template <class T>
@@ -63,9 +64,9 @@ bool Interpolate::update(float32 fTimestep)
 }
 
 //template <class T>
-void Interpolate::calculateIncrement(float32 finalVal, float32 fTime)
+void Interpolate::calculateIncrement(float32 finalVal, float32 fTime, bool bUseCurrent)
 {
-  increment = (finalVal - *ptr) / fTime;
+  increment = (finalVal - ((bUseCurrent)?(*ptr):(initial))) / fTime;
 }
 
 
