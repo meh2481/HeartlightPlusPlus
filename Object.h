@@ -85,7 +85,7 @@ public:
     void    addData(uint64_t iAdd)  {m_iData |= iAdd;};
     void    removeData(uint64_t iRem)   {m_iData &= ~iRem;};
     bool    isData(uint64_t iTest) {return(m_iData & iTest);};
-    virtual float32 _getDepthID() {return layer->image->_getID();};   //Draw these together to for speed
+    virtual float32 _getDepthID() {return layer->image->_getID();};   //Draw these together for speed
 };
 
 //Objects specific to our game

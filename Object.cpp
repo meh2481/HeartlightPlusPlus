@@ -153,7 +153,7 @@ void obj::draw()
         }
         glPushMatrix();
         glTranslatef(pos.x, pos.y, 0.0f);
-        glRotatef(rot*180.0f/PI, 0.0f, 0.0f, 1.0f); //Convert radians to degrees
+        glRotatef(rot*RAD2DEG, 0.0f, 0.0f, 1.0f);
         if((*i)->layer != NULL)
         {
           (*i)->layer->draw();
