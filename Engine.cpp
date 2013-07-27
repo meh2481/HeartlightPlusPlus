@@ -203,6 +203,10 @@ Image* Engine::getImage(string sName)
 void Engine::createImage(string sPath, string sName)
 {
     m_mImageNames[sName] = sPath;
+	//Set to new path
+	map<string, Image*>::iterator i = m_mImages.find(sName);
+    if(i != m_mImages.end())
+		m_mImages[sName]->_setFilename(sPath);
 }
 
 void Engine::createSound(string sPath, string sName)

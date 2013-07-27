@@ -221,7 +221,10 @@ void myEngine::loadLevel_retro()
                 case '$':   //Heart
                     m_iHeartsTotal++;   //Increment the total number of hearts in this level
                     m_levelGrid[col][row] = new retroObject(getImage("o_heart"));
-                    m_levelGrid[col][row]->setNumFrames(6);
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);
+					else
+						m_levelGrid[col][row]->setNumFrames(6);
                     m_levelGrid[col][row]->setFrame(randInt(0,5));    //randomize the frame it starts at
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
@@ -230,6 +233,8 @@ void myEngine::loadLevel_retro()
 
                 case '@':   //rock
                     m_levelGrid[col][row] = new retroObject(getImage("o_rock"));
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
@@ -237,6 +242,8 @@ void myEngine::loadLevel_retro()
 
                 case '.':   //grass
                     m_levelGrid[col][row] = new retroObject(getImage("o_grass"));
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
@@ -256,6 +263,8 @@ void myEngine::loadLevel_retro()
 
                 case '!':   //exit door
                     m_levelGrid[col][row] = new Door(getImage("o_door"));
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
@@ -264,6 +273,8 @@ void myEngine::loadLevel_retro()
 
                 case '&':   //bomb
                     m_levelGrid[col][row] = new retroObject(getImage("o_bomb"));
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);
@@ -271,7 +282,10 @@ void myEngine::loadLevel_retro()
 
                 case '0':   //balloon
                     m_levelGrid[col][row] = new retroObject(getImage("o_balloon"));
-                    m_levelGrid[col][row]->setNumFrames(4);
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);
+					else
+						m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setFrame(randInt(0,3));
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
@@ -280,6 +294,8 @@ void myEngine::loadLevel_retro()
 
                 case '=':   //plasma
                     m_levelGrid[col][row] = new retroObject(getImage("o_plasma"));
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.25, 0.25);	//64x64. Derp
                     m_levelGrid[col][row]->setNumFrames(8);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
@@ -288,6 +304,8 @@ void myEngine::loadLevel_retro()
 
                 case '#':   //brick wall
                     m_levelGrid[col][row] = new retroObject(getImage("o_brick"));
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);
                     m_levelGrid[col][row]->setAnimate(false);   //Don't animate
                     m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setFrame(m_iCurrentLevel % 4);  //Color depends on level number, like original game
@@ -298,6 +316,8 @@ void myEngine::loadLevel_retro()
 
                 case '%':   //metal wall
                     m_levelGrid[col][row] = new retroObject(getImage("o_metalwall"));
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
                     addObject(m_levelGrid[col][row]);

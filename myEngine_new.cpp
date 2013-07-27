@@ -44,8 +44,13 @@ void myEngine::loadLevel_new()
                 case '$':   //Heart
                 {
                     physicsObject* obj = new physicsObject(getImage("o_heart"));
-                    obj->setNumFrames(6);
-                    obj->setFrame(randInt(0,5));
+					if(!m_bRetroGfx)
+						obj->layer->scale.Set(0.125, 0.125);
+					else
+					{
+						obj->setNumFrames(6);
+						obj->setFrame(randInt(0,5));
+					}
                     b2BodyDef def;
                     def.type = b2_dynamicBody;
                     def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
@@ -82,6 +87,8 @@ void myEngine::loadLevel_new()
                 case '@':   //rock
                 {
                     physicsObject* obj = new physicsObject(getImage("o_rock"));
+					if(!m_bRetroGfx)
+						obj->layer->scale.Set(0.125, 0.125);
                     b2BodyDef def;
                     def.type = b2_dynamicBody;
                     def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
@@ -100,6 +107,8 @@ void myEngine::loadLevel_new()
                 case '.':   //grass
                 {
                     physicsObject* obj = new physicsObject(getImage("o_grass"));
+					if(!m_bRetroGfx)
+						obj->layer->scale.Set(0.125, 0.125);
                     b2BodyDef def;
                     def.type = b2_staticBody;
                     def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
@@ -156,6 +165,8 @@ void myEngine::loadLevel_new()
                 case '&':   //bomb
                 {
                     physicsObject* obj = new physicsObject(getImage("o_bomb"));
+					if(!m_bRetroGfx)
+						obj->layer->scale.Set(0.125, 0.125);
                     b2BodyDef def;
                     def.type = b2_dynamicBody;
                     def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
@@ -187,7 +198,10 @@ void myEngine::loadLevel_new()
                 }
                 case '0':   //balloon
                     m_levelGrid[col][row] = new retroObject(getImage("o_balloon"));
-                    m_levelGrid[col][row]->setNumFrames(4);
+					if(!m_bRetroGfx)
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);
+					else
+						m_levelGrid[col][row]->setNumFrames(4);
                     m_levelGrid[col][row]->setFrame(randInt(0,3));
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
@@ -197,6 +211,8 @@ void myEngine::loadLevel_new()
                 case '=':   //plasma
                 {
                     physicsObject* obj = new physicsObject(getImage("o_plasma"));
+					if(!m_bRetroGfx)
+						obj->layer->scale.Set(0.25, 0.25);
                     obj->setNumFrames(8);
                     b2BodyDef def;
                     def.type = b2_staticBody;
@@ -216,6 +232,8 @@ void myEngine::loadLevel_new()
                 case '#':   //brick wall
                 {
                     physicsObject* obj = new physicsObject(getImage("o_brick"));
+					if(!m_bRetroGfx)
+						obj->layer->scale.Set(0.125, 0.125);
                     obj->setNumFrames(4);
                     obj->setFrame(m_iCurrentLevel % 4);
                     obj->setAnimate(false);
@@ -237,6 +255,8 @@ void myEngine::loadLevel_new()
                 case '%':   //metal wall
                 {
                     physicsObject* obj = new physicsObject(getImage("o_metalwall"));
+					if(!m_bRetroGfx)
+						obj->layer->scale.Set(0.125, 0.125);
                     b2BodyDef def;
                     def.type = b2_staticBody;
                     def.position.Set((GRID_WIDTH / 2.0 + col * GRID_WIDTH) * SCALE_DOWN_FACTOR,
@@ -405,7 +425,7 @@ void myEngine::updateGrid_new()
 //Test to see if player is on the ground
 bool myEngine::isOnGround()
 {
-    if(RETRO)
+    if(m_bRetroPhys)
         return false;
 
     b2Body* bPlayer = m_objTest->getBody();

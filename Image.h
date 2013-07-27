@@ -49,14 +49,16 @@ public:
     Image(string sFilename);
     ~Image();
     
+	//Engine use functions
     void _reload();  //Reload memory associated with this image
+	void _setFilename(string s) {m_sFilename = s;};
+    uint32_t _getID()    {return m_iID;};    //For engine use
+    void _setID(uint32_t id) {m_iID = id;};
 
     //Accessor methods
     uint32_t getWidth()     {return m_iWidth;};
     uint32_t getHeight()    {return m_iHeight;};
     string getFilename()    {return m_sFilename;};
-    uint32_t _getID()    {return m_iID;};    //For engine use
-    void _setID(uint32_t id) {m_iID = id;};
 
     //public methods
     void draw(Rect rcDrawPos);

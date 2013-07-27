@@ -4,7 +4,6 @@
 */
 
 #include "myEngine.h"
-bool RETRO = true;
 
 //For our engine functions to be able to call our Engine class functions - Note that this means there can be no more than one Engine at a time
 //TODO: Think of workaround? How does everything communicate now?
@@ -32,6 +31,9 @@ myEngine::myEngine(uint16_t iWidth, uint16_t iHeight, string sTitle) : Engine(iW
     m_bMusic = true;
     m_bRad  = false;
     m_bJumped = false;
+	m_bRetroPhys = true;
+	m_bRetroGfx = false;
+	m_bRetroSfx = true;
     //m_rcViewScreen.set(0,0,getWidth(),getHeight());
 //    m_bDragScreen = false;
 //    m_bScaleScreen = false;
@@ -61,7 +63,7 @@ void myEngine::frame()
     if(m_iFade == FADE_IN)
         return; //Don't do anything if fading in
 
-    if(RETRO)
+    if(m_bRetroPhys)
         updateGrid_retro();
     else
         updateGrid_new();
@@ -90,7 +92,7 @@ void myEngine::frame()
             m_iCurrentLevel++;  //Go to next level
             if(m_iCurrentLevel >= m_vLevels.size())
                 m_iCurrentLevel = 0;
-            if(RETRO)
+            if(m_bRetroPhys)
                 loadLevel_retro();
             else
                 loadLevel_new();
@@ -253,7 +255,7 @@ void myEngine::init()
     parallaxLayer* objLayer = new parallaxLayer(objImg);
     physSegment* objSeg = new physSegment();
     objSeg->layer = objLayer;
-    objSeg->obj3D = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
+    //objSeg->obj3D = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
     myObj = new obj();
     myObj->addSegment(objSeg);
     objLayer->scale.x = 0.5;
@@ -262,7 +264,7 @@ void myEngine::init()
     objLayer->pos.x = 200;
     objLayer->pos.y = 100;
     objLayer->depth = 2.0f;
-    objSeg->obj3D->pos.x = -0.8;
+    //objSeg->obj3D->pos.x = -0.8;
     objLayer->col.set(0.0f, 1.0f, 1.0f, 0.0f);
     Interpolate* inter = new Interpolate(&(objLayer->col.a));
     inter->setMinVal(0.0f, false);
@@ -270,8 +272,8 @@ void myEngine::init()
     inter->calculateIncrement(1.0f, 1.0f);
     //inter->setDelay(10.0f);
     addInterpolation(inter);
-    inter = new Interpolate(&(objSeg->obj3D->angle));
-	objSeg->obj3D->rot.y = 1.0;
+    //inter = new Interpolate(&(objSeg->obj3D->angle));
+	//objSeg->obj3D->rot.y = 1.0;
     inter->calculateIncrement(180.0f, 1.0f);
     addInterpolation(inter);
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
@@ -279,7 +281,10 @@ void myEngine::init()
     hideCursor(); //Start in retro mode without a cursor
 
     //Load all images, so we can scale all of them up from the start
-    loadImages("res/gfx/orig.xml");
+	if(m_bRetroGfx)
+		loadImages("res/gfx/orig.xml");
+	else
+		loadImages("res/gfx/new.xml");
 
     //testObj = new Object3D("cs/trixie2.obj", "cs/trixie.png");
     //shipObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
@@ -331,7 +336,7 @@ void myEngine::init()
     gun->gun = "n_blastgun";
     m_lGuns.push_back(gun);
   
-    if(RETRO)
+    if(m_bRetroPhys)
     {
         loadLevel_retro();
         m_iCurGun = m_lGuns.end();
@@ -353,7 +358,7 @@ void myEngine::init()
     //    playMusic("o_mus_menu"); //Start playing menu music
 
     //Create physics boundary if not in retro mode
-    //if(!RETRO)
+    //if(!m_bRetroPhys)
     //{
         b2BodyDef grounddef;
         grounddef.position.SetZero();
@@ -371,7 +376,7 @@ void myEngine::init()
         worldBox.CreateChain(vertices, 5);
         groundBody->CreateFixture(&worldBox, 0.0);
         
-    if(!RETRO)
+    if(!m_bRetroPhys)
         setFramerate(60); //YAY 60 fps!
     //}
     
@@ -492,12 +497,12 @@ void myEngine::handleEvent(SDL_Event event)
                         m_iCurrentLevel++;
                         if(m_iCurrentLevel >= m_vLevels.size())
                             m_iCurrentLevel = 0;
-                        if(RETRO)
+                        if(m_bRetroPhys)
                             loadLevel_retro();
                         else
                             loadLevel_new();
                     }
-                    //else if(!RETRO)
+                    //else if(!m_bRetroPhys)
                     //{
                     //    b2Body* bod = m_objTest->getBody();
                     //    b2Vec2 force;
@@ -512,12 +517,12 @@ void myEngine::handleEvent(SDL_Event event)
                         if(m_iCurrentLevel == 0)
                             m_iCurrentLevel = m_vLevels.size();
                         m_iCurrentLevel--;
-                        if(RETRO)
+                        if(m_bRetroPhys)
                             loadLevel_retro();
                         else
                             loadLevel_new();
                     }
-                    //else if(!RETRO)
+                    //else if(!m_bRetroPhys)
                     //{
                     //    b2Body* bod = m_objTest->getBody();
                     //    b2Vec2 force;
@@ -528,7 +533,7 @@ void myEngine::handleEvent(SDL_Event event)
 
                 case SDLK_ESCAPE:
                     //Make gnome die
-                    if(RETRO)
+                    if(m_bRetroPhys)
                     {
                         if(!m_iDyingCount)
                             m_iDyingCount = DIE_COUNT;
@@ -552,6 +557,20 @@ void myEngine::handleEvent(SDL_Event event)
                 case SDLK_r:
                     toggleRetro();
                     break;
+				
+				case SDLK_t:
+					m_bRetroGfx = !m_bRetroGfx;
+					if(m_bRetroGfx)
+						loadImages("res/gfx/orig.xml");
+					else
+						loadImages("res/gfx/new.xml");
+					reloadImages();
+					//Reload level as well
+					if(m_bRetroPhys)
+						loadLevel_retro();
+					else
+						loadLevel_new();
+					break;
 
                 case SDLK_5:   //Refresh cursor XML
                     m_cur->loadFromXML("res/cursor/cursor1.xml");
@@ -619,7 +638,7 @@ void myEngine::handleEvent(SDL_Event event)
             }
             /*else if(event.key == SDLK_RBUTTON)
             {
-                if(!RETRO)
+                if(!m_bRetroPhys)
                     place_new(event.x, event.y);
                 //m_bScaleScreen = true;
                 //m_ptLastMousePos.Set(event.x, event.y);
@@ -775,9 +794,9 @@ void myEngine::toggleRetro()
 {
   if(m_iFade != FADE_NONE)
     return; //Don't allow retro-mode-changing if fading (causes crash)
-  RETRO = !RETRO;
+  m_bRetroPhys = !m_bRetroPhys;
   //Reload the current level and set the framerate
-  if(RETRO)
+  if(m_bRetroPhys)
   {
     loadLevel_retro();
     setFramerate(GAME_FRAMERATE);

@@ -48,11 +48,11 @@ public:
     bool getAnimate()               {return m_bAnimate;};
     int16_t  getFrame() {return m_iCurFrame;};
     void  setFrame(int16_t iFrame) {m_iCurFrame = iFrame;}; //WARNING: Potentially dangerous
-    uint32_t getWidth() {return m_iWidth;};
-    uint32_t getHeight() {return m_iHeight;};
+    uint32_t getWidth() {return m_iWidth * layer->scale.x;};
+    uint32_t getHeight() {return m_iHeight * layer->scale.y;};
     void setCenter(Point ptCenter) {m_ptPos = ptCenter;};
     void setCenter(float32 x, float32 y)    {m_ptPos.x = x; m_ptPos.y = y;};
-    void setPos(float32 x, float32 y)   {m_ptPos.x = x + m_iWidth/2.0; m_ptPos.y = y + m_iHeight/2.0;};
+    void setPos(float32 x, float32 y)   {m_ptPos.x = x + m_iWidth*layer->scale.x/2.0; m_ptPos.y = y + m_iHeight*layer->scale.y/2.0;};
     void setPos(Point ptULCorner)   {setPos(ptULCorner.x, ptULCorner.y);};
     virtual Point getCenter()  {return m_ptPos;};
     Point getVelocity() {return m_ptVel;};

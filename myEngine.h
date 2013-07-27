@@ -37,8 +37,6 @@
 #define FALLING_1           8
 #define FALLING_2           16
 
-extern bool RETRO;//   false   //If we're playing in retro mode or not
-
 class myEngine : public Engine
 {
 private:
@@ -65,6 +63,9 @@ private:
     Vec2 lastMousePos;
     list<resolution> m_lResolutions;
     list<resolution>::iterator iCurResolution;
+	bool m_bRetroPhys;         //If we're playing with modern or retro physics
+	bool m_bRetroGfx;			//If we're playing with new or retro graphics
+	bool m_bRetroSfx;			//If we're playing with new or retro sound effects
     //Object3D* o3d;
     //bool m_bDragScreen;
     //bool m_bScaleScreen;
