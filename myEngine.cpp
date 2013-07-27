@@ -480,6 +480,7 @@ void myEngine::hudSignalHandler(string sSignal)
 
 float fXpos = 0.0;
 float fYpos = 0.0;
+bool bBlur = true;
 
 void myEngine::handleEvent(SDL_Event event)
 {
@@ -571,6 +572,13 @@ void myEngine::handleEvent(SDL_Event event)
 					else
 						loadLevel_new();
 					break;
+					
+				/*case SDLK_y:
+					if(!bBlur)
+						glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+					else
+						glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+					bBlur = !bBlur;*/	//TODO
 
                 case SDLK_5:   //Refresh cursor XML
                     m_cur->loadFromXML("res/cursor/cursor1.xml");
@@ -628,35 +636,32 @@ void myEngine::handleEvent(SDL_Event event)
             break;
 
         case SDL_MOUSEBUTTONDOWN:
-            isMouseDown = true;
             if(event.button.button == SDL_BUTTON_LEFT)
             {
+				isMouseDown = true;
                 if(m_iCurGun != m_lGuns.end())
                 {
                     (*m_iCurGun)->mouseDown(event.button.x, event.button.y);
                 }
             }
-            /*else if(event.key == SDLK_RBUTTON)
+            else if(event.button.button == SDL_BUTTON_RIGHT)
             {
-                if(!m_bRetroPhys)
-                    place_new(event.x, event.y);
-                //m_bScaleScreen = true;
-                //m_ptLastMousePos.Set(event.x, event.y);
-            }*/
+				if(m_bDebug)
+					glScalef(0.5,0.5,1.0);
+				else
+					glScalef(2.0,2.0,1.0);
+            }
             break;
 
         case SDL_MOUSEBUTTONUP:
-            isMouseDown = false;
             if(event.button.button == SDL_BUTTON_LEFT)
             {
+				isMouseDown = false;
                 if(m_iCurGun != m_lGuns.end())
                 {
                     (*m_iCurGun)->mouseUp(event.button.x, event.button.y);
                 }
             }
-//                m_bDragScreen = false;
-//            else if(event.key == SDLK_RBUTTON)
-//                m_bScaleScreen = false;
             break;
 
         case SDL_MOUSEMOTION:
@@ -691,15 +696,26 @@ void myEngine::handleEvent(SDL_Event event)
             break;
 
         //TODO
-        /*case INPUT_MOUSEWHEEL:
+        //case INPUT_MOUSEWHEEL:
+			//if(event.wheel < 0)
+			//	glScalef(1.0/2.0,1.0/2.0,1.0);
+			//else
+			//	glScalef((float32)event.wheel,(float32)event.wheel,1.0);
+				/*
             m_rcViewScreen.right -= (float32)event.wheel * getWidth()/getHeight();
             m_rcViewScreen.bottom -= (float32)event.wheel;
             m_rcViewScreen.left += (float32)event.wheel * getWidth()/getHeight();
             m_rcViewScreen.top += (float32)event.wheel;
             //cout << "Screen pos: " << m_rcViewScreen.left << ", " << m_rcViewScreen.top << ", " << m_rcViewScreen.right << ", " << m_rcViewScreen.bottom << endl;
-            //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;
-            break;*/
+            //cout << "Screen scale: " << (float32)getWidth()/m_rcViewScreen.width() << ", " << (float32)getHeight()/m_rcViewScreen.height() << endl;*/
+        //    break;
     }
+	
+	/*Uint8 ms = SDL_GetMouseState(NULL, NULL);
+	if(SDL_BUTTON(SDL_BUTTON_WHEELUP) & ms)
+		cout << "wheel up" << endl;
+	if(SDL_BUTTON(SDL_BUTTON_WHEELDOWN) & ms)
+		cout << "wheel down" << endl;*/
 }
 
 
