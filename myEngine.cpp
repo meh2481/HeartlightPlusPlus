@@ -231,6 +231,7 @@ void myEngine::draw()
     
     //objLayer->depth = 2.0f;
     //cout << "Objlayer: " << objLayer->depth << endl;
+    m_hud->draw(getTime());
     myObj->draw();
     //o3d->render();
     //objLayer->scale.x += 0.001;
@@ -244,7 +245,6 @@ void myEngine::draw()
   
     //Draw our HUD
     //glClear(GL_DEPTH_BUFFER_BIT);
-    m_hud->draw(getTime());
 }
 
 void myEngine::init()

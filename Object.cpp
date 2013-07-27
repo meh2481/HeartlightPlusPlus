@@ -154,13 +154,13 @@ void obj::draw()
         glPushMatrix();
         glTranslatef(pos.x, pos.y, 0.0f);
         glRotatef(rot*RAD2DEG, 0.0f, 0.0f, 1.0f);
-        if((*i)->layer != NULL)
-        {
-          (*i)->layer->draw();
-        }
         if((*i)->obj3D != NULL)
         {
           (*i)->obj3D->render();
+        }
+        if((*i)->layer != NULL)
+        {
+          (*i)->layer->draw();
         }
         glPopMatrix();
         
