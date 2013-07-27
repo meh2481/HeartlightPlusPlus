@@ -382,6 +382,28 @@ void myEngine::init()
     
     //Keep track of current resolution
     m_lResolutions = getAvailableResolutions();
+	for(list<resolution>::iterator i = m_lResolutions.begin(); i != m_lResolutions.end(); i++)
+	{
+		//Make sure this resolution is an even multiple of 320x200
+		if(i->w % SCREEN_WIDTH || i->h % SCREEN_HEIGHT)	//If a modulus returns nonzero, not an even multiple
+		{
+			list<resolution>::iterator j = i;
+			j--;
+			m_lResolutions.erase(i);
+			i = j;
+		}
+		else	//If both remainders are still zero, it still may not be an even scaling (1:2 ratio or such)
+		{
+			int iMul = i->w / SCREEN_WIDTH;
+			if(SCREEN_HEIGHT * iMul != i->h)
+			{
+				list<resolution>::iterator j = i;
+				j--;
+				m_lResolutions.erase(i);
+				i = j;
+			}
+		}
+	}
     iCurResolution = m_lResolutions.end();
     iCurResolution--;
 }
@@ -579,13 +601,6 @@ void myEngine::handleEvent(SDL_Event event)
 					else
 						loadLevel_new();
 					break;
-					
-				/*case SDLK_y:
-					if(!bBlur)
-						glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-					else
-						glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-					bBlur = !bBlur;*/	//TODO
 
                 case SDLK_5:   //Refresh cursor XML
                     m_cur->loadFromXML("res/cursor/cursor1.xml");
@@ -601,13 +616,23 @@ void myEngine::handleEvent(SDL_Event event)
                     if(iCurResolution == m_lResolutions.end())
                       iCurResolution = m_lResolutions.begin();
                     changeScreenResolution(iCurResolution->w, iCurResolution->h);
+					scale_amt = iCurResolution->w / SCREEN_WIDTH;
+					//Scale up as well
+					glPopMatrix();
+					glPushMatrix();
+					glTranslatef((scale_amt-1.0)*getWidth()/getHeight(), -(scale_amt-1.0), 0.0);
+					glScalef(scale_amt,scale_amt,1.0);
                     break;
                 
                 case SDLK_RETURN:
                     if(keyDown(SDLK_LALT) || keyDown(SDLK_RALT))
                     {
-                      toggleFullscreen();
-                    }
+						toggleFullscreen();
+						glPopMatrix();
+						glPushMatrix();
+						glTranslatef((scale_amt-1.0)*getWidth()/getHeight(), -(scale_amt-1.0), 0.0);
+						glScalef(scale_amt,scale_amt,1.0);
+					}
                     break;
 
                 case SDLK_EQUALS:

@@ -15,8 +15,8 @@
 #define LEVEL_WIDTH     20
 #define LEVEL_HEIGHT    12
 
-//#define SCREEN_WIDTH    320
-//#define SCREEN_HEIGHT   200
+#define SCREEN_WIDTH    320
+#define SCREEN_HEIGHT   200
 
 //#define SCALE_FAC       1   //By what factor the retro gfx are scaled TODO: Variable
 
