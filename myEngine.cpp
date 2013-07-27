@@ -481,6 +481,7 @@ void myEngine::hudSignalHandler(string sSignal)
 float fXpos = 0.0;
 float fYpos = 0.0;
 bool bBlur = true;
+float32 scale_amt = 1.0;
 
 void myEngine::handleEvent(SDL_Event event)
 {
@@ -562,9 +563,15 @@ void myEngine::handleEvent(SDL_Event event)
 				case SDLK_t:
 					m_bRetroGfx = !m_bRetroGfx;
 					if(m_bRetroGfx)
+					{
 						loadImages("res/gfx/orig.xml");
+						setImagePixellated();
+					}
 					else
+					{
 						loadImages("res/gfx/new.xml");
+						setImageBlurred();
+					}
 					reloadImages();
 					//Reload level as well
 					if(m_bRetroPhys)
@@ -644,12 +651,23 @@ void myEngine::handleEvent(SDL_Event event)
                     (*m_iCurGun)->mouseDown(event.button.x, event.button.y);
                 }
             }
+			//RMB zooms in/out
             else if(event.button.button == SDL_BUTTON_RIGHT)
             {
 				if(m_bDebug)
-					glScalef(0.5,0.5,1.0);
+					scale_amt--;
 				else
-					glScalef(2.0,2.0,1.0);
+					scale_amt++;
+				
+				//Reset back to centered
+				glPopMatrix();
+				glPushMatrix();
+				//Center on upper left corner
+				glTranslatef((scale_amt-1.0)*getWidth()/getHeight(), -(scale_amt-1.0), 0.0);
+				//Scale up
+				glScalef(scale_amt,scale_amt,1.0);
+				//Reset pan variables
+				fXpos = fYpos = 0.0f;
             }
             break;
 
@@ -671,9 +689,9 @@ void myEngine::handleEvent(SDL_Event event)
             }
             if(isMouseDown)
             {
-              glTranslatef(event.motion.xrel/1000.0, -event.motion.yrel/1000.0, 0.0);
-              fXpos += event.motion.xrel;
-              fYpos -= event.motion.yrel;
+              glTranslatef(event.motion.xrel/(scale_amt*1000.0), -event.motion.yrel/(scale_amt*1000.0), 0.0);
+              fXpos += event.motion.xrel/(scale_amt*1000.0);
+              fYpos -= event.motion.yrel/(scale_amt*1000.0);
               //cout << "pos: " << fXpos << ", " << fYpos << endl;
             }
 /*            if(m_bDragScreen)

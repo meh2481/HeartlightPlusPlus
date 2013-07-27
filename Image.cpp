@@ -9,6 +9,7 @@
 
 int screenDrawWidth;
 int screenDrawHeight;
+static bool g_bBlurred = true;
 
 Image::Image(string sFilename)
 {
@@ -161,10 +162,11 @@ void Image::draw(Rect rcDrawPos, Rect rcImgPos)
     // tell opengl to use the generated texture
     glBindTexture(GL_TEXTURE_2D, m_hTex);
   
-    // Draw pixellated rather than blurred TODO: If rotated, blur instead
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	if(g_bBlurred)
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	else
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
   
   
     int32_t w, h;
@@ -300,8 +302,15 @@ void _removeImgReload(Image* img)
   sg_images.erase(img);
 }
 
+void setImageBlurred()
+{
+	g_bBlurred = true;
+}
 
-
+void setImagePixellated()
+{
+	g_bBlurred = false;
+}
 
 
 

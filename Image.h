@@ -88,6 +88,13 @@ void reloadImages();
 void _addImgReload(Image* img);
 void _removeImgReload(Image* img);
 
+//Misc image functions
+void setImageBlurred();		//Draw images blurred
+void setImagePixellated();	//Draw images pixellated
+
+
+
+
 #endif
 
 

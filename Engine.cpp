@@ -432,6 +432,7 @@ void Engine::setup_opengl()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
+	glPushMatrix();
     //glEnable(GL_CULL_FACE);
 	
 	//Set up lighting
