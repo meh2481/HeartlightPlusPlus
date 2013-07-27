@@ -17,7 +17,7 @@ GLfloat LightPosition[] = { 0.0f, 0.0f, 2.0f, 1.0f };
 extern int screenDrawWidth;
 extern int screenDrawHeight;
 
-bool Engine::_myFrameFunc()
+bool Engine::_frame()
 {
     //Handle input events from SDL
     SDL_Event event;
@@ -31,7 +31,7 @@ bool Engine::_myFrameFunc()
             m_ptCursorPos.y = event.motion.y;
         }
         if(event.type == SDL_QUIT)
-            return true;
+            return true;	//TODO: propogate event to application
     }
 
     //Get current key state
@@ -49,7 +49,7 @@ bool Engine::_myFrameFunc()
         m_cursor->update(m_fTargetTime);
         _interpolations(m_fTargetTime);
         frame();
-        _myRenderFunc();
+        _render();
     }
 
     if(m_fAccumulatedTime + m_fTargetTime * 3.0 < fCurTime)    //We've gotten far too behind; we could have a huge FPS jump if the load lessens
@@ -59,7 +59,7 @@ bool Engine::_myFrameFunc()
     return m_bQuitting;
 }
 
-bool Engine::_myRenderFunc()
+void Engine::_render()
 {
     // Begin rendering by clearing the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -72,7 +72,6 @@ bool Engine::_myRenderFunc()
 
     // End rendering and update the screen
     SDL_GL_SwapBuffers();
-    return false;   //Keep going
 }
 
 Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle)
@@ -153,7 +152,7 @@ void Engine::start()
     // Load all that we need to
     init();
     // Let's rock now!
-    while(!_myFrameFunc());
+    while(!_frame());
 }
 
 void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)

@@ -53,10 +53,8 @@ private:
     float32 m_fLastCycle;     //When the last cycle was
 
     //Engine-use function definitions
-//    friend bool frameFunc();
-//    friend bool renderFunc();
-    bool _myFrameFunc();
-    bool _myRenderFunc();
+    bool _frame();
+    void _render();
     
     void _interpolations(float32 dt); //update any interpolating variables
 //    HEFFECT _getEffect(string sName);
