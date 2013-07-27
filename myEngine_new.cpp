@@ -212,7 +212,7 @@ void myEngine::loadLevel_new()
                 {
                     physicsObject* obj = new physicsObject(getImage("o_plasma"));
 					if(!m_bRetroGfx)
-						obj->layer->scale.Set(0.25, 0.25);
+						obj->layer->scale.Set(0.125, 0.125);
                     obj->setNumFrames(8);
                     b2BodyDef def;
                     def.type = b2_staticBody;

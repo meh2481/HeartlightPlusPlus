@@ -295,7 +295,7 @@ void myEngine::loadLevel_retro()
                 case '=':   //plasma
                     m_levelGrid[col][row] = new retroObject(getImage("o_plasma"));
 					if(!m_bRetroGfx)
-						m_levelGrid[col][row]->layer->scale.Set(0.25, 0.25);	//64x64. Derp
+						m_levelGrid[col][row]->layer->scale.Set(0.125, 0.125);	//64x64. Derp
                     m_levelGrid[col][row]->setNumFrames(8);
                     m_levelGrid[col][row]->setPos(col * GRID_WIDTH, row * GRID_HEIGHT);
                     m_levelGrid[col][row]->setName(cObj);
