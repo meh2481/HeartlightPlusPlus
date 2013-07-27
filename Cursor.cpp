@@ -85,6 +85,44 @@ void Cursor::update(float32 fTimestep)
         g = m_ig;
         b = m_ib;
         uint16_t iNum = fTimestep * m_color.fNumPerSec;
+		//Run through hue values as per HSV color scheme. In the RGB color space, this looks like the following:
+		//1. R starts at max
+		//R ==========
+		//G
+		//B
+		
+		//2. Increase G until max
+		//R ==========
+		//G >>>>>>>>>>
+		//B
+		
+		//3. Decrease R until 0
+		//R <<<<<<<<<<
+		//G ==========
+		//B
+		
+		//4. Increase B until max
+		//R
+		//G ==========
+		//B >>>>>>>>>>
+		
+		//5. Decrease G until 0
+		//R
+		//G <<<<<<<<<<
+		//B ==========
+		
+		//6. Increase R until max
+		//R >>>>>>>>>>
+		//G
+		//B ==========
+		
+		//7. Decrease B until 0
+		//R ==========
+		//G 
+		//B <<<<<<<<<<
+		
+		//8. Loop back to beginning
+		
         if(r >= 255)
         {
             if(b > 0)

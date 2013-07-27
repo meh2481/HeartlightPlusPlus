@@ -66,10 +66,16 @@ void Engine::_render()
 
     // Game-specific drawing
     draw();
+	
+	//Draw cursor at absolute location
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
     glClear(GL_DEPTH_BUFFER_BIT); //Draw cursor over everything
     if(m_cursor != NULL && m_bShowCursor)    //Draw cursor if it's there and if we should
         m_cursor->draw(m_ptCursorPos);
-
+	glPopMatrix();
+	
     // End rendering and update the screen
     SDL_GL_SwapBuffers();
 }
