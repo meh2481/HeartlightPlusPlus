@@ -634,6 +634,10 @@ void myEngine::handleEvent(SDL_Event event)
                     //Scale up as well
                     glTranslatef((scale_amt-1.0)*(float32)getWidth()/(float32)getHeight(), 1.0f - scale_amt, 0.0);
                     glScalef(scale_amt,scale_amt,1.0);
+                    if(scale_y > scale_amt)
+                    {
+                      glTranslatef(0.0f, (0.5), 0.0);              
+                    }
                     break;
                 }
                 
