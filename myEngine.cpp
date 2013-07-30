@@ -45,10 +45,10 @@ myEngine::~myEngine()
     delete m_hud;
     //delete testObj;
     //delete shipObj;
-    delete objImg;
+    //delete objImg;
     //delete objLayer;
     //delete objSeg;
-    delete myObj;
+    //delete myObj;
 }
 
 void myEngine::frame()
@@ -234,7 +234,7 @@ void myEngine::draw()
     //objLayer->depth = 2.0f;
     //cout << "Objlayer: " << objLayer->depth << endl;
     m_hud->draw(getTime());
-    myObj->draw();
+    //myObj->draw();
     //o3d->render();
     //objLayer->scale.x += 0.001;
     //objLayer->scale.y += 0.004;
@@ -251,31 +251,31 @@ void myEngine::draw()
 
 void myEngine::init()
 {
-    objImg = new Image("res/hud/logo.png");
-    parallaxLayer* objLayer = new parallaxLayer(objImg);
-    physSegment* objSeg = new physSegment();
-    objSeg->layer = objLayer;
+    //objImg = new Image("res/hud/logo.png");
+    //parallaxLayer* objLayer = new parallaxLayer(objImg);
+    //physSegment* objSeg = new physSegment();
+    //objSeg->layer = objLayer;
     //objSeg->obj3D = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
-    myObj = new obj();
-    myObj->addSegment(objSeg);
-    objLayer->scale.x = 0.5;
-    objLayer->scale.y = 0.4;
-    objLayer->rot = PI/4.0;
-    objLayer->pos.x = 200;
-    objLayer->pos.y = 100;
-    objLayer->depth = 2.0f;
+    //myObj = new obj();
+    //myObj->addSegment(objSeg);
+    //objLayer->scale.x = 0.5;
+    //objLayer->scale.y = 0.4;
+    //objLayer->rot = PI/4.0;
+    //objLayer->pos.x = 200;
+    //objLayer->pos.y = 100;
+    //objLayer->depth = 2.0f;
     //objSeg->obj3D->pos.x = -0.8;
-    objLayer->col.set(0.0f, 1.0f, 1.0f, 0.0f);
-    Interpolate* inter = new Interpolate(&(objLayer->col.a));
-    inter->setMinVal(0.0f, false);
-    inter->setMaxVal(1.0f, false);
-    inter->calculateIncrement(1.0f, 1.0f);
+    //objLayer->col.set(0.0f, 1.0f, 1.0f, 0.0f);
+    //Interpolate* inter = new Interpolate(&(objLayer->col.a));
+    //inter->setMinVal(0.0f, false);
+    //inter->setMaxVal(1.0f, false);
+    //inter->calculateIncrement(1.0f, 1.0f);
     //inter->setDelay(10.0f);
-    addInterpolation(inter);
+    //addInterpolation(inter);
     //inter = new Interpolate(&(objSeg->obj3D->angle));
-	//objSeg->obj3D->rot.y = 1.0;
-    inter->calculateIncrement(180.0f, 1.0f);
-    addInterpolation(inter);
+	  //objSeg->obj3D->rot.y = 1.0;
+    //inter->calculateIncrement(180.0f, 1.0f);
+    //addInterpolation(inter);
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);
     hideCursor(); //Start in retro mode without a cursor
