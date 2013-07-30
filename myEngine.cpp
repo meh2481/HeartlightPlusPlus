@@ -382,7 +382,7 @@ void myEngine::init()
     
     //Keep track of current resolution
     m_lResolutions = getAvailableResolutions();
-	for(list<resolution>::iterator i = m_lResolutions.begin(); i != m_lResolutions.end(); i++)
+	/*for(list<resolution>::iterator i = m_lResolutions.begin(); i != m_lResolutions.end(); i++)
 	{
 		//Make sure this resolution is an even multiple of 320x200
 		if(i->w % SCREEN_WIDTH || i->h % SCREEN_HEIGHT)	//If a modulus returns nonzero, not an even multiple
@@ -403,7 +403,7 @@ void myEngine::init()
 				i = j;
 			}
 		}
-	}
+	}*/
     iCurResolution = m_lResolutions.end();
     iCurResolution--;
 }
@@ -612,29 +612,42 @@ void myEngine::handleEvent(SDL_Event event)
                 //    break;
                 
                 case SDLK_1:
+                {
                     iCurResolution++;
                     if(iCurResolution == m_lResolutions.end())
                       iCurResolution = m_lResolutions.begin();
                     changeScreenResolution(iCurResolution->w, iCurResolution->h);
-					scale_amt = iCurResolution->w / SCREEN_WIDTH;
-					//Scale up as well
-					glPopMatrix();
-					glPushMatrix();
-					glTranslatef((scale_amt-1.0)*getWidth()/getHeight(), -(scale_amt-1.0), 0.0);
-					glScalef(scale_amt,scale_amt,1.0);
+                    glPopMatrix();
+                    glPushMatrix();
+                    float32 scale_x = (float32)iCurResolution->w / (float32)SCREEN_WIDTH;
+                    float32 scale_y = (float32)iCurResolution->h / (float32)SCREEN_HEIGHT;
+                    scale_amt = scale_x;
+                    if(scale_y < scale_amt)
+                    {
+                      scale_amt = scale_y;
+                      //glTranslatef((scale_amt-1.0)*(float32)getWidth()/(float32)getHeight(), 0.0f, 0.0f);         
+                    }
+                    else if(scale_y > scale_amt)
+                    {
+                      //glTranslatef(0.0f, (scale_y-scale_amt)*(0.5), 0.0);              
+                    }
+                    //Scale up as well
+                    glTranslatef((scale_amt-1.0)*(float32)getWidth()/(float32)getHeight(), 1.0f - scale_amt, 0.0);
+                    glScalef(scale_amt,scale_amt,1.0);
                     break;
+                }
                 
                 case SDLK_RETURN:
                     if(keyDown(SDLK_LALT) || keyDown(SDLK_RALT))
                     {
-						toggleFullscreen();
-						glPopMatrix();
-						glPushMatrix();
-						glTranslatef((scale_amt-1.0)*getWidth()/getHeight(), -(scale_amt-1.0), 0.0);
-						glScalef(scale_amt,scale_amt,1.0);
-					}
+                      toggleFullscreen();
+                      glPopMatrix();
+                      glPushMatrix();
+                      glTranslatef((scale_amt-1.0)*(float32)getWidth()/(float32)getHeight(), -(scale_amt-1.0), 0.0);
+                      glScalef(scale_amt,scale_amt,1.0);
+                    }
                     break;
-
+                    
                 case SDLK_EQUALS:
                     if(m_iCurGun != m_lGuns.end())
                         (*m_iCurGun)->clear();
