@@ -622,21 +622,16 @@ void myEngine::handleEvent(SDL_Event event)
                     float32 scale_x = (float32)iCurResolution->w / (float32)SCREEN_WIDTH;
                     float32 scale_y = (float32)iCurResolution->h / (float32)SCREEN_HEIGHT;
                     scale_amt = scale_x;
-                    if(scale_y < scale_amt)
-                    {
-                      scale_amt = scale_y;
-                      //glTranslatef((scale_amt-1.0)*(float32)getWidth()/(float32)getHeight(), 0.0f, 0.0f);         
-                    }
-                    else if(scale_y > scale_amt)
-                    {
-                      //glTranslatef(0.0f, (scale_y-scale_amt)*(0.5), 0.0);              
-                    }
                     //Scale up as well
                     glTranslatef((scale_amt-1.0)*(float32)getWidth()/(float32)getHeight(), 1.0f - scale_amt, 0.0);
                     glScalef(scale_amt,scale_amt,1.0);
                     if(scale_y > scale_amt)
                     {
-                      glTranslatef(0.0f, (0.5), 0.0);              
+                      glTranslatef(0.0, -0.16666/scale_amt, 0.0); //Magic numbers ftw
+                    }
+                    else if(scale_y < scale_amt)
+                    {
+                      //glTranslatef(0.0f, -((GLfloat)((iCurResolution->h % SCREEN_HEIGHT)))/((GLfloat)iCurResolution->h * scale_amt), 0.0);
                     }
                     break;
                 }
@@ -696,20 +691,17 @@ void myEngine::handleEvent(SDL_Event event)
 			//RMB zooms in/out
             else if(event.button.button == SDL_BUTTON_RIGHT)
             {
-				if(m_bDebug)
-					scale_amt--;
-				else
-					scale_amt++;
+              cout << "scale amt: " << scale_amt << endl;
 				
 				//Reset back to centered
-				glPopMatrix();
+				/*glPopMatrix();
 				glPushMatrix();
 				//Center on upper left corner
 				glTranslatef((scale_amt-1.0)*getWidth()/getHeight(), -(scale_amt-1.0), 0.0);
 				//Scale up
 				glScalef(scale_amt,scale_amt,1.0);
 				//Reset pan variables
-				fXpos = fYpos = 0.0f;
+				fXpos = fYpos = 0.0f;*/
             }
             break;
 
