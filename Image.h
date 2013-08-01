@@ -13,7 +13,7 @@
 //extern int SCREEN_HEIGHT;// 600.0
 
 //TODO: Figure out what causes this and calculate mathematically? Or just live with it?
-#define MAGIC_ZOOM_NUMBER -2.415f
+#define MAGIC_ZOOM_NUMBER -2.414213562373095
 
 class Color
 {
