@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     errlog << "Starting FreeImage" << endl;
     FreeImage_Initialise();
 #endif
-    myEngine* eng = new myEngine(SCREEN_WIDTH, SCREEN_HEIGHT, "Heartlight++"); //Create our engine
+    myEngine* eng = new myEngine(1000, 600, "Heartlight++"); //Create our engine
 
     eng->setFramerate(GAME_FRAMERATE);
     eng->start(); //Get the engine rolling

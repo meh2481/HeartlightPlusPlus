@@ -20,4 +20,7 @@
   <image name="n_blastgun" path="res/gfx/new/nukemgun.png" /> <!-- Gun from Duke Nukem 2, ripped by Ultimecia -->
   <image name="n_gun" path="res/gfx/new/gunnorm.png" />
   <image name="n_shotgun" path="res/gfx/new/shotgun.png" />
+  
+  <!-- testing stuff -->
+  <image name="test_arc" path="res/gfx/new/arc.png" />
 </images>

@@ -199,6 +199,51 @@ void Image::draw(Rect rcDrawPos, Rect rcImgPos)
     glEnd();
 }
 
+void Image::draw4V(Point ul, Point ur, Point bl, Point br)
+{
+  if(m_hTex == 0)
+    return;
+  
+  // tell opengl to use the generated texture
+  glBindTexture(GL_TEXTURE_2D, m_hTex);
+  
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	if(g_bBlurred)
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	else
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+  
+  
+  int32_t w, h;
+#ifdef __APPLE__
+  w = m_iRealWidth;
+  h = m_iRealHeight;
+#else
+  w = m_iWidth;
+  h = m_iHeight;
+#endif
+  // make a rectangle
+  glBegin(GL_QUADS);
+  glColor4f(m_col.r,m_col.g,m_col.b,m_col.a);	//Colorize according to how we've colorized this image
+  // top left
+  glTexCoord2f(0.0f, 0.0f);
+  glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)ul.x/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)ul.y/(GLfloat)screenDrawHeight + 1.0, 0.0);
+  // bottom left
+  glTexCoord2f(0.0f, 1.0f);// (rcImgPos.bottom / (float32)h));
+  glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)bl.x/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(bl.y)/(GLfloat)screenDrawHeight+1.0, 0.0);
+  // bottom right
+  glTexCoord2f(1.0f, 1.0f);//(rcImgPos.right / (float32)w), (rcImgPos.bottom / (float32)h));
+  glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(br.x)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)(br.y)/(GLfloat)screenDrawHeight+1.0, 0.0);
+  // top right
+  glTexCoord2f(1.0f, 0.0f);//(rcImgPos.right / (float32)w), (rcImgPos.top / (float32)h));
+  glVertex3f((2.0*(float32)screenDrawWidth/(float32)screenDrawHeight)*((GLfloat)(ur.x)/(GLfloat)screenDrawWidth-0.5), -2.0*(GLfloat)ur.y/(GLfloat)screenDrawHeight+1.0, 0.0);
+  
+  //Reset color
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  glEnd();
+  
+}
+
 void Image::draw(float32 x, float32 y)
 {
     Rect rcScr = {x, y, m_iWidth+x, m_iHeight+y};

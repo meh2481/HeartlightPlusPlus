@@ -34,7 +34,6 @@ private:
 //    hgeSprite* m_hSprite;
     Point m_ptHotSpot;
     string     m_sFilename;
-    Color m_col;
     uint32_t m_iWidth, m_iHeight;
 #ifdef __APPLE__
     uint32_t m_iRealWidth, m_iRealHeight;
@@ -45,6 +44,8 @@ private:
     void _load(string sFilename);
 
 public:
+    Color m_col;
+    
     //Constructor/destructor
     Image(string sFilename);
     ~Image();
@@ -67,6 +68,7 @@ public:
     void draw(Point pt);                //draw the entire image with upper left corner at pt
     void draw(float32 x, float32 y, Rect rcImgPos); //draw part of the image at x, y
     void draw(Point pt, Rect rcImgPos); //draw part of the image at pt
+    void draw4V(Point ul, Point ur, Point bl, Point br);  //render the image at arbitrary quad
     void drawCentered(float32 x, float32 y, float32 rotation = 0.0, float32 stretchFactorx = 1.0, float32 stretchFactory = 1.0);    //Center the entire image centered at x,y
     void drawCentered(Point pt, float32 rotation = 0.0, float32 stretchFactorx = 1.0, float32 stretchFactory = 1.0);    //Center the entire image centered at pt
     void drawCentered(float32 x, float32 y, Rect rcImgPos, float32 rotation = 0.0, float32 stretchFactorx = 1.0, float32 stretchFactory = 1.0);    //Center part of the image at x,y

@@ -247,10 +247,67 @@ void myEngine::draw()
   
     //Draw our HUD
     //glClear(GL_DEPTH_BUFFER_BIT);
+    
+    //Draw lightning testing stuff
+    Image* img = getImage("test_arc");
+    img->setColor(m_lightningColor);
+    for(int i = 0; i < LIGHTNING_NUM-1; i++)
+    {
+      Point ul, ur, bl, br;
+      Point pos = m_ptLightningTestPos[i];
+      pos.y += 300;
+      pos.x = i*16;
+      pos.x += 50;
+      ul.x = bl.x = pos.x;
+      ur.x = br.x = pos.x + 16;
+      ul.y = pos.y;
+      bl.y = pos.y + 32;
+      //
+      pos = m_ptLightningTestPos[i+1];
+      pos.y += 300;
+      ur.y = pos.y;
+      br.y = pos.y + 32;
+      img->draw4V(ul, ur, bl, br);
+      //img->drawCentered(pos);
+    }
+    
+    //Update
+    vector<Point> ptTemp;
+    ptTemp.reserve(LIGHTNING_NUM);
+    for(int i = 0; i < LIGHTNING_NUM; i++)
+    {
+      m_ptLightningTestPos[i].y += (rand() % 31) - 15;
+      if(m_ptLightningTestPos[i].y > 50)
+        m_ptLightningTestPos[i].y = 50;
+      if(m_ptLightningTestPos[i].y < -50)
+        m_ptLightningTestPos[i].y = -50;
+      ptTemp[i].y = m_ptLightningTestPos[i].y;
+    }
+    
+    for(int i = 2; i < LIGHTNING_NUM-2; i++)
+    {
+      float iTot = 0.0;
+      for(int j = i-2; j < i+3; j++)
+        iTot += m_ptLightningTestPos[j].y;
+      ptTemp[i].y = iTot / 5.0;
+    }
+    for(int i = 0; i < LIGHTNING_NUM; i++)
+    {
+      m_ptLightningTestPos[i].y = ptTemp[i].y;
+    }
+    //Ends are fixed in place
+    m_ptLightningTestPos[0].y = m_ptLightningTestPos[LIGHTNING_NUM-1].y = 0;
+    m_ptLightningTestPos[1].y = m_ptLightningTestPos[2].y / 2.0;
+    m_ptLightningTestPos[LIGHTNING_NUM-2].y = m_ptLightningTestPos[LIGHTNING_NUM-3].y / 2.0;
+    //m_ptLightningTestPos[2].y /= 2.0;
+    //
 }
 
 void myEngine::init()
 {
+    m_ptLightningTestPos.reserve(LIGHTNING_NUM);
+    for(int i = 0; i < LIGHTNING_NUM; i++)
+      m_ptLightningTestPos[i].x = m_ptLightningTestPos[i].y = 0;
     //objImg = new Image("res/hud/logo.png");
     //parallaxLayer* objLayer = new parallaxLayer(objImg);
     //physSegment* objSeg = new physSegment();
@@ -276,6 +333,23 @@ void myEngine::init()
 	  //objSeg->obj3D->rot.y = 1.0;
     //inter->calculateIncrement(180.0f, 1.0f);
     //addInterpolation(inter);
+    m_lightningColor.set(0.0f, 0.0f, 0.0f, 1.0f);
+   Interpolate* interp = new Interpolate(&(m_lightningColor.r));
+   interp->setMinVal(0.0f, false);
+   interp->setMaxVal(1.0f, false);
+   interp->calculateIncrement(1.0f, 1.0f);
+   addInterpolation(interp);
+   interp = new Interpolate(&(m_lightningColor.g));
+   interp->setMinVal(0.0f, false);
+   interp->setMaxVal(1.0f, false);
+   interp->calculateIncrement(1.0f, 2.0f);
+   addInterpolation(interp);
+   interp = new Interpolate(&(m_lightningColor.b));
+   interp->setMinVal(0.0f, false);
+   interp->setMaxVal(1.0f, false);
+   interp->calculateIncrement(1.0f, 3.0f);
+   addInterpolation(interp);
+   
     lastMousePos.Set(getWidth()/2.0, getHeight()/2.0);
     setCursorPos(getWidth()/2.0, getHeight()/2.0);
     hideCursor(); //Start in retro mode without a cursor
@@ -285,8 +359,8 @@ void myEngine::init()
 		loadImages("res/gfx/orig.xml");
 	else
 		loadImages("res/gfx/new.xml");
-
-    //testObj = new Object3D("cs/trixie2.obj", "cs/trixie.png");
+    
+        //testObj = new Object3D("cs/trixie2.obj", "cs/trixie.png");
     //shipObj = new Object3D("res/3D/spaceship2.obj", "res/3D/spaceship2.png");
 
     //Now scale all the images up
@@ -381,7 +455,17 @@ void myEngine::init()
     //}
     
     //Keep track of current resolution
-    m_lResolutions = getAvailableResolutions();
+    //m_lResolutions = getAvailableResolutions();
+    //TESTING
+    resolution r;
+    r.w = 1280;
+    r.h = 768;
+    m_lResolutions.push_back(r);
+    r.h = 720;
+    m_lResolutions.push_back(r);
+    r.h = 600;
+    m_lResolutions.push_back(r);
+    
 	/*for(list<resolution>::iterator i = m_lResolutions.begin(); i != m_lResolutions.end(); i++)
 	{
 		//Make sure this resolution is an even multiple of 320x200
@@ -604,7 +688,7 @@ void myEngine::handleEvent(SDL_Event event)
 
                 case SDLK_5:   //Refresh cursor XML
                     m_cur->loadFromXML("res/cursor/cursor1.xml");
-                    loadLevelDirectory("res/levels");
+                    loadLevelDirectory("res/levels");                
                     break;
 
                 //case SDLK_0:
@@ -613,6 +697,7 @@ void myEngine::handleEvent(SDL_Event event)
                 
                 case SDLK_1:
                 {
+                    bool bChange = false;
                     iCurResolution++;
                     if(iCurResolution == m_lResolutions.end())
                       iCurResolution = m_lResolutions.begin();
@@ -622,19 +707,24 @@ void myEngine::handleEvent(SDL_Event event)
                     float32 scale_x = (float32)iCurResolution->w / (float32)SCREEN_WIDTH;
                     float32 scale_y = (float32)iCurResolution->h / (float32)SCREEN_HEIGHT;
                     scale_amt = scale_x;
+                    if(scale_y < scale_amt)
+                    {
+                      scale_amt = scale_y;
+                      bChange = true;
+                    }
                     //Scale up as well
-                    glTranslatef((scale_amt-1.0)*(float32)getWidth()/(float32)getHeight(), 1.0f - scale_amt, 0.0);
+                    glTranslatef((scale_amt-1.0)*(float32)iCurResolution->w/(float32)iCurResolution->h, 1.0f - scale_amt, 0.0);
                     glScalef(scale_amt,scale_amt,1.0);
                     if(scale_y > scale_amt)
                     {
                       glTranslatef(0.0, -0.16666/scale_amt, 0.0); //Magic numbers ftw
                     }
-                    else if(scale_y < scale_amt)
+                    else if(bChange)
                     {
                       //glTranslatef(0.0f, -((GLfloat)((iCurResolution->h % SCREEN_HEIGHT)))/((GLfloat)iCurResolution->h * scale_amt), 0.0);
                     }
                     break;
-                }
+                }//728, 720, 600
                 
                 case SDLK_RETURN:
                     if(keyDown(SDLK_LALT) || keyDown(SDLK_RALT))

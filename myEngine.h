@@ -66,6 +66,9 @@ private:
 	bool m_bRetroPhys;         //If we're playing with modern or retro physics
 	bool m_bRetroGfx;			//If we're playing with new or retro graphics
 	bool m_bRetroSfx;			//If we're playing with new or retro sound effects
+    vector<Point> m_ptLightningTestPos;
+    Color m_lightningColor;
+    #define LIGHTNING_NUM 60
     //Object3D* o3d;
     //bool m_bDragScreen;
     //bool m_bScaleScreen;
