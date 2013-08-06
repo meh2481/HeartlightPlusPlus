@@ -250,23 +250,25 @@ void myEngine::draw()
     
     //Draw lightning testing stuff
     Image* img = getImage("test_arc");
-    img->setColor(m_lightningColor);
+    //img->setColor(133,207,255);
+    #define LIGHTNING_WIDTH 10
+    #define LIGHTNING_HEIGHT  40
     for(int i = 0; i < LIGHTNING_NUM-1; i++)
     {
       Point ul, ur, bl, br;
       Point pos = m_ptLightningTestPos[i];
       pos.y += 300;
-      pos.x = i*16;
+      pos.x = i*LIGHTNING_WIDTH;
       pos.x += 50;
       ul.x = bl.x = pos.x;
-      ur.x = br.x = pos.x + 16;
+      ur.x = br.x = pos.x + LIGHTNING_WIDTH;
       ul.y = pos.y;
-      bl.y = pos.y + 32;
+      bl.y = pos.y + LIGHTNING_HEIGHT;
       //
       pos = m_ptLightningTestPos[i+1];
       pos.y += 300;
       ur.y = pos.y;
-      br.y = pos.y + 32;
+      br.y = pos.y + LIGHTNING_HEIGHT;
       img->draw4V(ul, ur, bl, br);
       //img->drawCentered(pos);
     }
@@ -277,10 +279,10 @@ void myEngine::draw()
     for(int i = 0; i < LIGHTNING_NUM; i++)
     {
       m_ptLightningTestPos[i].y += (rand() % 31) - 15;
-      if(m_ptLightningTestPos[i].y > 50)
-        m_ptLightningTestPos[i].y = 50;
-      if(m_ptLightningTestPos[i].y < -50)
-        m_ptLightningTestPos[i].y = -50;
+      if(m_ptLightningTestPos[i].y > 70)
+        m_ptLightningTestPos[i].y = 70;
+      if(m_ptLightningTestPos[i].y < -70)
+        m_ptLightningTestPos[i].y = -70;
       ptTemp[i].y = m_ptLightningTestPos[i].y;
     }
     
@@ -301,6 +303,7 @@ void myEngine::draw()
     m_ptLightningTestPos[LIGHTNING_NUM-2].y = m_ptLightningTestPos[LIGHTNING_NUM-3].y / 2.0;
     //m_ptLightningTestPos[2].y /= 2.0;
     //
+    
 }
 
 void myEngine::init()

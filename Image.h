@@ -78,7 +78,7 @@ public:
     void setColor(DWORD dwCol);
     void setColor(Color col)    {m_col = col;};
     Color getColor()            {return m_col;};
-    void setColor(float32 r, float32 g, float32 b, float32 a = 1.0) {m_col.set(r,g,b,a);};
+    //void setColor(float32 r, float32 g, float32 b, float32 a = 1.0) {m_col.set(r,g,b,a);};
 //    void scale(uint16_t iScaleFac); //Scales this image up by a given factor from the original, without interpolation. (scale(1) to reset to original size)
     void setHotSpot(float32 x, float32 y)   {m_ptHotSpot.x=x;m_ptHotSpot.y=y;};
     Point getHotSpot()                      {return m_ptHotSpot;};
