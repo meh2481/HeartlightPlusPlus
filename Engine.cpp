@@ -46,7 +46,8 @@ bool Engine::_frame()
         m_physicsWorld->Step(m_fTargetTime, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);
         //Use cycle time for everything else
         //float32 fCycleTime = getTime() - m_fLastCycle;
-        m_cursor->update(m_fTargetTime);
+        if(m_cursor != NULL)
+          m_cursor->update(m_fTargetTime);
         _interpolations(m_fTargetTime);
         frame();
         _render();
